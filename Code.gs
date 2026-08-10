@@ -43,7 +43,31 @@ function onOpen() {
 }
 
 function authorizeAndDiagnoseRuntime() {
-  ScriptApp.requireAllScopes(ScriptApp.AuthMode.FULL);
+  const authorization = ScriptApp.getAuthorizationInfo(ScriptApp.AuthMode.FULL);
+  if (authorization.getAuthorizationStatus() === ScriptApp.AuthorizationStatus.REQUIRED) {
+    const authorizationUrl = authorization.getAuthorizationUrl();
+    if (!authorizationUrl) {
+      SpreadsheetApp.getUi().alert(
+        'Google reports that authorization is required, but did not provide an authorization URL. ' +
+        'Run authorizeAndDiagnoseRuntime from the Apps Script editor.'
+      );
+      return {ok: false, stage: 'authorization', error: 'Authorization URL is unavailable.'};
+    }
+
+    const html = HtmlService.createHtmlOutput(
+      '<div style="font:14px Arial,sans-serif;padding:18px;line-height:1.5">' +
+        '<p>Google Sheets access has not been granted to this runtime.</p>' +
+        '<p><a href="' + escapeHtmlAttribute_(authorizationUrl) + '" target="_blank" ' +
+        'style="display:inline-block;padding:9px 14px;background:#1a73e8;color:#fff;' +
+        'text-decoration:none;border-radius:4px">Grant access</a></p>' +
+        '<p>After approving access, close this window and select ' +
+        '<b>Automotive Runtime → Authorize and diagnose</b> again.</p>' +
+      '</div>'
+    ).setWidth(440).setHeight(220);
+    SpreadsheetApp.getUi().showModalDialog(html, 'Authorize Automotive Runtime');
+    return {ok: false, stage: 'authorization', error: 'Authorization required.'};
+  }
+
   const result = getRuntimeDiagnostics();
   const lines = result.ok
     ? [
@@ -737,6 +761,13 @@ function formatRuntimeError_(error) {
   const message = error.message || String(error);
   const location = error.stack ? String(error.stack).split('\n').slice(0, 3).join(' | ') : '';
   return location && location.indexOf(message) < 0 ? message + ' | ' + location : (location || message);
+}
+function escapeHtmlAttribute_(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 function replacePlaceholder_(text, label) { return String(text || '').replace(/\{[^}]+\}/g, label); }
 function instantiateId_(templateId, code) { const parts = String(templateId).split('-'); if (parts.length > 2) parts[1] = code; return parts.join('-'); }
