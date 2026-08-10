@@ -1,0 +1,16 @@
+{
+  "name": "automotive-onboarding-runtime",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Container-bound Google Apps Script runtime for Automotive Onboarding",
+  "devDependencies": {
+    "@google/clasp": "^3.3.0"
+  },
+  "scripts": {
+    "login": "clasp login",
+    "open": "clasp open-script",
+    "pull": "clasp pull",
+    "push": "clasp push",
+    "status": "clasp show-file-status"
+  }
+}
