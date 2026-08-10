@@ -19,7 +19,7 @@ Container-bound Google Apps Script for the spreadsheet `Automotive Onboarding �
 6. Open **Project Settings**, enable display of `appsscript.json`, and replace it with this package's manifest.
 7. Save the project.
 8. Run `onOpen` once from the editor.
-9. Reload the spreadsheet and select **Automotive Runtime → Authorize and diagnose**. Grant access to the current spreadsheet when Google asks.
+9. Reload the spreadsheet and select **Automotive Runtime → Authorize and diagnose**. If the runtime displays an authorization window, select **Grant access**, approve access in Google, then run **Authorize and diagnose** again.
 10. Confirm that the diagnostic reports access to `ПУЛ ТАСКОВ`, `_TRANSLATIONS`, and the document lock.
 11. Open **Automotive Runtime → Open runtime**.
 
