@@ -31,6 +31,7 @@ The runtime uses only the current spreadsheet. Configuration is stored in `_TRAN
 
 - `ЧЕКЛИСТ` is the full-width working tab. It contains a persistent native filter. Users edit only `Актуален`, `DONE`, and `Комментарий`.
 - `КОНФИГУРАЦИЯ` is the structured project-configuration tab. Use **ЧЕКЛИСТ → Сохранить конфигурацию и пересобрать** after making changes.
+- `ИНСТРУКЦИЯ` is the operator-facing quick start, configuration map, state reference, and safe-edit guide. Keep it aligned with this README whenever runtime behavior changes.
 - `ПУЛ ТАСКОВ` is the protected technical state and graph tab. Its protection warns against direct edits; Google Sheets owners can still override any protection, so routine work must happen in `ЧЕКЛИСТ`.
 - `_TRANSLATIONS` remains hidden.
 
@@ -81,6 +82,20 @@ The copied container-bound Script ID is intentionally left blank in the registry
 ## Configuration model
 
 Automotive integrations, payment gateways, carriers, and tax services are selected with checkboxes from fixed catalogs in `КОНФИГУРАЦИЯ`.
+
+### Applying catalog selections
+
+Checkboxes in `КОНФИГУРАЦИЯ` are a draft until the user selects **ЧЕКЛИСТ → Сохранить конфигурацию и пересобрать**. The configuration sheet does not rebuild the checklist from a normal cell edit.
+
+After a successful rebuild:
+
+1. repeatable service tasks are inserted into their thematic sections rather than appended as one block;
+2. integration tasks appear in Sections 2 and 4, payment tasks in Sections 2 and 10, carrier tasks in Sections 2 and 11, and tax-access tasks in Section 2;
+3. selected automotive-integration branches are generated but remain `INACTIVE` unless `supplier_feed` is one of the selected source types;
+4. E2E branches are generated only when at least one payment gateway and at least one shipping method are selected;
+5. existing `DONE` and comment values are preserved for stable Task IDs that remain in the rebuilt model.
+
+To verify a selection, search `ЧЕКЛИСТ` for the service name or generated Task ID instead of looking only at the top or bottom of the sheet. A changed total task count is expected when repeatable service or E2E branches are added or removed; source types, overlap, and fitment can change applicability without necessarily changing the row count.
 
 Automotive integrations:
 
