@@ -280,8 +280,12 @@ function resetOnboardingSpreadsheet_(spreadsheet, metadata) {
 function migrateAllWorkbooksToEnglish() {
   const master = runtimeSpreadsheet_();
   const results = [];
-  migrateWorkbookToEnglish_(master, true);
-  results.push({spreadsheetId: master.getId(), name: master.getName(), status: 'MIGRATED'});
+  if (workbookNeedsEnglishMigration_(master)) {
+    migrateWorkbookToEnglish_(master, true);
+    results.push({spreadsheetId: master.getId(), name: master.getName(), status: 'MIGRATED'});
+  } else {
+    results.push({spreadsheetId: master.getId(), name: master.getName(), status: 'ALREADY_ENGLISH'});
+  }
 
   const registry = master.getSheetByName(PROJECT_FACTORY.registrySheet);
   if (registry && registry.getLastRow() >= 2) {
@@ -293,14 +297,24 @@ function migrateAllWorkbooksToEnglish() {
       seen[id] = true;
       try {
         const child = SpreadsheetApp.openById(id);
-        migrateWorkbookToEnglish_(child, false);
-        results.push({spreadsheetId: id, name: child.getName(), status: 'MIGRATED'});
+        if (workbookNeedsEnglishMigration_(child)) {
+          migrateWorkbookToEnglish_(child, false);
+          results.push({spreadsheetId: id, name: child.getName(), status: 'MIGRATED'});
+        } else {
+          results.push({spreadsheetId: id, name: child.getName(), status: 'ALREADY_ENGLISH'});
+        }
       } catch (error) {
         results.push({spreadsheetId: id, status: 'SKIPPED', error: formatRuntimeError_(error)});
       }
     });
   }
   return results;
+}
+
+function workbookNeedsEnglishMigration_(spreadsheet) {
+  return Object.keys(LEGACY_SHEET_NAMES).some(function (key) {
+    return Boolean(spreadsheet.getSheetByName(LEGACY_SHEET_NAMES[key]));
+  });
 }
 
 function migrateWorkbookToEnglish_(spreadsheet, isMaster) {
