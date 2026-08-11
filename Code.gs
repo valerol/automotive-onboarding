@@ -12,6 +12,10 @@ const RUNTIME = Object.freeze({
   configKey: 'AUTOMOTIVE_RUNTIME_CONFIG_V1',
   configKeyCell: 'D1',
   configValueCell: 'E1',
+  fastPathVersion: 'AUTOMOTIVE_FAST_PATH_V1',
+  fastPathProperty: 'AUTOMOTIVE_FAST_PATH_VERSION',
+  modelVersionProperty: 'AUTOMOTIVE_MODEL_VERSION',
+  rowIndexCacheKey: 'AUTOMOTIVE_ROW_INDEX_V1',
   yes: 'ДА',
   no: 'НЕТ',
   statuses: Object.freeze({inactive: 'INACTIVE', done: 'DONE', blocked: 'BLOCKED', ready: 'READY', waiting: 'WAITING'})
@@ -360,8 +364,8 @@ function onEdit(e) {
 }
 
 function handleChecklistEdit_(e) {
-  const editLock = LockService.getScriptLock();
-  if (!editLock.tryLock(30000)) {
+  const editLock = LockService.getDocumentLock();
+  if (!editLock.tryLock(5000)) {
     SpreadsheetApp.getActive().toast('Предыдущее изменение ещё обрабатывается. Повторите действие.', 'ЧЕКЛИСТ', 5);
     return;
   }
@@ -404,22 +408,351 @@ function handleChecklistEdit_(e) {
       return;
     }
 
-    const patch = {language: checklistLanguage_(sheet)};
-    if (column === 4) patch.applicable = String(e.range.getDisplayValue()) === RUNTIME.no ? RUNTIME.no : RUNTIME.yes;
-    if (column === 5) patch.done = String(e.value) === 'TRUE';
-    if (column === 6) patch.comment = String(e.range.getValue() || '');
-
     try {
-      updateTaskFromSidebar(taskId, patch);
+      if (!runtimeFastPathCompatible_()) {
+        refreshChecklist_();
+        return;
+      }
+
+      if (column === 6) {
+        fastUpdateComment_(taskId, String(e.range.getValue() || ''));
+        return;
+      }
+
+      fastUpdateChecklistTask_(sheet, taskId, {
+        applicable: column === 4
+          ? (String(e.range.getDisplayValue()) === RUNTIME.no ? RUNTIME.no : RUNTIME.yes)
+          : undefined,
+        done: column === 5 ? String(e.value) === 'TRUE' : undefined
+      }, e.range.getRow());
     } catch (error) {
+      if (typeof e.oldValue !== 'undefined') e.range.setValue(e.oldValue);
+      else if (column === 5) e.range.setValue(false);
+      else e.range.clearContent();
       SpreadsheetApp.getActive().toast(formatRuntimeError_(error), 'Изменение отклонено', 7);
     }
-
-    refreshChecklist_();
-    if (column === 5) showReadyTasks_(sheet);
   } finally {
     editLock.releaseLock();
   }
+}
+
+function runtimeFastPathCompatible_() {
+  const properties = PropertiesService.getDocumentProperties();
+  return properties.getProperty(RUNTIME.fastPathProperty) === RUNTIME.fastPathVersion &&
+    properties.getProperty(RUNTIME.modelVersionProperty) === RUNTIME_MODEL.version;
+}
+
+function markRuntimeFastPathCompatible_() {
+  PropertiesService.getDocumentProperties().setProperties((function () {
+    const values = {};
+    values[RUNTIME.fastPathProperty] = RUNTIME.fastPathVersion;
+    values[RUNTIME.modelVersionProperty] = RUNTIME_MODEL.version;
+    return values;
+  })());
+}
+
+function invalidateRuntimeIndexes_() {
+  CacheService.getDocumentCache().remove(RUNTIME.rowIndexCacheKey);
+}
+
+function fastUpdateComment_(taskId, comment) {
+  const pool = getPoolSheet_();
+  const row = findTaskRowCached_(pool, taskId);
+  if (!row || String(pool.getRange(row, RUNTIME.columns.id).getDisplayValue() || '').trim() !== taskId) {
+    invalidateRuntimeIndexes_();
+    throw new Error('Task row index is stale for ' + taskId + '. Run a full checklist refresh.');
+  }
+  pool.getRange(row, RUNTIME.columns.comment).setValue(comment);
+}
+
+function fastUpdateChecklistTask_(checklist, taskId, patch, editedRow) {
+  const timer = createRuntimeTimer_('checklist-edit');
+  const config = getRuntimeConfiguration();
+  const state = readOperationalState_(config);
+  timer.mark('read-state');
+  const indexes = buildRuntimeIndexes_(state.tasks);
+  const task = indexes.byId[taskId];
+  if (!task) throw new Error('Unknown Task ID: ' + taskId);
+
+  const checklistIndex = readChecklistRowIndex_(checklist);
+  if (checklistIndex.byId[taskId] !== editedRow) {
+    invalidateRuntimeIndexes_();
+    throw new Error('Checklist row index is stale for ' + taskId + '. Run a full checklist refresh.');
+  }
+
+  const before = state.tasks.map(cloneRuntimeTask_);
+  const baseline = calculateRuntimeGraph_(state.tasks.map(cloneRuntimeTask_), config);
+  const baselineTask = baseline.byId[taskId];
+
+  if (typeof patch.applicable !== 'undefined') {
+    if (task.systemApplicable) {
+      checklist.getRange(checklistIndex.byId[taskId], 4).setValue(task.localApplicable);
+      throw new Error(taskId + ' applicability is controlled by Configuration.');
+    }
+    task.localApplicable = patch.applicable === RUNTIME.no ? RUNTIME.no : RUNTIME.yes;
+  }
+
+  if (typeof patch.done !== 'undefined') {
+    if (patch.done && baselineTask.status !== RUNTIME.statuses.ready) {
+      checklist.getRange(checklistIndex.byId[taskId], 5).setValue(Boolean(task.done));
+      throw new Error(taskId + ' is not READY. Waiting for: ' + baselineTask.waitingFor);
+    }
+    task.done = Boolean(patch.done);
+  }
+
+  const calculated = calculateRuntimeGraph_(state.tasks, config);
+  timer.mark('calculate');
+  const changedIds = diffRuntimeTasks_(before, calculated.tasks);
+  writeRuntimeDiff_(state.sheet, calculated.tasks, changedIds);
+  timer.mark('write-pool');
+  writeChecklistDiff_(checklist, checklistIndex, calculated, changedIds);
+  timer.mark('write-checklist');
+  updateCountersFromTasks_(state.sheet, calculated.tasks);
+  applyChecklistVisibilityFromGraph_(
+    checklist,
+    checklistIndex,
+    calculated.tasks,
+    typeof patch.done !== 'undefined'
+  );
+  cacheRuntimeRowIndex_(calculated.tasks, checklistIndex);
+  timer.mark('finalize');
+  timer.finish();
+}
+
+function cloneRuntimeTask_(task) {
+  const clone = {};
+  Object.keys(task).forEach(function (key) {
+    clone[key] = Array.isArray(task[key]) ? task[key].slice() : task[key];
+  });
+  return clone;
+}
+
+function buildRuntimeIndexes_(tasks) {
+  const byId = {};
+  const reverseDependencies = {};
+  const children = {};
+  const poolRowById = {};
+  tasks.forEach(function (task) {
+    byId[task.id] = task;
+    poolRowById[task.id] = task.row;
+    task.dependencies.forEach(function (dependency) {
+      (reverseDependencies[dependency] || (reverseDependencies[dependency] = [])).push(task.id);
+    });
+    if (task.parent) (children[task.parent] || (children[task.parent] = [])).push(task.id);
+  });
+  return {
+    byId: byId,
+    poolRowById: poolRowById,
+    reverseDependencies: reverseDependencies,
+    children: children
+  };
+}
+
+function calculateRuntimeGraph_(tasks, config) {
+  const indexes = buildRuntimeIndexes_(tasks);
+  const byId = indexes.byId;
+  const activeMemo = {};
+
+  tasks.forEach(function (task) {
+    const configuredApplicable = configuredLocalApplicability_(task, config);
+    if (configuredApplicable) task.localApplicable = configuredApplicable;
+  });
+
+  function isActive(task, trail) {
+    if (Object.prototype.hasOwnProperty.call(activeMemo, task.id)) return activeMemo[task.id];
+    if (task.configurationApplicable === false || task.localApplicable === RUNTIME.no) {
+      return (activeMemo[task.id] = false);
+    }
+    if (!task.parent) return (activeMemo[task.id] = true);
+    if ((trail || []).indexOf(task.id) >= 0) return (activeMemo[task.id] = false);
+    const parent = byId[task.parent];
+    return (activeMemo[task.id] = Boolean(parent && isActive(parent, (trail || []).concat(task.id))));
+  }
+
+  tasks.forEach(function (task) { task.active = isActive(task, []); });
+
+  let changed = true;
+  while (changed) {
+    changed = false;
+    const capability = evaluateCapabilities_(tasks, config);
+    tasks.forEach(function (task) {
+      const readiness = evaluateTaskReadiness_(task, byId, capability, config);
+      if (task.done && (!task.active || readiness.level !== 'PASS')) {
+        task.done = false;
+        changed = true;
+      }
+    });
+  }
+
+  const capability = evaluateCapabilities_(tasks, config);
+  tasks.forEach(function (task) {
+    const readiness = evaluateTaskReadiness_(task, byId, capability, config);
+    task.effectiveApplicable = task.active ? RUNTIME.yes : RUNTIME.no;
+    if (!task.active) task.status = RUNTIME.statuses.inactive;
+    else if (task.done) task.status = RUNTIME.statuses.done;
+    else if (readiness.level === 'BLOCKED') task.status = RUNTIME.statuses.blocked;
+    else if (readiness.level === 'PASS') task.status = RUNTIME.statuses.ready;
+    else task.status = RUNTIME.statuses.waiting;
+    task.waitingFor = task.status === RUNTIME.statuses.waiting || task.status === RUNTIME.statuses.blocked
+      ? readiness.reasons.join(', ')
+      : '';
+  });
+  return {tasks: tasks, byId: byId, indexes: indexes};
+}
+
+function diffRuntimeTasks_(before, after) {
+  const beforeById = indexById_(before);
+  return after.filter(function (task) {
+    const old = beforeById[task.id];
+    return !old || old.localApplicable !== task.localApplicable || old.done !== task.done ||
+      old.effectiveApplicable !== task.effectiveApplicable || old.status !== task.status ||
+      old.waitingFor !== task.waitingFor;
+  }).map(function (task) { return task.id; });
+}
+
+function writeRuntimeDiff_(sheet, tasks, changedIds) {
+  const changed = {};
+  changedIds.forEach(function (id) { changed[id] = true; });
+  const rows = tasks.filter(function (task) { return changed[task.id]; });
+  writeContiguousTaskBlocks_(sheet, rows, RUNTIME.columns.applicable, 2, function (task) {
+    return [task.localApplicable, Boolean(task.done)];
+  });
+  writeContiguousTaskBlocks_(sheet, rows, RUNTIME.columns.effectiveApplicable, 3, function (task) {
+    return [task.effectiveApplicable, task.status, task.waitingFor];
+  });
+}
+
+function writeContiguousTaskBlocks_(sheet, tasks, column, width, valueFn) {
+  if (!tasks.length) return;
+  const ordered = tasks.slice().sort(function (a, b) { return a.row - b.row; });
+  let block = [ordered[0]];
+  const flush = function () {
+    sheet.getRange(block[0].row, column, block.length, width).setValues(block.map(valueFn));
+  };
+  for (let index = 1; index < ordered.length; index++) {
+    if (ordered[index].row === ordered[index - 1].row + 1) block.push(ordered[index]);
+    else { flush(); block = [ordered[index]]; }
+  }
+  flush();
+}
+
+function readChecklistRowIndex_(sheet) {
+  const lastRow = Math.max(sheet.getLastRow(), RUNTIME.checklistFirstTaskRow);
+  const rows = sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, lastRow - RUNTIME.checklistFirstTaskRow + 1, 3).getDisplayValues();
+  const byId = {};
+  const sectionRowById = {};
+  let sectionRow = 0;
+  rows.forEach(function (row, index) {
+    const sheetRow = RUNTIME.checklistFirstTaskRow + index;
+    const id = String(row[0] || '').trim();
+    if (!id && String(row[1] || '').trim()) sectionRow = sheetRow;
+    else if (id) { byId[id] = sheetRow; sectionRowById[id] = sectionRow; }
+  });
+  return {byId: byId, sectionRowById: sectionRowById, lastRow: lastRow};
+}
+
+function writeChecklistDiff_(sheet, checklistIndex, calculated, changedIds) {
+  const tasks = changedIds.map(function (id) { return calculated.byId[id]; }).filter(function (task) {
+    return task && checklistIndex.byId[task.id];
+  }).map(function (task) {
+    const copy = cloneRuntimeTask_(task);
+    copy.row = checklistIndex.byId[task.id];
+    return copy;
+  });
+  writeContiguousTaskBlocks_(sheet, tasks, 3, 3, function (task) {
+    return [task.status, task.localApplicable, Boolean(task.done)];
+  });
+  writeContiguousTaskBlocks_(sheet, tasks, 7, 1, function (task) { return [task.waitingFor]; });
+}
+
+function applyChecklistVisibilityFromGraph_(sheet, checklistIndex, tasks, focusReady) {
+  let selected = focusReady ? [RUNTIME.statuses.ready] : getChecklistStatusSelection_();
+  if (focusReady && !tasks.some(function (task) { return task.status === RUNTIME.statuses.ready; })) {
+    selected = CHECKLIST_FILTER.statuses.slice();
+  }
+  if (focusReady) {
+    setChecklistStatusSelection_(selected);
+    sheet.getRange('D2').setValue(checklistFilterSummary_(selected));
+  }
+  const visibleSections = {};
+  const hiddenRows = [];
+  tasks.forEach(function (task) {
+    const row = checklistIndex.byId[task.id];
+    if (!row) return;
+    if (selected.indexOf(task.status) >= 0) visibleSections[checklistIndex.sectionRowById[task.id]] = true;
+    else hiddenRows.push(row);
+  });
+  Object.keys(checklistIndex.sectionRowById).forEach(function (id) {
+    const sectionRow = checklistIndex.sectionRowById[id];
+    if (sectionRow && !visibleSections[sectionRow] && hiddenRows.indexOf(sectionRow) < 0) hiddenRows.push(sectionRow);
+  });
+  sheet.showRows(RUNTIME.checklistFirstTaskRow, checklistIndex.lastRow - RUNTIME.checklistFirstTaskRow + 1);
+  setChecklistHiddenRows_(sheet, hiddenRows);
+}
+
+function updateCountersFromTasks_(sheet, tasks) {
+  const counts = countStatuses_(tasks);
+  sheet.getRange('B3').setValue(counts.READY || 0);
+  sheet.getRange('D3').setValue(counts.INACTIVE || 0);
+  sheet.getRange('B4').setValue((counts.WAITING || 0) + (counts.BLOCKED || 0));
+  sheet.getRange('D4').setValue(counts.DONE || 0);
+}
+
+function cacheRuntimeRowIndex_(tasks, checklistIndex) {
+  const poolById = {};
+  tasks.forEach(function (task) { poolById[task.id] = task.row; });
+  CacheService.getDocumentCache().put(RUNTIME.rowIndexCacheKey, JSON.stringify({
+    poolById: poolById,
+    checklistById: checklistIndex.byId,
+    modelVersion: RUNTIME_MODEL.version,
+    fastPathVersion: RUNTIME.fastPathVersion
+  }), 21600);
+}
+
+function findTaskRowCached_(sheet, taskId) {
+  const cache = CacheService.getDocumentCache();
+  const raw = cache.get(RUNTIME.rowIndexCacheKey);
+  if (raw) {
+    try {
+      const index = JSON.parse(raw);
+      if (index.modelVersion === RUNTIME_MODEL.version && index.fastPathVersion === RUNTIME.fastPathVersion && index.poolById[taskId]) {
+        return Number(index.poolById[taskId]);
+      }
+    } catch (ignored) {
+      cache.remove(RUNTIME.rowIndexCacheKey);
+    }
+  }
+  const ids = sheet.getRange(RUNTIME.firstTaskRow, RUNTIME.columns.id, Math.max(1, sheet.getLastRow() - RUNTIME.firstTaskRow + 1), 1).getDisplayValues();
+  const poolById = {};
+  ids.forEach(function (value, index) {
+    const id = String(value[0] || '').trim();
+    if (id) poolById[id] = RUNTIME.firstTaskRow + index;
+  });
+  cache.put(RUNTIME.rowIndexCacheKey, JSON.stringify({
+    poolById: poolById,
+    checklistById: {},
+    modelVersion: RUNTIME_MODEL.version,
+    fastPathVersion: RUNTIME.fastPathVersion
+  }), 21600);
+  return Number(poolById[taskId] || 0);
+}
+
+function createRuntimeTimer_(name) {
+  const started = Date.now();
+  let previous = started;
+  const stages = {};
+  return {
+    mark: function (stage) {
+      const now = Date.now();
+      stages[stage] = now - previous;
+      previous = now;
+    },
+    finish: function () {
+      const total = Date.now() - started;
+      if (total > 3000) console.warn(JSON.stringify({operation: name, totalMs: total, stages: stages}));
+      return {operation: name, totalMs: total, stages: stages};
+    }
+  };
 }
 
 function refreshChecklist_() {
@@ -517,6 +850,8 @@ function refreshChecklist_() {
   }
 
   applyChecklistStatusFilter_(sheet);
+  markRuntimeFastPathCompatible_();
+  cacheRuntimeRowIndex_(state.tasks, readChecklistRowIndex_(sheet));
 }
 
 function showReadyTasks_(sheet) {
@@ -1050,10 +1385,9 @@ function updateTaskFromSidebar(taskId, patch) {
 
 function getRuntimeConfiguration() {
   const sheet = getTranslationsSheet_();
-  const key = String(sheet.getRange(RUNTIME.configKeyCell).getDisplayValue() || '');
-  const raw = key === RUNTIME.configKey
-    ? String(sheet.getRange(RUNTIME.configValueCell).getValue() || '')
-    : '';
+  const stored = sheet.getRange(RUNTIME.configKeyCell + ':' + RUNTIME.configValueCell).getValues()[0];
+  const key = String(stored[0] || '');
+  const raw = key === RUNTIME.configKey ? String(stored[1] || '') : '';
   if (!raw) return defaultConfiguration_();
   try {
     return normalizeConfiguration_(JSON.parse(raw));
@@ -1071,6 +1405,7 @@ function saveRuntimeConfiguration(config) {
     const sheet = getTranslationsSheet_();
     sheet.getRange(RUNTIME.configKeyCell).setValue(RUNTIME.configKey);
     sheet.getRange(RUNTIME.configValueCell).setValue(JSON.stringify(normalized));
+    invalidateRuntimeIndexes_();
     rebuildOperationalPool_(normalized);
   } finally {
     lock.releaseLock();
@@ -1336,25 +1671,17 @@ function requiredCapabilitiesForTask_(task, cap, config) {
 }
 
 function rebuildOperationalPool_(config) {
+  invalidateRuntimeIndexes_();
   const sheet = getPoolSheet_();
   const previous = readOperationalState_();
   const previousById = indexById_(previous.tasks);
-  const tasks = instantiateModel_(config);
+  const tasks = mergeTaskStateForRebuild_(instantiateModel_(config), previousById);
   const sections = [];
   tasks.forEach(function (task) { if (sections.indexOf(task.section) < 0) sections.push(task.section); });
   const output = [];
   sections.forEach(function (section) {
     output.push({sectionHeader: true, section: section});
     tasks.filter(function (task) { return task.section === section; }).forEach(function (task) {
-      const old = previousById[task.id];
-      if (task.systemApplicable) {
-        task.localApplicable = task.defaultApplicable;
-        task.done = task.localApplicable === RUNTIME.yes && old ? old.done : false;
-      } else {
-        task.localApplicable = old ? old.localApplicable : task.defaultApplicable;
-        task.done = old ? old.done : false;
-      }
-      task.commentValue = old ? old.comment : task.comment;
       output.push(task);
     });
   });
@@ -1392,6 +1719,21 @@ function rebuildOperationalPool_(config) {
   });
   refreshTranslations_(tasks);
   sheet.getRange(RUNTIME.firstDataRow, 1, output.length, 10).setVerticalAlignment('middle');
+}
+
+function mergeTaskStateForRebuild_(tasks, previousById) {
+  tasks.forEach(function (task) {
+    const old = previousById[task.id];
+    if (task.systemApplicable) {
+      task.localApplicable = task.defaultApplicable;
+      task.done = task.localApplicable === RUNTIME.yes && old ? old.done : false;
+    } else {
+      task.localApplicable = old ? old.localApplicable : task.defaultApplicable;
+      task.done = old ? old.done : false;
+    }
+    task.commentValue = old ? old.comment : task.comment;
+  });
+  return tasks;
 }
 
 function instantiateModel_(config) {
@@ -1474,19 +1816,18 @@ function validateRuntimeModel() {
   return {ok: errors.length === 0, errors: unique_(errors), taskCount: state.tasks.length};
 }
 
-function readOperationalState_() {
+function readOperationalState_(config) {
   const sheet = getPoolSheet_();
   const lastRow = Math.max(sheet.getLastRow(), RUNTIME.firstTaskRow);
   const range = sheet.getRange(RUNTIME.firstDataRow, 1, lastRow - RUNTIME.firstDataRow + 1, 10);
   const values = range.getValues();
-  const displayValues = range.getDisplayValues();
-  const model = instantiateModel_(getRuntimeConfiguration());
+  const model = instantiateModel_(config || getRuntimeConfiguration());
   const metadata = {};
   model.forEach(function (task) { metadata[task.id] = task; });
   let section = '';
   const tasks = [];
   values.forEach(function (row, index) {
-    const displayRow = displayValues[index];
+    const displayRow = row.map(function (value) { return value == null ? '' : String(value); });
     const sheetRow = RUNTIME.firstDataRow + index;
     if (!displayRow[0] && displayRow[1]) { section = String(displayRow[1]); return; }
     if (!displayRow[0]) return;

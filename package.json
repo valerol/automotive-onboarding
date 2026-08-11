@@ -7,6 +7,7 @@
     "@google/clasp": "^3.3.0"
   },
   "scripts": {
+    "test": "node tests/runtime.test.js",
     "login": "clasp login",
     "open": "clasp open-script",
     "pull": "clasp pull",
