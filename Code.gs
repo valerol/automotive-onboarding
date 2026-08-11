@@ -998,7 +998,7 @@ function canCompleteTask_(taskId) {
   const byId = indexById_(state.tasks);
   const task = byId[taskId];
   if (!task) return {allowed: false, reason: 'Unknown Task ID: ' + taskId};
-  if (task.localApplicable === RUNTIME.no || task.effectiveApplicable === RUNTIME.no) return {allowed: false, reason: taskId + ' is INACTIVE.'};
+  if (!taskIsEffectivelyApplicable_(task)) return {allowed: false, reason: taskId + ' is INACTIVE.'};
   const capability = evaluateCapabilities_(state.tasks, getRuntimeConfiguration());
   const readiness = evaluateTaskReadiness_(task, byId, capability, getRuntimeConfiguration());
   return readiness.level === 'PASS'
@@ -1007,13 +1007,13 @@ function canCompleteTask_(taskId) {
 }
 
 function evaluateTaskReadiness_(task, byId, capability, config) {
-  if (!task.active && task.effectiveApplicable === RUNTIME.no) return {level: 'EXCLUDED', reasons: []};
+  if (!taskIsEffectivelyApplicable_(task)) return {level: 'EXCLUDED', reasons: []};
   const missing = [];
   const waiting = [];
   task.dependencies.forEach(function (id) {
     const dependency = byId[id];
     if (!dependency) missing.push(id);
-    else if (dependency.localApplicable === RUNTIME.no || dependency.effectiveApplicable === RUNTIME.no) return;
+    else if (!taskIsEffectivelyApplicable_(dependency)) return;
     else if (!dependency.done) waiting.push(id);
   });
   const required = requiredCapabilitiesForTask_(task, capability, config);
@@ -1027,7 +1027,7 @@ function evaluateTaskReadiness_(task, byId, capability, config) {
 }
 
 function evaluateCapabilities_(tasks, config) {
-  const active = tasks.filter(function (task) { return task.active !== false && task.localApplicable !== RUNTIME.no; });
+  const active = tasks.filter(taskIsEffectivelyApplicable_);
   const byGate = groupBy_(active, function (task) { return task.gate || ''; });
   const allDone = function (list) { return list.length > 0 && list.every(function (task) { return task.done; }); };
   const gateDone = function (name) { return allDone(byGate[name] || []); };
@@ -1438,7 +1438,15 @@ function isConfigured_() {
   return String(sheet.getRange(RUNTIME.configKeyCell).getDisplayValue() || '') === RUNTIME.configKey &&
     Boolean(String(sheet.getRange(RUNTIME.configValueCell).getValue() || ''));
 }
-function taskDone_(tasks, id) { const task = tasks.filter(function (x) { return x.id === id; })[0]; return Boolean(task && task.active !== false && task.localApplicable !== RUNTIME.no && task.done); }
+function taskIsEffectivelyApplicable_(task) {
+  if (!task || task.localApplicable === RUNTIME.no) return false;
+  // During recalculation, the freshly computed boolean is authoritative.
+  // Outside recalculation (for example canCompleteTask_), use the persisted
+  // effective applicability instead of treating an undefined active flag as true.
+  if (typeof task.active === 'boolean') return task.active;
+  return task.effectiveApplicable !== RUNTIME.no;
+}
+function taskDone_(tasks, id) { const task = tasks.filter(function (x) { return x.id === id; })[0]; return Boolean(taskIsEffectivelyApplicable_(task) && task.done); }
 function normalizeCode_(value) { return String(value || '').trim().toUpperCase().replace(/[^A-Z0-9_]+/g, '_').replace(/^_+|_+$/g, ''); }
 function formatRuntimeError_(error) {
   if (!error) return 'Unknown error';
