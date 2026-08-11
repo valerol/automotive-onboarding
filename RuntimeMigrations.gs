@@ -3,6 +3,10 @@ const RUNTIME_MIGRATIONS = Object.freeze({
     // Version 2 introduces the row-indexed edit fast path. Operational rows do
     // not change, so the migration only rebuilds the derived checklist and
     // writes compatibility metadata after preservation checks pass.
+  },
+  2: function migrateRuntime2To3_() {
+    // Version 3 makes the runtime English-only. Workbook sheet names and
+    // visible values are migrated by migrateWorkbookToEnglish_.
   }
 });
 

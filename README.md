@@ -21,19 +21,19 @@ Container-bound Google Apps Script for the spreadsheet `Automotive Onboarding �
 6. Open **Project Settings**, enable display of `appsscript.json`, and replace it with this package's manifest.
 7. Save the project.
 8. Run `onOpen` once from the editor.
-9. Reload the spreadsheet and select **ЧЕКЛИСТ → Проверить доступ**. If the runtime displays an authorization window, select **Grant access**, approve access in Google, then run **Проверить доступ** again.
-10. Confirm that the diagnostic reports access to `ПУЛ ТАСКОВ`, `_TRANSLATIONS`, and the runtime lock.
-11. Run `installChecklistWorkspace` once from the Apps Script editor, or select **ЧЕКЛИСТ → Открыть чеклист** after reloading the spreadsheet.
+9. Reload the spreadsheet and select **CHECKLIST → Authorize and diagnose**. If the runtime displays an authorization window, select **Grant access**, approve access in Google, then run **Authorize and diagnose** again.
+10. Confirm that the diagnostic reports access to `TASK POOL`, `_RUNTIME_DATA`, and the runtime lock.
+11. Run `installChecklistWorkspace` once from the Apps Script editor, or select **CHECKLIST → Open checklist** after reloading the spreadsheet.
 
-Configuration is stored in each project's `_TRANSLATIONS!D1:E1`; task translations remain in `A:C`. Runtime properties and caches live in the central script and are namespaced by Spreadsheet ID.
+Configuration is stored in each project's `_RUNTIME_DATA!D1:E1`; English task display data remains in `A:B`. Runtime properties and caches live in the central script and are namespaced by Spreadsheet ID.
 
 ## Workspace
 
-- `ЧЕКЛИСТ` is the full-width working tab. It contains a persistent native filter. Users edit only `Актуален`, `DONE`, and `Комментарий`.
-- `КОНФИГУРАЦИЯ` is the structured project-configuration tab. In data-only projects every supported edit is saved and rebuilds the checklist automatically.
-- `ИНСТРУКЦИЯ` is the operator-facing quick start, configuration map, state reference, and safe-edit guide. Keep it aligned with this README whenever runtime behavior changes.
-- `ПУЛ ТАСКОВ` is the protected technical state and graph tab. Its protection warns against direct edits; Google Sheets owners can still override any protection, so routine work must happen in `ЧЕКЛИСТ`.
-- `_TRANSLATIONS` remains hidden.
+- `CHECKLIST` is the full-width working tab. It contains a persistent native filter. Users edit only `Applicable`, `DONE`, and `Comment`.
+- `CONFIGURATION` is the structured project-configuration tab. In data-only projects every supported edit is saved and rebuilds the checklist automatically.
+- `INSTRUCTIONS` is the operator-facing quick start, configuration map, state reference, and safe-edit guide. It is regenerated in English by the runtime.
+- `TASK POOL` is the protected technical state and graph tab. Its protection warns against direct edits; Google Sheets owners can still override any protection, so routine work must happen in `CHECKLIST`.
+- `_RUNTIME_DATA` remains hidden.
 
 ## GitHub / clasp setup
 
@@ -70,17 +70,17 @@ The factory requires full Google Sheets and Drive scopes to initialize a copied 
 
 ## Multiple onboarding projects
 
-Keep one central master. Use **Создать onboarding-проект** for each project. The factory creates a data-only spreadsheet, initializes its independent task state, installs a central `onEdit` trigger, and records its Trigger ID in `ПРОЕКТЫ`. Project users do not authorize Apps Script; the trigger runs as the account that created it.
+Keep one central master. Use **Create onboarding project** for each project. The factory creates a data-only spreadsheet, initializes its independent task state, installs a central `onEdit` trigger, and records its Trigger ID in `PROJECTS`. Project users do not authorize Apps Script; the trigger runs as the account that created it.
 
 One central script supports up to 20 installable project triggers for its owner. Detailed creation and recovery instructions are in [`docs/PROJECT_FACTORY.md`](docs/PROJECT_FACTORY.md).
 
 ## Configuration model
 
-Automotive integrations, payment gateways, carriers, and tax services are selected with checkboxes from fixed catalogs in `КОНФИГУРАЦИЯ`.
+Automotive integrations, payment gateways, carriers, and tax services are selected with checkboxes from fixed catalogs in `CONFIGURATION`.
 
 ### Applying catalog selections
 
-Checkboxes and supported values in `КОНФИГУРАЦИЯ` are applied automatically by the central installable trigger. The central master also retains its menu command for administrative use.
+Checkboxes and supported values in `CONFIGURATION` are applied automatically by the central installable trigger. The central master also retains its menu command for administrative use.
 
 After a successful rebuild:
 
@@ -90,7 +90,7 @@ After a successful rebuild:
 4. E2E branches are generated only when at least one payment gateway and at least one shipping method are selected;
 5. existing `DONE` and comment values are preserved for stable Task IDs that remain in the rebuilt model.
 
-To verify a selection, search `ЧЕКЛИСТ` for the service name or generated Task ID instead of looking only at the top or bottom of the sheet. A changed total task count is expected when repeatable service or E2E branches are added or removed; source types, overlap, and fitment can change applicability without necessarily changing the row count.
+To verify a selection, search `CHECKLIST` for the service name or generated Task ID instead of looking only at the top or bottom of the sheet. A changed total task count is expected when repeatable service or E2E branches are added or removed; source types, overlap, and fitment can change applicability without necessarily changing the row count.
 
 Automotive integrations:
 
@@ -129,7 +129,7 @@ Tax services:
 - `TAXJAR` — TaxJar;
 - `AVATAX` — AvaTax.
 
-QA products are recorded in the task `Комментарий` field. The runtime creates one system QA sample branch. E2E scenarios are generated automatically from the selected payment gateways, shipping methods, and tax services. The minimum scenario set covers every selected payment gateway, shipping method, and tax service at least once.
+QA products are recorded in the task `Comment` field. The runtime creates one system QA sample branch. E2E scenarios are generated automatically from the selected payment gateways, shipping methods, and tax services. The minimum scenario set covers every selected payment gateway, shipping method, and tax service at least once.
 
 Catalog source types do not create task instances. They only control the effective applicability of existing tasks:
 
@@ -172,9 +172,9 @@ Saving configuration rebuilds repeatable branches and preserves state for Task I
 2. Leave `11-11`, `11-12`, and `12-29` open: checkout must remain waiting.
 3. Complete `11-11` and `11-12`: shipping availability passes, while checkout remains waiting for `12-29`.
 4. Attempt to complete a waiting task: the checkbox must be reset.
-5. Set a parent task to `НЕТ`: its child rows must become `INACTIVE` and their checked `DONE` values must be cleared.
-6. Switch EN/RU in the sidebar: task titles must change without reading external storage.
-7. Confirm that task `01-05` is shown as `01-05`, not as a JavaScript date, and can be changed between `ДА` and `НЕТ` from the sidebar.
+5. Set a parent task to `NO`: its child rows must become `INACTIVE` and their checked `DONE` values must be cleared.
+6. Confirm that the checklist language is fixed to English.
+7. Confirm that task `01-05` is shown as `01-05`, not as a JavaScript date, and can be changed between `YES` and `NO` from the sidebar.
 
 ## Important
 

@@ -1,29 +1,38 @@
 const PROJECT_FACTORY = Object.freeze({
-  registrySheet: 'ПРОЕКТЫ',
+  registrySheet: 'PROJECTS',
   metadataSheet: '_PROJECT_METADATA',
   defaultFolderId: 'root',
   registryHeaders: Object.freeze([
-    'Название', 'Spreadsheet ID', 'URL', 'Trigger ID', 'Дата создания',
-    'Runtime version', 'Статус миграции'
+    'Project name', 'Spreadsheet ID', 'URL', 'Trigger ID', 'Created at',
+    'Runtime version', 'Migration status'
   ])
+});
+
+const LEGACY_SHEET_NAMES = Object.freeze({
+  CHECKLIST: '\u0427\u0415\u041A\u041B\u0418\u0421\u0422',
+  PROJECTS: '\u041F\u0420\u041E\u0415\u041A\u0422\u042B',
+  CONFIGURATION: '\u041A\u041E\u041D\u0424\u0418\u0413\u0423\u0420\u0410\u0426\u0418\u042F',
+  RUNTIME_DATA: '_\u0422\u0420\u0410\u041D\u0421\u041B\u042F\u0426\u0418\u0418',
+  TASK_POOL: '\u041F\u0423\u041B \u0422\u0410\u0421\u041A\u041E\u0412',
+  INSTRUCTIONS: '\u0418\u041D\u0421\u0422\u0420\u0423\u041A\u0426\u0418\u042F'
 });
 
 function promptCreateOnboardingProject() {
   const ui = SpreadsheetApp.getUi();
-  const nameResult = ui.prompt('Создать onboarding-проект', 'Название проекта', ui.ButtonSet.OK_CANCEL);
+  const nameResult = ui.prompt('Create onboarding project', 'Project name', ui.ButtonSet.OK_CANCEL);
   if (nameResult.getSelectedButton() !== ui.Button.OK) return;
   const folderResult = ui.prompt(
-    'Папка Google Drive',
-    'Введите ссылку или ID папки. Оставьте поле пустым, чтобы сохранить рядом с текущей таблицей.',
+    'Google Drive folder',
+    'Enter a folder link or ID. Leave this blank to save the project in My Drive.',
     ui.ButtonSet.OK_CANCEL
   );
   if (folderResult.getSelectedButton() !== ui.Button.OK) return;
   try {
     const result = createOnboardingProjectInFolder(nameResult.getResponseText(), folderResult.getResponseText());
-    ui.alert('Проект создан:\n' + result.url);
+    ui.alert('Project created:\n' + result.url);
     return result;
   } catch (error) {
-    ui.alert('Не удалось создать onboarding-проект', error.message, ui.ButtonSet.OK);
+    ui.alert('Could not create the onboarding project', error.message, ui.ButtonSet.OK);
     throw error;
   }
 }
@@ -31,15 +40,15 @@ function promptCreateOnboardingProject() {
 function promptCreateCleanMasterTemplate() {
   const ui = SpreadsheetApp.getUi();
   ui.alert(
-    'Используется один центральный мастер',
-    'Мастер больше не копируется: его Apps Script является общим runtime для всех onboarding-проектов. ' +
-      'Создавайте новые проекты командой «Создать onboarding-проект».',
+    'One central master is used',
+    'The master is no longer copied: its Apps Script is the shared runtime for all onboarding projects. ' +
+      'Create new projects with Create onboarding project.',
     ui.ButtonSet.OK
   );
 }
 
 function createCleanMasterTemplateInFolder(name, folderId) {
-  throw new Error('Мастер является единым центральным runtime и больше не копируется.');
+  throw new Error('The master is the single central runtime and is no longer copied.');
 }
 
 function createOnboardingProjectInFolder(name, folderId) {
@@ -165,7 +174,7 @@ function installCentralProjectTrigger_(spreadsheet) {
 
   const projectTriggers = ScriptApp.getProjectTriggers();
   if (projectTriggers.length >= 20) {
-    throw new Error('Достигнут лимит Google Apps Script: 20 onboarding-проектов на один центральный runtime.');
+    throw new Error('Google Apps Script limit reached: 20 onboarding projects per central runtime.');
   }
   return ScriptApp.newTrigger('centralProjectOnEdit')
     .forSpreadsheet(spreadsheetId)
@@ -187,15 +196,15 @@ function resolveDriveFolderId_(folderInput, sourceFileId) {
     // entry even though the drive root itself is a valid destination folder.
     if (source.driveId) return source.driveId;
   } catch (error) {
-    throw new Error('Не удалось определить папку текущей таблицы. Детали: ' + error.message);
+    throw new Error('Could not determine the current spreadsheet folder. Details: ' + error.message);
   }
   if (PROJECT_FACTORY.defaultFolderId) return PROJECT_FACTORY.defaultFolderId;
-  throw new Error('У текущей таблицы нет доступной родительской папки. Укажите ссылку или ID папки Google Drive.');
+  throw new Error('The current spreadsheet has no accessible parent folder. Enter a Google Drive folder link or ID.');
 }
 
 function normalizeDriveFolderId_(folderInput) {
   const value = String(folderInput || '').trim();
-  if (!value) throw new Error('Укажите ссылку или ID папки Google Drive.');
+  if (!value) throw new Error('Enter a Google Drive folder link or ID.');
 
   const folderUrlMatch = value.match(/\/folders\/([A-Za-z0-9_-]+)/);
   if (folderUrlMatch) return folderUrlMatch[1];
@@ -204,7 +213,7 @@ function normalizeDriveFolderId_(folderInput) {
   if (idParameterMatch) return idParameterMatch[1];
 
   if (/^[A-Za-z0-9_-]{10,}$/.test(value)) return value;
-  throw new Error('Не удалось распознать папку Google Drive. Вставьте полную ссылку на папку или её ID.');
+  throw new Error('Could not recognize the Google Drive folder. Paste the full folder link or its ID.');
 }
 
 function assertDriveDestinationWritable_(folderId) {
@@ -217,20 +226,20 @@ function assertDriveDestinationWritable_(folderId) {
     });
   } catch (error) {
     throw new Error(
-      'Google Drive не нашёл папку «' + folderId + '». В это поле нельзя вводить название проекта или папки: ' +
-      'вставьте ссылку/ID существующей папки либо оставьте поле пустым, чтобы сохранить рядом с текущей таблицей. ' +
-      'Также проверьте доступ аккаунта, который запускает команду. ' +
-      'Детали: ' + error.message
+      'Google Drive could not find folder "' + folderId + '". Do not enter a project or folder name here: ' +
+      'paste the link or ID of an existing folder, or leave the field blank to save in My Drive. ' +
+      'Also verify access for the account running the command. ' +
+      'Details: ' + error.message
     );
   }
 
   if (folder.mimeType !== 'application/vnd.google-apps.folder') {
-    throw new Error('Указанный ID относится не к папке Google Drive: ' + folderId);
+    throw new Error('The supplied ID does not belong to a Google Drive folder: ' + folderId);
   }
   if (folder.capabilities && folder.capabilities.canAddChildren === false) {
     throw new Error(
-      'Нет права создавать файлы в папке «' + (folder.name || folderId) + '». ' +
-      'Для Shared Drive требуется роль Content manager или Manager.'
+      'You cannot create files in folder "' + (folder.name || folderId) + '". ' +
+      'A Shared Drive requires the Content manager or Manager role.'
     );
   }
   return folder;
@@ -249,6 +258,7 @@ function resetOnboardingSpreadsheet_(spreadsheet, metadata) {
 
   const calculated = writeCleanOperationalPool_(spreadsheet, config);
   writeCleanChecklist_(spreadsheet, calculated.tasks);
+  renderEnglishInstructions_(spreadsheet);
   writeProjectMetadata_(spreadsheet, {
     kind: metadata.kind,
     projectName: metadata.name,
@@ -265,6 +275,124 @@ function resetOnboardingSpreadsheet_(spreadsheet, metadata) {
   } else {
     ensureProjectRegistry_(spreadsheet).getRange('A2:G').clearContent();
   }
+}
+
+function migrateAllWorkbooksToEnglish() {
+  const master = runtimeSpreadsheet_();
+  const results = [];
+  migrateWorkbookToEnglish_(master, true);
+  results.push({spreadsheetId: master.getId(), name: master.getName(), status: 'MIGRATED'});
+
+  const registry = master.getSheetByName(PROJECT_FACTORY.registrySheet);
+  if (registry && registry.getLastRow() >= 2) {
+    const ids = registry.getRange(2, 2, registry.getLastRow() - 1, 1).getDisplayValues();
+    const seen = {};
+    ids.forEach(function (row) {
+      const id = String(row[0] || '').trim();
+      if (!id || seen[id]) return;
+      seen[id] = true;
+      try {
+        const child = SpreadsheetApp.openById(id);
+        migrateWorkbookToEnglish_(child, false);
+        results.push({spreadsheetId: id, name: child.getName(), status: 'MIGRATED'});
+      } catch (error) {
+        results.push({spreadsheetId: id, status: 'SKIPPED', error: formatRuntimeError_(error)});
+      }
+    });
+  }
+  return results;
+}
+
+function migrateWorkbookToEnglish_(spreadsheet, isMaster) {
+  return withRuntimeSpreadsheet_(spreadsheet, function () {
+    renameLegacySheet_(spreadsheet, LEGACY_SHEET_NAMES.CHECKLIST, RUNTIME.checklistSheet);
+    renameLegacySheet_(spreadsheet, LEGACY_SHEET_NAMES.CONFIGURATION, RUNTIME.configurationSheet);
+    renameLegacySheet_(spreadsheet, LEGACY_SHEET_NAMES.RUNTIME_DATA, RUNTIME.translationsSheet);
+    renameLegacySheet_(spreadsheet, LEGACY_SHEET_NAMES.TASK_POOL, RUNTIME.poolSheet);
+    renameLegacySheet_(spreadsheet, LEGACY_SHEET_NAMES.INSTRUCTIONS, RUNTIME.instructionSheet);
+    if (isMaster) renameLegacySheet_(spreadsheet, LEGACY_SHEET_NAMES.PROJECTS, PROJECT_FACTORY.registrySheet);
+
+    const pool = spreadsheet.getSheetByName(RUNTIME.poolSheet);
+    if (!pool) throw new Error('Missing sheet: ' + RUNTIME.poolSheet);
+    if (pool.getLastRow() >= RUNTIME.firstDataRow) {
+      const range = pool.getRange(RUNTIME.firstDataRow, 1, pool.getLastRow() - RUNTIME.firstDataRow + 1, RUNTIME.columns.applicable);
+      const rows = range.getValues();
+      rows.forEach(function (row) {
+        if (String(row[0] || '').trim()) row[RUNTIME.columns.applicable - 1] = normalizeApplicability_(row[RUNTIME.columns.applicable - 1]);
+      });
+      range.setValues(rows);
+    }
+
+    const config = getRuntimeConfiguration();
+    const configuration = ensureConfigurationSheet_();
+    renderConfigurationSheet_(configuration, config);
+    rebuildOperationalPool_(config);
+    recalculateRuntime();
+    const state = readOperationalState_(config);
+    refreshTranslations_(state.tasks);
+    const checklist = ensureChecklistSheet_();
+    refreshChecklist_();
+    renderEnglishInstructions_(spreadsheet);
+    protectPoolSheet_();
+    spreadsheet.setSpreadsheetLocale('en_US');
+    if (isMaster) {
+      spreadsheet.rename('Automotive Onboarding — Master');
+      ensureProjectRegistry_(spreadsheet);
+    }
+    spreadsheet.setActiveSheet(checklist);
+    return {spreadsheetId: spreadsheet.getId(), name: spreadsheet.getName(), taskCount: state.tasks.length};
+  });
+}
+
+function renameLegacySheet_(spreadsheet, legacyName, englishName) {
+  const legacy = spreadsheet.getSheetByName(legacyName);
+  const english = spreadsheet.getSheetByName(englishName);
+  if (!legacy) return english;
+  if (english && english.getSheetId() !== legacy.getSheetId()) {
+    throw new Error('Cannot rename ' + legacyName + ': sheet ' + englishName + ' already exists.');
+  }
+  legacy.setName(englishName);
+  return legacy;
+}
+
+function renderEnglishInstructions_(spreadsheet) {
+  let sheet = spreadsheet.getSheetByName(RUNTIME.instructionSheet);
+  if (!sheet) sheet = spreadsheet.insertSheet(RUNTIME.instructionSheet);
+  const rows = [
+    ['AUTOMOTIVE ONBOARDING — OPERATING GUIDE', ''],
+    ['Purpose', 'Use CHECKLIST for daily work and CONFIGURATION to define the project scope.'],
+    ['Quick start', 'Open CONFIGURATION, select all applicable services and options, then save the configuration.'],
+    ['Checklist editing', 'Only Applicable, DONE, and Comment are editable. System-controlled applicability is read-only.'],
+    ['Status filter', 'Use CHECKLIST -> Status filter. READY means the task can be completed now.'],
+    ['DONE', 'Mark DONE only after the task is complete. The runtime rejects premature completion.'],
+    ['WAITING', 'One or more dependencies are incomplete. See Waiting for for the blocking Task IDs.'],
+    ['BLOCKED', 'A required capability or configuration is missing. Resolve the listed prerequisite.'],
+    ['INACTIVE', 'The task is outside the current project scope or disabled by its parent/configuration.'],
+    ['Comments', 'Use Comment for project-specific evidence, decisions, URLs, and QA product details.'],
+    ['Configuration', 'Checkbox selections rebuild repeatable branches while preserving state by stable Task ID.'],
+    ['Project creation', 'In the master, choose CHECKLIST -> Create onboarding project.'],
+    ['Destination folder', 'Paste a Google Drive folder link or ID. Leave it blank to create the project in the creator account\'s My Drive.'],
+    ['Ownership', 'The Google account that runs project creation owns the new spreadsheet and its central installable trigger.'],
+    ['Domain access', 'Other @x-cart.com users can create projects when the master and destination folder are shared with sufficient access.'],
+    ['Authorization', 'Only the central runtime owner/creator authorizes Apps Script. Project editors use the spreadsheet without script authorization.'],
+    ['Runtime limit', 'One central Apps Script project supports up to 20 installable project triggers for its owner.'],
+    ['Technical sheets', 'TASK POOL, _RUNTIME_DATA, and _PROJECT_METADATA are runtime-managed. Do not edit them directly.'],
+    ['Recovery', 'If creation fails, verify folder access and retry. Failed partial copies are moved to Trash and logged in PROJECTS.']
+  ];
+  sheet.getDataRange().breakApart();
+  sheet.clearContents();
+  if (sheet.getMaxRows() < rows.length) sheet.insertRowsAfter(sheet.getMaxRows(), rows.length - sheet.getMaxRows());
+  if (sheet.getMaxColumns() < 2) sheet.insertColumnsAfter(sheet.getMaxColumns(), 2 - sheet.getMaxColumns());
+  sheet.getRange(1, 1, rows.length, 2).setValues(rows).setVerticalAlignment('top');
+  sheet.getRange('A1:B1').merge().setBackground('#29375f').setFontColor('#ffffff').setFontSize(18).setFontWeight('bold');
+  sheet.getRange(2, 1, rows.length - 1, 1).setFontWeight('bold').setBackground('#e9edf5');
+  sheet.getRange(2, 2, rows.length - 1, 1).setWrap(true);
+  sheet.setColumnWidth(1, 190);
+  sheet.setColumnWidth(2, 720);
+  sheet.setFrozenRows(1);
+  sheet.setHiddenGridlines(true);
+  sheet.setTabColor('#3b82f6');
+  return sheet;
 }
 
 function writeCleanOperationalPool_(spreadsheet, config) {
@@ -345,12 +473,12 @@ function runtimeTaskFromModel_(task, row) {
 
 function refreshTranslationsOnSpreadsheet_(spreadsheet, tasks) {
   const sheet = spreadsheet.getSheetByName(RUNTIME.translationsSheet);
-  const rows = [['Task ID', 'English', 'Русский']].concat(tasks.map(function (task) {
-    return [String(task.id), task.title, task.titleRu];
+  const rows = [['Task ID', 'English']].concat(tasks.map(function (task) {
+    return [String(task.id), task.title];
   }));
   if (sheet.getMaxRows() < rows.length) sheet.insertRowsAfter(sheet.getMaxRows(), rows.length - sheet.getMaxRows());
   sheet.getRange(1, 1, sheet.getMaxRows(), 3).clearContent();
-  sheet.getRange(1, 1, rows.length, 3).setNumberFormat('@').setValues(rows);
+  sheet.getRange(1, 1, rows.length, 2).setNumberFormat('@').setValues(rows);
 }
 
 function writeCleanChecklist_(spreadsheet, tasks) {
@@ -358,19 +486,18 @@ function writeCleanChecklist_(spreadsheet, tasks) {
   if (!sheet) throw new Error('Copy is missing ' + RUNTIME.checklistSheet);
   const translations = {};
   instantiateModel_(defaultConfiguration_()).forEach(function (task) {
-    translations[task.id] = {en: task.title, ru: task.titleRu};
+    translations[task.id] = {en: task.title};
   });
-  const language = 'ru';
   const displayRows = [];
   let section = '';
   tasks.forEach(function (task) {
     const translated = translations[task.id] || {};
-    const localizedSection = language === 'ru' ? (SECTION_RU[task.section] || task.section) : task.section;
+    const localizedSection = task.section;
     if (localizedSection !== section) {
       section = localizedSection;
       displayRows.push({type: 'section', section: section});
     }
-    displayRows.push({type: 'task', task: task, title: translated.ru || task.title});
+    displayRows.push({type: 'task', task: task, title: translated.en || task.title});
   });
   const requiredRows = RUNTIME.checklistFirstTaskRow + displayRows.length - 1;
   if (sheet.getMaxRows() < requiredRows) sheet.insertRowsAfter(sheet.getMaxRows(), requiredRows - sheet.getMaxRows());
@@ -395,7 +522,7 @@ function writeCleanChecklist_(spreadsheet, tasks) {
     } else if (!blockStart) blockStart = sheetRow;
   });
   if (blockStart) applyCleanChecklistValidations_(sheet, blockStart, RUNTIME.checklistFirstTaskRow + displayRows.length - blockStart);
-  sheet.getRange('G2').setValue('RU');
+  sheet.getRange('G2').setValue('EN');
   sheet.getRange('D2').setValue('ALL');
   ensureChecklistFormatting_(sheet);
 }

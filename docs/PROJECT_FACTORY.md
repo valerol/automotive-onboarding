@@ -28,17 +28,17 @@ once from the master Apps Script editor and approve the requested permissions.
 ## Create a project
 
 1. Open the central master.
-2. Select **ЧЕКЛИСТ → Создать onboarding-проект**.
+2. Select **CHECKLIST → Create onboarding project**.
 3. Enter the project name.
 4. Paste the destination folder URL/ID, or leave it blank. If the master's
    parent folder is not exposed to the executing account, the project remains
    in that account's **My Drive** root. In the live deployment this is the
    `valerol@x-cart.com` account.
-5. Open the returned spreadsheet and work in `ЧЕКЛИСТ`. Use the dropdown in
-   `D2` for status filtering. Supported edits in `КОНФИГУРАЦИЯ` are saved and
+5. Open the returned spreadsheet and work in `CHECKLIST`. Use the dropdown in
+   `D2` for status filtering. Supported edits in `CONFIGURATION` are saved and
    rebuild the checklist automatically.
 
-The `ПРОЕКТЫ` registry stores the Spreadsheet ID, URL, central Trigger ID,
+The `PROJECTS` registry stores the Spreadsheet ID, URL, central Trigger ID,
 runtime version, and status `CENTRAL_ACTIVE`.
 
 ## Important limits

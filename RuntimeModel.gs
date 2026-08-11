@@ -6,10 +6,9 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-01",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm automotive integrations",
-      "ru": "Подтвердите интеграцию с автомобильной отраслью.",
       "parent": "",
       "dependencies": [],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Output: final list of integrations used in the project.",
       "scope": "STATIC",
       "collection": "",
@@ -22,12 +21,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-02",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm catalog source",
-      "ru": "Подтвердите источник каталога",
       "parent": "",
       "dependencies": [
         "01-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Confirm the source or combination of sources used for catalog data.",
       "scope": "STATIC",
       "collection": "",
@@ -40,12 +38,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-03",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm pricing source",
-      "ru": "Подтвердите источник цен.",
       "parent": "",
       "dependencies": [
         "01-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined pricing and stock item.",
       "scope": "STATIC",
       "collection": "",
@@ -58,12 +55,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-04",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm stock source",
-      "ru": "Подтвердите источник товара.",
       "parent": "",
       "dependencies": [
         "01-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined pricing and stock item.",
       "scope": "STATIC",
       "collection": "",
@@ -76,10 +72,9 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-05",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Receive final brands list",
-      "ru": "Получите окончательный список брендов.",
       "parent": "",
       "dependencies": [],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -92,13 +87,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-06",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm provider-side brand approval requirements",
-      "ru": "Подтвердите требования к одобрению бренда со стороны поставщика услуг.",
       "parent": "",
       "dependencies": [
         "01-01",
         "01-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Section 1 confirms which approvals are required; Section 2 verifies that they were actually granted.",
       "scope": "STATIC",
       "collection": "",
@@ -111,10 +105,9 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-07",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm product categories",
-      "ru": "Подтвердите категории товаров",
       "parent": "",
       "dependencies": [],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -127,12 +120,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-08",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm categories excluded from import",
-      "ru": "Подтвердите категории, исключенные из импорта.",
       "parent": "01-01",
       "dependencies": [
         "01-07"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined exclusions item.",
       "scope": "STATIC",
       "collection": "",
@@ -145,12 +137,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-09",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm brands excluded from import",
-      "ru": "Подтвердите бренды, исключенные из импорта.",
       "parent": "01-01",
       "dependencies": [
         "01-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined exclusions item.",
       "scope": "STATIC",
       "collection": "",
@@ -163,12 +154,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-10",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm MMY or YMM requirement",
-      "ru": "Подтвердите требования MMY или YMM.",
       "parent": "",
       "dependencies": [
         "01-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "The task remains applicable even when the answer is No; downstream fitment tasks are then set to inactive.",
       "scope": "STATIC",
       "collection": "",
@@ -181,12 +171,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-11",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm VIN Lookup requirement",
-      "ru": "Подтвердите требование к поиску VIN-кода.",
       "parent": "",
       "dependencies": [
         "01-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "The task remains applicable even when the answer is No.",
       "scope": "STATIC",
       "collection": "",
@@ -199,12 +188,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-12",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm pricing rules",
-      "ru": "Подтвердите правила ценообразования.",
       "parent": "",
       "dependencies": [
         "01-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from pricing and markup rules.",
       "scope": "STATIC",
       "collection": "",
@@ -217,12 +205,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-13",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm markup rules",
-      "ru": "Подтвердите правила разметки",
       "parent": "",
       "dependencies": [
         "01-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from pricing and markup rules.",
       "scope": "STATIC",
       "collection": "",
@@ -235,12 +222,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-14",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm inventory tracking rules",
-      "ru": "Подтвердите правила отслеживания запасов.",
       "parent": "",
       "dependencies": [
         "01-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Confirm rules and exceptions; this is not a manual check of every product.",
       "scope": "STATIC",
       "collection": "",
@@ -253,12 +239,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-15",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm out-of-stock product display behavior",
-      "ru": "Подтвердите поведение отображения товара, которого нет в наличии.",
       "parent": "",
       "dependencies": [
         "01-14"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -271,12 +256,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-16",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm backorder behavior",
-      "ru": "Подтверждение поведения при наличии товара в очереди",
       "parent": "",
       "dependencies": [
         "01-14"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate only if backorders are applicable.",
       "scope": "STATIC",
       "collection": "",
@@ -289,12 +273,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-17",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm automotive stock source handling rules",
-      "ru": "Подтвердите правила обработки складских запасов автомобильных комплектующих.",
       "parent": "",
       "dependencies": [
         "01-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -307,12 +290,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-18",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm stock import settings",
-      "ru": "Подтвердите настройки импорта товаров.",
       "parent": "",
       "dependencies": [
         "01-17"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined stock and price import settings item.",
       "scope": "STATIC",
       "collection": "",
@@ -325,14 +307,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-19",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm price import settings",
-      "ru": "Подтвердите настройки импорта цен.",
       "parent": "",
       "dependencies": [
         "01-03",
         "01-12",
         "01-13"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined stock and price import settings item.",
       "scope": "STATIC",
       "collection": "",
@@ -345,12 +326,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-20",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm product variations display mode",
-      "ru": "Подтвердите режим отображения вариантов товара.",
       "parent": "",
       "dependencies": [
         "01-02"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate only if product options or variants are applicable.",
       "scope": "STATIC",
       "collection": "",
@@ -363,10 +343,9 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-21",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm shipping requirements",
-      "ru": "Подтвердите требования к доставке.",
       "parent": "",
       "dependencies": [],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -379,10 +358,9 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-22",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm tax requirements",
-      "ru": "Подтвердите налоговые требования",
       "parent": "",
       "dependencies": [],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -395,10 +373,9 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-23",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm payment methods",
-      "ru": "Подтвердите способы оплаты",
       "parent": "",
       "dependencies": [],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -411,10 +388,9 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-24",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Document custom requirements",
-      "ru": "Документируйте индивидуальные требования",
       "parent": "",
       "dependencies": [],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "DONE is valid when requirements are documented or their absence is confirmed.",
       "scope": "STATIC",
       "collection": "",
@@ -427,10 +403,9 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "01-25",
       "section": "1. SCOPE AND REQUIREMENTS CONFIRMED",
       "en": "Confirm planned launch date",
-      "ru": "Подтвердите запланированную дату запуска.",
       "parent": "",
       "dependencies": [],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -443,12 +418,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-INT-00",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Integration}: request missing access from customer",
-      "ru": "{Интеграция}: запрос на отсутствие доступа от клиента",
       "parent": "",
       "dependencies": [
         "01-01"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Conditional. Clone once per integration only when access is missing; replace INT with a unique code.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -461,13 +435,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-INT-01",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Integration}: receive credentials through Secure Credentials Form",
-      "ru": "{Интеграция}: получение учетных данных через форму защищенных учетных данных.",
       "parent": "",
       "dependencies": [
         "01-01",
         "02-INT-00"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Branch root for this integration. Clone once per confirmed integration.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -480,12 +453,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-INT-02",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Integration}: verify access",
-      "ru": "{Интеграция}: проверка доступа",
       "parent": "02-INT-01",
       "dependencies": [
         "02-INT-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -498,12 +470,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-INT-03",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Integration}: verify account is active",
-      "ru": "{Интеграция}: проверка активности учетной записи",
       "parent": "02-INT-01",
       "dependencies": [
         "02-INT-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -516,13 +487,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-INT-04",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Integration}: verify required brand approvals are granted",
-      "ru": "{Интеграция}: проверка наличия необходимых разрешений для бренда.",
       "parent": "02-INT-01",
       "dependencies": [
         "01-06",
         "02-INT-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Set inactive when the integration has no provider-side brand approval requirement.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -535,13 +505,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-INT-05",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Integration}: test API credentials successfully",
-      "ru": "{Интеграция}: проверка учетных данных API прошла успешно.",
       "parent": "02-INT-01",
       "dependencies": [
         "02-INT-02",
         "02-INT-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -554,12 +523,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-INT-06",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Integration}: configure additional FTP import",
-      "ru": "{Интеграция}: настройка дополнительного импорта FTP",
       "parent": "02-INT-01",
       "dependencies": [
         "02-INT-02"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate only when an additional FTP import is required.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -572,12 +540,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-PAY-00",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Payment gateway}: request missing access from customer",
-      "ru": "{Платежный шлюз}: запрос на отсутствие доступа от клиента",
       "parent": "",
       "dependencies": [
         "01-23"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Conditional. Clone once per gateway only when access is missing.",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -590,13 +557,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-PAY-01",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Payment gateway}: receive credentials through Secure Credentials Form",
-      "ru": "{Платежный шлюз}: получение учетных данных через форму защищенных учетных данных",
       "parent": "",
       "dependencies": [
         "01-23",
         "02-PAY-00"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Branch root. Clone once per confirmed payment gateway.",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -609,12 +575,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-PAY-02",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Payment gateway}: test credentials successfully",
-      "ru": "{Платежный шлюз}: проверка учетных данных прошла успешно.",
       "parent": "02-PAY-01",
       "dependencies": [
         "02-PAY-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -627,12 +592,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-SHIP-00",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Carrier}: request missing access from customer",
-      "ru": "{Оператор связи}: запрос на отсутствие доступа от клиента",
       "parent": "",
       "dependencies": [
         "01-21"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Conditional. Clone once per carrier only when access is missing.",
       "scope": "REPEAT",
       "collection": "carriers",
@@ -645,13 +609,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-SHIP-01",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Carrier}: receive credentials through Secure Credentials Form",
-      "ru": "{Оператор связи}: получите учетные данные через форму защищенной передачи учетных данных.",
       "parent": "",
       "dependencies": [
         "01-21",
         "02-SHIP-00"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Branch root. Clone once per confirmed carrier.",
       "scope": "REPEAT",
       "collection": "carriers",
@@ -664,12 +627,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-SHIP-02",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Carrier}: test credentials successfully",
-      "ru": "{Оператор}: проверка учетных данных прошла успешно.",
       "parent": "02-SHIP-01",
       "dependencies": [
         "02-SHIP-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "carriers",
@@ -682,12 +644,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-TAX-00",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Tax service}: request missing access from customer",
-      "ru": "{Налоговая служба}: запрос на отсутствие доступа у клиента",
       "parent": "",
       "dependencies": [
         "01-22"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Conditional. Clone once per tax service only when access is missing.",
       "scope": "REPEAT",
       "collection": "tax_services",
@@ -700,13 +661,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-TAX-01",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Tax service}: receive credentials through Secure Credentials Form",
-      "ru": "{Налоговая служба}: получение учетных данных через форму защищенной передачи учетных данных",
       "parent": "",
       "dependencies": [
         "01-22",
         "02-TAX-00"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Branch root. Clone once per confirmed tax service.",
       "scope": "REPEAT",
       "collection": "tax_services",
@@ -719,12 +679,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-TAX-02",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "{Tax service}: test credentials successfully",
-      "ru": "{Налоговая служба}: проверка учетных данных прошла успешно.",
       "parent": "02-TAX-01",
       "dependencies": [
         "02-TAX-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "tax_services",
@@ -737,7 +696,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "02-90",
       "section": "2. ACCESS AND ACCOUNTS",
       "en": "Verify that no employee personal or temporary credentials are used",
-      "ru": "Убедитесь, что не используются личные или временные учетные данные сотрудников.",
       "parent": "",
       "dependencies": [
         "02-INT-01",
@@ -745,7 +703,7 @@ const RUNTIME_MODEL = Object.freeze({
         "02-SHIP-01",
         "02-TAX-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "After instantiation, Dependencies must list every applicable credential-receipt task.",
       "scope": "STATIC",
       "collection": "",
@@ -758,7 +716,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-01",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Select primary category source",
-      "ru": "Выберите основной источник категории",
       "parent": "",
       "dependencies": [
         "01-01",
@@ -787,7 +744,7 @@ const RUNTIME_MODEL = Object.freeze({
         "01-24",
         "01-25"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -800,12 +757,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-02",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Import or create categories",
-      "ru": "Импорт или создание категорий",
       "parent": "",
       "dependencies": [
         "03-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "One outcome; import and manual creation are alternative methods, so the item is not split.",
       "scope": "STATIC",
       "collection": "",
@@ -818,12 +774,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-03",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Disable unnecessary categories",
-      "ru": "Отключить ненужные категории",
       "parent": "",
       "dependencies": [
         "03-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -836,12 +791,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-04",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Verify categories match selected brands and catalog scope",
-      "ru": "Проверьте соответствие категорий выбранным брендам и тематике каталога.",
       "parent": "",
       "dependencies": [
         "03-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -854,12 +808,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-05",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Remove empty technical categories",
-      "ru": "Удалить пустые технические категории",
       "parent": "",
       "dependencies": [
         "03-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -872,12 +825,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-06",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Resolve obvious duplicate categories",
-      "ru": "Устранить очевидные дубликаты категорий",
       "parent": "",
       "dependencies": [
         "03-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive completion criterion replacing 'No obvious duplicate categories'.",
       "scope": "STATIC",
       "collection": "",
@@ -890,12 +842,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-07",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Verify category hierarchy",
-      "ru": "Проверьте иерархию категорий.",
       "parent": "",
       "dependencies": [
         "03-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -908,12 +859,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-08",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Verify category names",
-      "ru": "Проверьте названия категорий.",
       "parent": "",
       "dependencies": [
         "03-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -926,13 +876,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-09",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Verify storefront category navigation",
-      "ru": "Проверьте навигацию по категориям витрины магазина.",
       "parent": "",
       "dependencies": [
         "03-07",
         "03-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -945,13 +894,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-10",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Confirm product-to-category mapping rules",
-      "ru": "Подтвердите правила сопоставления товаров и категорий.",
       "parent": "",
       "dependencies": [
         "03-01",
         "01-07"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -964,7 +912,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-11",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Remove or disable demo categories",
-      "ru": "Удалить или отключить демонстрационные категории",
       "parent": "",
       "dependencies": [
         "01-01",
@@ -993,7 +940,7 @@ const RUNTIME_MODEL = Object.freeze({
         "01-24",
         "01-25"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate only when demo categories exist.",
       "scope": "STATIC",
       "collection": "",
@@ -1006,7 +953,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-12",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Remove or disable demo products",
-      "ru": "Удалить или отключить демонстрационные продукты",
       "parent": "",
       "dependencies": [
         "01-01",
@@ -1035,7 +981,7 @@ const RUNTIME_MODEL = Object.freeze({
         "01-24",
         "01-25"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate only when demo products exist.",
       "scope": "STATIC",
       "collection": "",
@@ -1048,13 +994,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-13",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Verify Imported Categories structure mapping to store categories",
-      "ru": "Проверьте соответствие структуры импортированных категорий категориям магазина.",
       "parent": "",
       "dependencies": [
         "03-02",
         "03-10"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Category mapping verification.",
       "scope": "STATIC",
       "collection": "",
@@ -1067,12 +1012,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "03-14",
       "section": "3. CATALOG ARCHITECTURE",
       "en": "Hide Shop by Brand block",
-      "ru": "Скрыть блок «Магазин по бренду»",
       "parent": "",
       "dependencies": [
         "01-05"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate only when the store sells one brand.",
       "scope": "STATIC",
       "collection": "",
@@ -1085,12 +1029,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-01",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: establish a successful connection",
-      "ru": "Интеграция: установить успешное соединение",
       "parent": "",
       "dependencies": [
         "02-INT-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Branch root. Clone the complete Section 4 block once per confirmed integration.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1103,12 +1046,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-02",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: retrieve available brands",
-      "ru": "{Интеграция}: получение доступных брендов",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1121,7 +1063,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-03",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: select import brands",
-      "ru": "{Интеграция}: выберите импортируемые бренды",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-02",
@@ -1129,7 +1070,7 @@ const RUNTIME_MODEL = Object.freeze({
         "01-09",
         "02-INT-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1142,14 +1083,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-04",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: enable required categories",
-      "ru": "{Интеграция}: включить необходимые категории",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-01",
         "01-07",
         "01-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1162,13 +1102,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-05",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: select warehouses",
-      "ru": "{Интеграция}: выбрать склады",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-01",
         "01-17"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Set inactive when the integration has no warehouse selection.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1181,7 +1120,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-06",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: configure pricing rules",
-      "ru": "{Интеграция}: настройка правил ценообразования",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-01",
@@ -1189,7 +1127,7 @@ const RUNTIME_MODEL = Object.freeze({
         "01-13",
         "01-19"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1202,12 +1140,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-07",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: verify MAP / MSRP rules",
-      "ru": "{Интеграция}: проверка правил MAP / MSRP",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-06"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Set inactive when MAP / MSRP is not applicable.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1220,7 +1157,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-08",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: configure stock rules",
-      "ru": "{Интеграция}: настройка правил учета запасов",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-01",
@@ -1228,7 +1164,7 @@ const RUNTIME_MODEL = Object.freeze({
         "01-17",
         "01-18"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1241,14 +1177,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-09",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: configure product visibility rules",
-      "ru": "{Интеграция}: настройка правил видимости продукта",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-08",
         "01-15",
         "01-16"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1261,12 +1196,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-10",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: configure image import",
-      "ru": "{Интеграция}: настройка импорта изображений",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1279,12 +1213,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-11",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: configure description import",
-      "ru": "{Интеграция}: импорт описания конфигурации",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1297,13 +1230,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-12",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: configure fitment import",
-      "ru": "{Интеграция}: настройка импорта соответствия",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-01",
         "01-10"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate only when fitment import is required for this integration.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1316,13 +1248,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-13",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: configure supplier shipping rates",
-      "ru": "{Интеграция}: настройка тарифов доставки поставщика",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-01",
         "01-21"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate only when supplier shipping rates are applicable.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1335,13 +1266,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-14",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: configure order export / fulfillment",
-      "ru": "{Интеграция}: настройка экспорта/выполнения заказов",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-01",
         "01-24"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate only when order export or fulfillment is applicable.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1354,7 +1284,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-15",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: configure cron and import schedule",
-      "ru": "{Интеграция}: настройка cron и импорт расписания",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-03",
@@ -1370,7 +1299,7 @@ const RUNTIME_MODEL = Object.freeze({
         "04-INT-13",
         "04-INT-14"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Inactive optional dependencies count as not required.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1383,7 +1312,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-16",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: complete the latest import successfully",
-      "ru": "{Интеграция}: последний импорт успешно завершен",
       "parent": "04-INT-01",
       "dependencies": [
         "03-03",
@@ -1400,7 +1328,7 @@ const RUNTIME_MODEL = Object.freeze({
         "03-14",
         "04-INT-15"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "A completed import may still contain item-level errors that require review.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1413,12 +1341,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-17",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: review import errors",
-      "ru": "{Интеграция}: проверка ошибок импорта",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-16"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "DONE means errors were reviewed; resolution is handled later where required.",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1431,12 +1358,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-19",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: verify repeated import does not create duplicates",
-      "ru": "{Интеграция}: проверка того, что повторный импорт не создает дубликатов.",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-17"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1449,14 +1375,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "04-INT-20",
       "section": "4. AUTOMOTIVE INTEGRATION CONFIGURATION",
       "en": "{Integration}: verify repeated import does not restore excluded products",
-      "ru": "{Интеграция}: проверка того, что повторный импорт не восстанавливает исключенные продукты",
       "parent": "04-INT-01",
       "dependencies": [
         "04-INT-17",
         "01-08",
         "01-09"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "integrations",
@@ -1469,14 +1394,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-01",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Define priority source for product title",
-      "ru": "Определите приоритетный источник для названия продукта.",
       "parent": "",
       "dependencies": [
         "01-02",
         "01-03",
         "01-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1489,14 +1413,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-02",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Define priority source for description",
-      "ru": "Определите приоритетный источник для описания.",
       "parent": "",
       "dependencies": [
         "01-02",
         "01-03",
         "01-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1509,14 +1432,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-03",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Define priority source for images",
-      "ru": "Определите приоритетный источник для изображений.",
       "parent": "",
       "dependencies": [
         "01-02",
         "01-03",
         "01-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1529,14 +1451,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-04",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Define priority source for categories",
-      "ru": "Определите приоритетный источник для категорий.",
       "parent": "",
       "dependencies": [
         "01-02",
         "01-03",
         "01-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1549,14 +1470,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-05",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Define priority source for fitment",
-      "ru": "Определите приоритетный источник для установки.",
       "parent": "",
       "dependencies": [
         "01-02",
         "01-03",
         "01-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1569,14 +1489,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-06",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Define priority source for price",
-      "ru": "Определите приоритетный источник для ценообразования.",
       "parent": "",
       "dependencies": [
         "01-02",
         "01-03",
         "01-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1589,14 +1508,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-07",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Define priority source for stock",
-      "ru": "Определите приоритетный источник для запасов",
       "parent": "",
       "dependencies": [
         "01-02",
         "01-03",
         "01-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1609,7 +1527,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-08",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Verify one import does not overwrite correct data from another",
-      "ru": "Убедитесь, что один импорт не перезаписывает корректные данные из другого.",
       "parent": "",
       "dependencies": [
         "05-01",
@@ -1620,7 +1537,7 @@ const RUNTIME_MODEL = Object.freeze({
         "05-06",
         "05-07"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1633,12 +1550,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-09",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Verify related import schedules do not conflict",
-      "ru": "Убедитесь, что соответствующие графики импорта не противоречат друг другу.",
       "parent": "",
       "dependencies": [
         "04-INT-15"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "After instantiation, replace 04-INT-15 with the schedule task for every applicable integration.",
       "scope": "STATIC",
       "collection": "",
@@ -1651,12 +1567,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-10",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Configure sufficient intervals between related imports",
-      "ru": "Настройте достаточные интервалы между соответствующими импортами.",
       "parent": "",
       "dependencies": [
         "05-09"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1669,14 +1584,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-11",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Verify a product available from multiple suppliers is handled correctly",
-      "ru": "Убедитесь, что информация о наличии товара у нескольких поставщиков обрабатывается корректно.",
       "parent": "",
       "dependencies": [
         "05-06",
         "05-07",
         "05-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1689,12 +1603,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-12",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Verify the same SKU from multiple sources is handled correctly",
-      "ru": "Убедитесь, что один и тот же артикул (SKU) из нескольких источников обрабатывается корректно.",
       "parent": "",
       "dependencies": [
         "05-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1707,12 +1620,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "05-13",
       "section": "5. MULTIPLE-SOURCE CONFLICT RULES",
       "en": "Verify the same MPN from multiple sources is handled correctly",
-      "ru": "Убедитесь, что один и тот же MPN из нескольких источников обрабатывается корректно.",
       "parent": "",
       "dependencies": [
         "05-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined SKU / MPN item.",
       "scope": "STATIC",
       "collection": "",
@@ -1725,12 +1637,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-01",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify all approved brands are imported",
-      "ru": "Убедитесь, что все одобренные бренды импортируются.",
       "parent": "",
       "dependencies": [
         "04-INT-17"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "After instantiation, depend on the reviewed import for every applicable integration.",
       "scope": "STATIC",
       "collection": "",
@@ -1743,7 +1654,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-02",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify all approved categories are imported",
-      "ru": "Убедитесь, что все утвержденные категории импортированы.",
       "parent": "",
       "dependencies": [
         "04-INT-17",
@@ -1760,7 +1670,7 @@ const RUNTIME_MODEL = Object.freeze({
         "03-13",
         "03-14"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1773,13 +1683,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-03",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Compare imported product count with expected count",
-      "ru": "Сравните количество импортированной продукции с ожидаемым количеством.",
       "parent": "",
       "dependencies": [
         "06-01",
         "06-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1792,12 +1701,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-04",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Resolve unexplained product count differences",
-      "ru": "Устранить необъяснимые расхождения в количестве товаров.",
       "parent": "",
       "dependencies": [
         "06-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1810,12 +1718,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-05",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Check missing brands separately",
-      "ru": "Проверьте отсутствующие бренды отдельно.",
       "parent": "",
       "dependencies": [
         "06-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1828,12 +1735,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-06",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Investigate import errors",
-      "ru": "Расследуйте ошибки импорта.",
       "parent": "",
       "dependencies": [
         "04-INT-17"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1846,12 +1752,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-07",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Resolve or document every investigated import error",
-      "ru": "Устранить или задокументировать каждую исследованную ошибку импорта.",
       "parent": "",
       "dependencies": [
         "06-06"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1864,13 +1769,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-08",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify there are no mass duplicate products",
-      "ru": "Убедитесь в отсутствии массового дублирования товаров.",
       "parent": "",
       "dependencies": [
         "06-03",
         "05-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1883,12 +1787,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-09",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify there are no mass products without price",
-      "ru": "Убедитесь, что нет товаров массового производства без указания цены.",
       "parent": "",
       "dependencies": [
         "06-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1901,12 +1804,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-10",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify there are no mass products without category",
-      "ru": "Убедитесь, что отсутствуют массовые товары без категории.",
       "parent": "",
       "dependencies": [
         "06-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1919,12 +1821,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-11",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify there are no mass products without brand",
-      "ru": "Убедитесь, что нет товаров массового производства без бренда.",
       "parent": "",
       "dependencies": [
         "06-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1937,12 +1838,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-12",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify there are no mass products without images",
-      "ru": "Убедитесь, что нет товаров массового производства без изображений.",
       "parent": "",
       "dependencies": [
         "06-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1955,12 +1855,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-13",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify there are no invalid zero or negative prices",
-      "ru": "Убедитесь в отсутствии недопустимых нулевых или отрицательных цен.",
       "parent": "",
       "dependencies": [
         "06-09"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1973,12 +1872,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-14",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify stock statuses match provider data",
-      "ru": "Проверьте соответствие наличия товара данным поставщика.",
       "parent": "",
       "dependencies": [
         "06-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -1991,14 +1889,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-15",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify disabled and out-of-stock logic works",
-      "ru": "Проверьте работоспособность логики для отключенных и отсутствующих товаров.",
       "parent": "",
       "dependencies": [
         "06-14",
         "01-15",
         "01-16"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -2011,13 +1908,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-16",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify only authorized brands are present in automotive integration catalogs",
-      "ru": "Убедитесь, что в каталогах автомобильной интеграции представлены только авторизованные бренды.",
       "parent": "",
       "dependencies": [
         "06-01",
         "02-INT-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -2030,13 +1926,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-17",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify MAP pricing works",
-      "ru": "Проверьте, работает ли ценообразование MAP.",
       "parent": "",
       "dependencies": [
         "06-09",
         "04-INT-07"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when MAP pricing applies.",
       "scope": "STATIC",
       "collection": "",
@@ -2049,13 +1944,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-18",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify options and variants are imported correctly",
-      "ru": "Убедитесь, что параметры и варианты импортированы корректно.",
       "parent": "",
       "dependencies": [
         "06-03",
         "01-20"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when options or variants apply.",
       "scope": "STATIC",
       "collection": "",
@@ -2068,13 +1962,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-19",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Verify fitment is imported",
-      "ru": "Убедитесь, что совместимость импортирована.",
       "parent": "",
       "dependencies": [
         "06-03",
         "04-INT-12"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when fitment import applies.",
       "scope": "STATIC",
       "collection": "",
@@ -2087,13 +1980,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "06-20",
       "section": "6. CATALOG IMPORT COMPLETED",
       "en": "Complete a repeated scheduled import successfully",
-      "ru": "Повторный запланированный импорт успешно завершен.",
       "parent": "",
       "dependencies": [
         "06-07",
         "05-10"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -2106,7 +1998,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-02",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include at least five products from every main supplier",
-      "ru": "Включите в список как минимум пять товаров от каждого основного поставщика.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2128,7 +2019,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Record the selected product IDs in the comment or linked project evidence.",
       "scope": "STATIC",
       "collection": "",
@@ -2141,7 +2032,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-03",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include at least three products from every key brand",
-      "ru": "Включите как минимум три товара от каждого ключевого бренда.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2163,7 +2053,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Record the selected product IDs in the comment or linked project evidence.",
       "scope": "STATIC",
       "collection": "",
@@ -2176,7 +2066,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-04",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include a product with multiple images",
-      "ru": "Добавьте товар с несколькими изображениями.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2198,7 +2087,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -2211,7 +2100,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-05",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include a product with options or variants",
-      "ru": "Включите в описание товар с вариантами или опциями.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2233,7 +2121,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when variants exist.",
       "scope": "STATIC",
       "collection": "",
@@ -2246,7 +2134,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-06",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include a product with MMY fitment",
-      "ru": "Укажите товар с посадочным размером MMY.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2268,7 +2155,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when fitment products exist.",
       "scope": "STATIC",
       "collection": "",
@@ -2281,7 +2168,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-07",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include a product without fitment",
-      "ru": "Укажите товар без указания совместимости.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2303,7 +2189,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -2316,7 +2202,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-08",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include an out-of-stock product",
-      "ru": "Укажите товар, которого нет в наличии.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2338,7 +2223,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -2351,7 +2236,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-09",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include a MAP product",
-      "ru": "Включите продукт MAP.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2373,7 +2257,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when MAP products exist.",
       "scope": "STATIC",
       "collection": "",
@@ -2386,7 +2270,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-10",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include a discounted product",
-      "ru": "Включите товар со скидкой.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2408,7 +2291,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when discounted products exist.",
       "scope": "STATIC",
       "collection": "",
@@ -2421,7 +2304,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-11",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include an oversized or freight product",
-      "ru": "Включите в список негабаритный или крупногабаритный товар.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2443,7 +2325,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when oversized or freight products exist.",
       "scope": "STATIC",
       "collection": "",
@@ -2456,7 +2338,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-12",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include a product available from multiple suppliers",
-      "ru": "Укажите товар, доступный у нескольких поставщиков.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2478,7 +2359,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when multiple-supplier products exist.",
       "scope": "STATIC",
       "collection": "",
@@ -2491,7 +2372,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-13",
       "section": "7. CATALOG QA SAMPLING",
       "en": "Include a product in a deeply nested category",
-      "ru": "Включите продукт в глубоко вложенную категорию.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2513,7 +2393,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -2526,7 +2406,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-02",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify title",
-      "ru": "{Пример товара}: проверить название",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2548,7 +2427,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2561,7 +2440,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-03",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify SKU and MPN",
-      "ru": "{Пример товара}: проверьте артикул и номер товара.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2583,7 +2461,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2596,7 +2474,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-04",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify brand",
-      "ru": "{Образец товара}: проверить бренд",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2618,7 +2495,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2631,7 +2508,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-05",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify price",
-      "ru": "{Пример товара}: проверить цену",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2653,7 +2529,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2666,7 +2542,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-06",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify MAP and MSRP",
-      "ru": "{Представленный образец товара}: проверьте MAP и MSRP.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2688,7 +2563,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Set inactive for this product when the field is not applicable.",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2701,7 +2576,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-07",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify stock",
-      "ru": "{Представленный образец товара}: проверить наличие на складе",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2723,7 +2597,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2736,7 +2610,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-08",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify images",
-      "ru": "{Образец товара}: проверьте изображения",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2758,7 +2631,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2771,7 +2644,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-09",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify description",
-      "ru": "{Образец товара}: проверьте описание",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2793,7 +2665,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2806,7 +2678,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-10",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify category",
-      "ru": "{Произведенный образец товара}: проверьте категорию",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2828,7 +2699,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2841,7 +2712,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-11",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify fitment",
-      "ru": "{Пример товара}: проверка совместимости",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2863,7 +2733,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Set inactive for this product when the field is not applicable.",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2876,7 +2746,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-12",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify shipping attributes",
-      "ru": "{Пример товара}: проверка характеристик доставки",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2898,7 +2767,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Set inactive for this product when the field is not applicable.",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2911,7 +2780,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "07-PRODUCT-13",
       "section": "7. CATALOG QA SAMPLING",
       "en": "{Sampled product}: verify Add to Cart",
-      "ru": "{Представленный образец товара}: подтвердите Добавить в корзину",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -2933,7 +2801,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "qa_products",
@@ -2946,12 +2814,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-01",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify the vehicle database is imported",
-      "ru": "Убедитесь, что база данных транспортных средств импортирована.",
       "parent": "",
       "dependencies": [
         "06-19"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -2964,12 +2831,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-02",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify Make selector works",
-      "ru": "Проверьте, работает ли селектор Make.",
       "parent": "",
       "dependencies": [
         "08-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -2982,12 +2848,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-03",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify Model selector works",
-      "ru": "Проверьте работоспособность селектора модели.",
       "parent": "",
       "dependencies": [
         "08-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3000,12 +2865,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-04",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify Year selector works",
-      "ru": "Проверьте, работает ли селектор года.",
       "parent": "",
       "dependencies": [
         "08-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3018,12 +2882,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-05",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify Submodel or engine selector works",
-      "ru": "Убедитесь, что селектор подмодели или двигателя работает.",
       "parent": "",
       "dependencies": [
         "08-04"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate only when Submodel or engine is used.",
       "scope": "STATIC",
       "collection": "",
@@ -3036,12 +2899,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-06",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify a matching vehicle displays compatible products",
-      "ru": "Убедитесь, что на дисплее соответствующего транспортного средства отображаются совместимые товары.",
       "parent": "",
       "dependencies": [
         "08-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3054,12 +2916,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-07",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify a non-matching vehicle does not display an incompatible product",
-      "ru": "Убедитесь, что в автомобиле, не соответствующем описанию, не отображается несовместимый продукт.",
       "parent": "",
       "dependencies": [
         "08-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3072,12 +2933,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-08",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify fitment is displayed on applicable product pages",
-      "ru": "Информация о совместимости отображается на страницах соответствующих товаров.",
       "parent": "",
       "dependencies": [
         "08-06"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3090,12 +2950,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-09",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify the selected vehicle persists between pages",
-      "ru": "Убедитесь, что выбранное транспортное средство сохраняется между страницами.",
       "parent": "",
       "dependencies": [
         "08-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3108,12 +2967,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-10",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify Clear vehicle works",
-      "ru": "Проверьте работоспособность автомобиля Clear.",
       "parent": "",
       "dependencies": [
         "08-09"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3126,12 +2984,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-11",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify Change vehicle works",
-      "ru": "Проверьте работоспособность автомобиля.",
       "parent": "",
       "dependencies": [
         "08-09"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3144,14 +3001,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-12",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify MMY works on desktop",
-      "ru": "Убедитесь, что MMY работает на компьютере.",
       "parent": "",
       "dependencies": [
         "08-02",
         "08-03",
         "08-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3164,14 +3020,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-13",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify MMY works on mobile",
-      "ru": "Проверьте, работает ли MMY на мобильных устройствах.",
       "parent": "",
       "dependencies": [
         "08-02",
         "08-03",
         "08-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3184,13 +3039,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-14",
       "section": "8. MMY / FITMENT QA",
       "en": "Check at least five different vehicles",
-      "ru": "Проверьте как минимум пять разных автомобилей.",
       "parent": "",
       "dependencies": [
         "08-06",
         "08-07"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3203,12 +3057,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-15",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify universal products are handled correctly",
-      "ru": "Убедитесь в правильности обращения с универсальными изделиями.",
       "parent": "",
       "dependencies": [
         "08-06"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3221,12 +3074,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "08-16",
       "section": "8. MMY / FITMENT QA",
       "en": "Verify products with multiple fitments are handled correctly",
-      "ru": "Убедитесь, что продукция с несколькими вариантами установки обрабатывается корректно.",
       "parent": "",
       "dependencies": [
         "08-06"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3239,7 +3091,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-01",
       "section": "9. STORE CONFIGURATION",
       "en": "Complete the store profile",
-      "ru": "Заполните профиль магазина.",
       "parent": "",
       "dependencies": [
         "01-01",
@@ -3268,7 +3119,7 @@ const RUNTIME_MODEL = Object.freeze({
         "01-24",
         "01-25"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3281,12 +3132,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-02",
       "section": "9. STORE CONFIGURATION",
       "en": "Verify company name, address, and phone",
-      "ru": "Проверьте название компании, адрес и номер телефона.",
       "parent": "",
       "dependencies": [
         "09-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3299,12 +3149,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-03",
       "section": "9. STORE CONFIGURATION",
       "en": "Configure localization",
-      "ru": "Настройка локализации",
       "parent": "",
       "dependencies": [
         "09-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3317,12 +3166,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-04",
       "section": "9. STORE CONFIGURATION",
       "en": "Configure currency",
-      "ru": "Настройка валюты",
       "parent": "",
       "dependencies": [
         "09-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3335,12 +3183,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-05",
       "section": "9. STORE CONFIGURATION",
       "en": "Configure weight and dimension units",
-      "ru": "Настройте единицы измерения веса и габаритов.",
       "parent": "",
       "dependencies": [
         "09-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3353,12 +3200,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-06",
       "section": "9. STORE CONFIGURATION",
       "en": "Configure zones",
-      "ru": "Настройка зон",
       "parent": "",
       "dependencies": [
         "09-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3371,13 +3217,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-07",
       "section": "9. STORE CONFIGURATION",
       "en": "Configure taxes",
-      "ru": "Настройка налогов",
       "parent": "",
       "dependencies": [
         "09-06",
         "01-22"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3390,12 +3235,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-08",
       "section": "9. STORE CONFIGURATION",
       "en": "Configure email notifications",
-      "ru": "Настройка уведомлений по электронной почте",
       "parent": "",
       "dependencies": [
         "09-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3408,12 +3252,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-09",
       "section": "9. STORE CONFIGURATION",
       "en": "Verify customer email delivery",
-      "ru": "Проверка доставки электронных писем клиентам.",
       "parent": "",
       "dependencies": [
         "09-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3426,12 +3269,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-10",
       "section": "9. STORE CONFIGURATION",
       "en": "Verify administrator order notification delivery",
-      "ru": "Подтвердите доставку уведомления о заказе администратору.",
       "parent": "",
       "dependencies": [
         "09-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3444,12 +3286,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-11",
       "section": "9. STORE CONFIGURATION",
       "en": "Configure the correct store email address",
-      "ru": "Укажите правильный адрес электронной почты магазина.",
       "parent": "",
       "dependencies": [
         "09-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3462,12 +3303,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-12",
       "section": "9. STORE CONFIGURATION",
       "en": "Publish legal pages",
-      "ru": "Опубликовать юридические страницы",
       "parent": "",
       "dependencies": [
         "09-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3480,12 +3320,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-13",
       "section": "9. STORE CONFIGURATION",
       "en": "Publish shipping policy",
-      "ru": "Опубликовать политику доставки",
       "parent": "",
       "dependencies": [
         "09-12"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3498,12 +3337,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-14",
       "section": "9. STORE CONFIGURATION",
       "en": "Publish return policy",
-      "ru": "Опубликовать политику возврата",
       "parent": "",
       "dependencies": [
         "09-12"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3516,12 +3354,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-15",
       "section": "9. STORE CONFIGURATION",
       "en": "Publish privacy policy",
-      "ru": "Опубликовать политику конфиденциальности",
       "parent": "",
       "dependencies": [
         "09-12"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3534,12 +3371,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "09-16",
       "section": "9. STORE CONFIGURATION",
       "en": "Publish terms",
-      "ru": "Условия публикации",
       "parent": "",
       "dependencies": [
         "09-12"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3552,12 +3388,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-01",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: connect in production mode",
-      "ru": "{Платежный шлюз}: подключение в рабочем режиме",
       "parent": "",
       "dependencies": [
         "02-PAY-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Template root. Clone the complete block once per confirmed payment gateway; replace PAY with a unique code. For each gateway, determine which status transitions and functions are supported; set unsupported checks to INACTIVE.",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3570,12 +3405,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-02",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: test a successful payment",
-      "ru": "{Платежный шлюз}: проверка успешности платежа",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3588,12 +3422,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-03",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: test a failed payment",
-      "ru": "{Платежный шлюз}: проверка неудачной оплаты",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3606,12 +3439,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-04",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: verify the order is created in X-Cart",
-      "ru": "{Платежный шлюз}: убедитесь, что заказ создан в X-Cart.",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3624,12 +3456,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-05",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: verify the transaction is saved correctly",
-      "ru": "{Платежный шлюз}: убедитесь, что транзакция сохранена корректно.",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3642,13 +3473,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-06",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: verify order status changes correctly",
-      "ru": "{Платежный шлюз}: корректно проверяйте изменения статуса заказа.",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-02",
         "10-PAY-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3661,12 +3491,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-07",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: test capture",
-      "ru": "{Платежный шлюз}: тестовый захват",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Set inactive for this payment gateway when capture is not supported or not used.",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3679,12 +3508,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-08",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: test void",
-      "ru": "{Платежный шлюз}: тест void",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-02"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Set inactive for this payment gateway when void is not supported or not used.",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3697,12 +3525,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-09",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: test refund",
-      "ru": "{Платежный шлюз}: тестовый возврат средств",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Set inactive for this payment gateway when refund is not supported or not used.",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3715,12 +3542,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-10",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: verify customer payment or order email is received",
-      "ru": "{Платежный шлюз}: проверка получения платежа или электронного письма с подтверждением заказа от клиента.",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3733,12 +3559,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-11",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: verify administrator notification is received",
-      "ru": "{Платежный шлюз}: подтвердите получение уведомления от администратора.",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3751,7 +3576,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-PAY-12",
       "section": "10. PAYMENTS",
       "en": "{Payment gateway}: disable test mode before launch",
-      "ru": "{Платежный шлюз}: отключите тестовый режим перед запуском.",
       "parent": "10-PAY-01",
       "dependencies": [
         "10-PAY-02",
@@ -3760,7 +3584,7 @@ const RUNTIME_MODEL = Object.freeze({
         "10-PAY-08",
         "10-PAY-09"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "payment_gateways",
@@ -3773,12 +3597,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-90",
       "section": "10. PAYMENTS",
       "en": "Disable unused test payment methods",
-      "ru": "Отключить неиспользуемые тестовые способы оплаты",
       "parent": "",
       "dependencies": [
         "10-PAY-12"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3791,12 +3614,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-91",
       "section": "10. PAYMENTS",
       "en": "Disable unused offline payment methods",
-      "ru": "Отключить неиспользуемые способы оплаты в автономном режиме",
       "parent": "",
       "dependencies": [
         "10-PAY-12"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3809,13 +3631,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "10-92",
       "section": "10. PAYMENTS",
       "en": "Verify Turn14 receives a test order",
-      "ru": "Убедитесь, что Turn14 получил тестовый заказ.",
       "parent": "",
       "dependencies": [
         "10-PAY-04",
         "04-INT-14"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "System-controlled: active when T14|Turn14 is configured in Automotive integrations.",
       "scope": "STATIC",
       "collection": "",
@@ -3828,13 +3649,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-01",
       "section": "11. SHIPPING",
       "en": "Configure shipping origin",
-      "ru": "Настройка пункта отправления",
       "parent": "",
       "dependencies": [
         "01-21",
         "09-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3847,13 +3667,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-CAR-01",
       "section": "11. SHIPPING",
       "en": "{Carrier}: connect the carrier account",
-      "ru": "{Оператор связи}: подключите учетную запись оператора связи.",
       "parent": "",
       "dependencies": [
         "02-SHIP-02",
         "11-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Template root. Clone once per confirmed carrier; replace CAR with a unique code.",
       "scope": "REPEAT",
       "collection": "carriers",
@@ -3866,12 +3685,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-CAR-02",
       "section": "11. SHIPPING",
       "en": "{Carrier}: verify calculated rates are returned successfully",
-      "ru": "{Перевозчик}: проверьте, успешно ли возвращены рассчитанные тарифы.",
       "parent": "11-CAR-01",
       "dependencies": [
         "11-CAR-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "carriers",
@@ -3884,12 +3702,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-02",
       "section": "11. SHIPPING",
       "en": "Configure flat rates",
-      "ru": "Настройте фиксированные тарифы",
       "parent": "",
       "dependencies": [
         "11-01"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when flat rates are used.",
       "scope": "STATIC",
       "collection": "",
@@ -3902,12 +3719,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-03",
       "section": "11. SHIPPING",
       "en": "Verify supplier shipping rates work",
-      "ru": "Проверьте правильность тарифов доставки поставщика.",
       "parent": "",
       "dependencies": [
         "04-INT-13"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when supplier rates are used.",
       "scope": "STATIC",
       "collection": "",
@@ -3920,12 +3736,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-04",
       "section": "11. SHIPPING",
       "en": "Verify free shipping rules",
-      "ru": "Проверьте правила бесплатной доставки.",
       "parent": "",
       "dependencies": [
         "11-01"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when free shipping rules are used.",
       "scope": "STATIC",
       "collection": "",
@@ -3938,13 +3753,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-05",
       "section": "11. SHIPPING",
       "en": "Verify weight and dimensions are passed correctly",
-      "ru": "Убедитесь, что вес и габариты указаны правильно.",
       "parent": "",
       "dependencies": [
         "09-05",
         "11-CAR-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -3957,12 +3771,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-06",
       "section": "11. SHIPPING",
       "en": "Verify residential and commercial rules",
-      "ru": "Проверьте правила для жилых и коммерческих помещений.",
       "parent": "",
       "dependencies": [
         "11-CAR-02"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when these rules apply.",
       "scope": "STATIC",
       "collection": "",
@@ -3975,12 +3788,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-07",
       "section": "11. SHIPPING",
       "en": "Verify shipping for oversized products",
-      "ru": "Уточните стоимость доставки крупногабаритных товаров.",
       "parent": "",
       "dependencies": [
         "11-05"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when oversized products exist.",
       "scope": "STATIC",
       "collection": "",
@@ -3993,12 +3805,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-08",
       "section": "11. SHIPPING",
       "en": "Verify shipping for freight products",
-      "ru": "Уточните стоимость доставки для грузовых товаров.",
       "parent": "",
       "dependencies": [
         "11-05"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when freight products exist.",
       "scope": "STATIC",
       "collection": "",
@@ -4011,12 +3822,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-09",
       "section": "11. SHIPPING",
       "en": "Verify shipping for multiple products from one supplier",
-      "ru": "Проверьте доставку нескольких товаров от одного поставщика.",
       "parent": "",
       "dependencies": [
         "11-CAR-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4029,12 +3839,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-10",
       "section": "11. SHIPPING",
       "en": "Verify shipping for a mixed cart from different suppliers",
-      "ru": "Проверьте стоимость доставки для корзины, в которой представлены товары от разных поставщиков.",
       "parent": "",
       "dependencies": [
         "11-CAR-02"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when multiple suppliers are used.",
       "scope": "STATIC",
       "collection": "",
@@ -4047,14 +3856,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-11",
       "section": "11. SHIPPING",
       "en": "Verify shipping method names are customer-friendly",
-      "ru": "Убедитесь, что названия способов доставки понятны клиентам.",
       "parent": "",
       "dependencies": [
         "11-CAR-02",
         "11-02",
         "11-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4067,12 +3875,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "11-12",
       "section": "11. SHIPPING",
       "en": "Disable test and unavailable shipping methods",
-      "ru": "Отключить тестовые и недоступные способы доставки",
       "parent": "",
       "dependencies": [
         "11-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4085,12 +3892,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-01",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Install logo",
-      "ru": "Установить логотип",
       "parent": "",
       "dependencies": [
         "09-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4103,12 +3909,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-02",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Install favicon",
-      "ru": "Установите значок сайта (favicon).",
       "parent": "",
       "dependencies": [
         "09-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4121,12 +3926,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-03",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Apply corporate colors",
-      "ru": "Используйте корпоративные цвета.",
       "parent": "",
       "dependencies": [
         "09-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4139,12 +3943,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-04",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Install banner or record approval for no banner",
-      "ru": "Установите баннер или зарегистрируйте запрос на разрешение его отсутствия.",
       "parent": "",
       "dependencies": [
         "09-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Alternative outcomes; one task because both satisfy the same acceptance criterion.",
       "scope": "STATIC",
       "collection": "",
@@ -4157,12 +3960,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-05",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Add company information",
-      "ru": "Добавить информацию о компании",
       "parent": "",
       "dependencies": [
         "09-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4175,7 +3977,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-06",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Check website load speed",
-      "ru": "Проверьте скорость загрузки сайта.",
       "parent": "",
       "dependencies": [
         "12-01",
@@ -4184,7 +3985,7 @@ const RUNTIME_MODEL = Object.freeze({
         "12-04",
         "12-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4197,12 +3998,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-07",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Verify homepage has a clear informative H1",
-      "ru": "Убедитесь, что на главной странице есть четкий и информативный заголовок H1.",
       "parent": "",
       "dependencies": [
         "12-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4215,12 +4015,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-08",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Verify key landing pages have H1 tags",
-      "ru": "Убедитесь, что ключевые целевые страницы содержат теги H1.",
       "parent": "",
       "dependencies": [
         "12-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined H1 / duplicate H2 item.",
       "scope": "STATIC",
       "collection": "",
@@ -4233,12 +4032,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-09",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Remove duplicate H2 tags from key landing pages",
-      "ru": "Удалите повторяющиеся теги H2 с ключевых целевых страниц.",
       "parent": "",
       "dependencies": [
         "12-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined H1 / duplicate H2 item.",
       "scope": "STATIC",
       "collection": "",
@@ -4251,12 +4049,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-10",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Set descriptive meta titles and descriptions for key pages",
-      "ru": "Задайте описательные мета-заголовки и описания для ключевых страниц.",
       "parent": "",
       "dependencies": [
         "12-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4269,12 +4066,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-11",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Configure clean canonical URLs",
-      "ru": "Настройте чистые канонические URL-адреса.",
       "parent": "",
       "dependencies": [
         "12-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4287,12 +4083,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-12",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Optimize robots.txt",
-      "ru": "Оптимизировать robots.txt",
       "parent": "",
       "dependencies": [
         "12-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined robots.txt and sitemap.xml item.",
       "scope": "STATIC",
       "collection": "",
@@ -4305,12 +4100,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-13",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Optimize sitemap.xml",
-      "ru": "Оптимизируйте файл sitemap.xml",
       "parent": "",
       "dependencies": [
         "12-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Split from the original combined robots.txt and sitemap.xml item.",
       "scope": "STATIC",
       "collection": "",
@@ -4323,12 +4117,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-14",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Verify image alt text is used effectively",
-      "ru": "Убедитесь, что альтернативный текст изображения используется эффективно.",
       "parent": "",
       "dependencies": [
         "12-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4341,12 +4134,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-15",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Verify promotional text is confined to logical locations",
-      "ru": "Убедитесь, что рекламный текст размещен только в логичных местах.",
       "parent": "",
       "dependencies": [
         "12-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4359,12 +4151,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-16",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Install and configure Rich Snippets",
-      "ru": "Установите и настройте расширенные сниппеты.",
       "parent": "",
       "dependencies": [
         "12-05"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when applicable.",
       "scope": "STATIC",
       "collection": "",
@@ -4377,12 +4168,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-17",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Configure category pages to display 20–24 products",
-      "ru": "Настройте страницы категорий для отображения 20–24 товаров.",
       "parent": "",
       "dependencies": [
         "03-09"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4395,12 +4185,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-18",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Verify category images are appropriately sized",
-      "ru": "Убедитесь, что изображения категорий имеют соответствующий размер.",
       "parent": "",
       "dependencies": [
         "03-09"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4413,7 +4202,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-19",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Check homepage",
-      "ru": "Проверьте главную страницу",
       "parent": "",
       "dependencies": [
         "12-01",
@@ -4421,7 +4209,7 @@ const RUNTIME_MODEL = Object.freeze({
         "12-04",
         "12-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4434,13 +4222,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-20",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Check header",
-      "ru": "Проверьте заголовок",
       "parent": "",
       "dependencies": [
         "12-01",
         "12-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4453,13 +4240,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-21",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Check footer",
-      "ru": "Проверьте нижний колонтитул",
       "parent": "",
       "dependencies": [
         "12-03",
         "12-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4472,13 +4258,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-22",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Check main menu",
-      "ru": "Проверить главное меню",
       "parent": "",
       "dependencies": [
         "03-09",
         "12-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4491,14 +4276,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-23",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Check category pages",
-      "ru": "Проверьте страницы категорий",
       "parent": "",
       "dependencies": [
         "03-09",
         "12-17",
         "12-18"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4511,7 +4295,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-24",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Check product pages",
-      "ru": "Проверьте страницы товаров",
       "parent": "",
       "dependencies": [
         "07-02",
@@ -4528,7 +4311,7 @@ const RUNTIME_MODEL = Object.freeze({
         "07-13",
         "07-PRODUCT-13"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4541,7 +4324,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-25",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Verify search works",
-      "ru": "Проверьте, работает ли поиск.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -4563,7 +4345,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4576,7 +4358,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-26",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Verify filters work",
-      "ru": "Проверьте работоспособность фильтров.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -4598,7 +4379,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4611,12 +4392,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-27",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Verify brand pages work",
-      "ru": "Проверьте работоспособность страниц бренда.",
       "parent": "",
       "dependencies": [
         "06-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4629,12 +4409,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-28",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Verify cart works",
-      "ru": "Проверьте, работает ли корзина.",
       "parent": "",
       "dependencies": [
         "07-PRODUCT-13"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4647,14 +4426,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-29",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Verify checkout works",
-      "ru": "Проверьте, работает ли оформление заказа.",
       "parent": "",
       "dependencies": [
         "10-PAY-04",
         "11-CAR-02",
         "09-07"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4667,7 +4445,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-30",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Check mobile layout",
-      "ru": "Проверьте мобильную версию.",
       "parent": "",
       "dependencies": [
         "12-19",
@@ -4679,7 +4456,7 @@ const RUNTIME_MODEL = Object.freeze({
         "12-28",
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4692,14 +4469,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-31",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Remove demo content",
-      "ru": "Удалить демонстрационный контент",
       "parent": "",
       "dependencies": [
         "12-19",
         "12-23",
         "12-24"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when demo content exists.",
       "scope": "STATIC",
       "collection": "",
@@ -4712,14 +4488,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-32",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Resolve broken images",
-      "ru": "Исправлены неработающие изображения",
       "parent": "",
       "dependencies": [
         "12-19",
         "12-23",
         "12-24"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive completion criterion replacing 'No broken images'.",
       "scope": "STATIC",
       "collection": "",
@@ -4732,7 +4507,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-33",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Resolve broken links",
-      "ru": "Исправление неработающих ссылок",
       "parent": "",
       "dependencies": [
         "12-19",
@@ -4742,7 +4516,7 @@ const RUNTIME_MODEL = Object.freeze({
         "12-23",
         "12-24"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive completion criterion replacing 'No broken links'.",
       "scope": "STATIC",
       "collection": "",
@@ -4755,14 +4529,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-34",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Remove placeholder text",
-      "ru": "Удалить текст-заполнитель",
       "parent": "",
       "dependencies": [
         "12-19",
         "12-23",
         "12-24"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive completion criterion.",
       "scope": "STATIC",
       "collection": "",
@@ -4775,7 +4548,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-35",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Resolve visible technical errors",
-      "ru": "Устранение видимых технических ошибок",
       "parent": "",
       "dependencies": [
         "12-19",
@@ -4784,7 +4556,7 @@ const RUNTIME_MODEL = Object.freeze({
         "12-28",
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive completion criterion.",
       "scope": "STATIC",
       "collection": "",
@@ -4797,12 +4569,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "12-36",
       "section": "12. STOREFRONT, BRANDING & SEO QA",
       "en": "Check Contact Us page",
-      "ru": "Перейдите на страницу «Контакты».",
       "parent": "",
       "dependencies": [
         "12-05"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -4815,12 +4586,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-01",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Standard order",
-      "ru": "Выполнение сценария E2E: Стандартный заказ",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -4833,12 +4603,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-02",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Guest checkout",
-      "ru": "Реализация сквозного сценария: оформление заказа гостем",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -4851,12 +4620,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-03",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Registered customer checkout",
-      "ru": "Реализация сквозного сценария: оформление заказа зарегистрированным клиентом.",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -4869,12 +4637,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-04",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Order with an MMY-selected product",
-      "ru": "Реализация сценария E2E: оформление заказа с продуктом, выбранным в MMY.",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when MMY applies. Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -4887,12 +4654,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-05",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Order from one supplier",
-      "ru": "Реализация сквозного сценария: заказ у одного поставщика.",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -4905,12 +4671,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-06",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Mixed cart from multiple suppliers",
-      "ru": "Реализация сквозного сценария: смешанная корзина товаров от нескольких поставщиков.",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when multiple suppliers are used. Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -4923,12 +4688,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-07",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Out-of-state order",
-      "ru": "Выполнение сценария E2E: заказ из другого штата",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -4941,12 +4705,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-08",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Order with tax",
-      "ru": "Реализация сквозного сценария: Заказ с учетом налога",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -4959,12 +4722,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-09",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Order with coupon",
-      "ru": "Реализация сценария E2E: Заказ с использованием купона",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when coupons are in scope. Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -4977,12 +4739,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-10",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Free shipping order",
-      "ru": "Выполнить сквозной сценарий: заказ с бесплатной доставкой",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when free shipping is configured. Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -4995,12 +4756,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-11",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Oversized or freight order",
-      "ru": "Реализация сквозного сценария: негабаритный или крупногабаритный заказ.",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when oversized or freight products exist. Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -5013,12 +4773,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-12",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Failed payment",
-      "ru": "Выполнение сценария E2E: Неудачная оплата",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -5031,12 +4790,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-13",
       "section": "13. END-TO-END ORDER QA",
       "en": "Execute E2E scenario: Refund or void",
-      "ru": "Выполнить сквозной сценарий: возврат средств или аннулирование.",
       "parent": "",
       "dependencies": [
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
       "collection": "",
@@ -5049,12 +4807,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-SCN-02",
       "section": "13. END-TO-END ORDER QA",
       "en": "{Scenario}: verify product price is correct",
-      "ru": "{Сценарий}: проверить правильность цены товара",
       "parent": "",
       "dependencies": [
         "13-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "e2e_scenarios",
@@ -5067,12 +4824,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-SCN-03",
       "section": "13. END-TO-END ORDER QA",
       "en": "{Scenario}: verify tax is correct",
-      "ru": "{Сценарий}: проверка правильности налога",
       "parent": "",
       "dependencies": [
         "13-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "e2e_scenarios",
@@ -5085,12 +4841,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-SCN-04",
       "section": "13. END-TO-END ORDER QA",
       "en": "{Scenario}: verify shipping is correct",
-      "ru": "{Сценарий}: проверить правильность доставки",
       "parent": "",
       "dependencies": [
         "13-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "e2e_scenarios",
@@ -5103,12 +4858,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-SCN-05",
       "section": "13. END-TO-END ORDER QA",
       "en": "{Scenario}: verify payment result is correct",
-      "ru": "{Сценарий}: проверка корректности результата платежа",
       "parent": "",
       "dependencies": [
         "13-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "e2e_scenarios",
@@ -5121,12 +4875,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-SCN-06",
       "section": "13. END-TO-END ORDER QA",
       "en": "{Scenario}: verify the order result is correct",
-      "ru": "{Сценарий}: проверить правильность результата заказа",
       "parent": "",
       "dependencies": [
         "13-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "e2e_scenarios",
@@ -5139,12 +4892,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-SCN-07",
       "section": "13. END-TO-END ORDER QA",
       "en": "{Scenario}: verify emails are received",
-      "ru": "{Сценарий}: проверить получение электронных писем",
       "parent": "",
       "dependencies": [
         "13-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "e2e_scenarios",
@@ -5157,12 +4909,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-SCN-08",
       "section": "13. END-TO-END ORDER QA",
       "en": "{Scenario}: verify stock is updated correctly",
-      "ru": "{Сценарий}: проверить корректность обновления данных о наличии товара.",
       "parent": "",
       "dependencies": [
         "13-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "e2e_scenarios",
@@ -5175,12 +4926,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-SCN-09",
       "section": "13. END-TO-END ORDER QA",
       "en": "{Scenario}: verify the order is visible to the administrator",
-      "ru": "{Сценарий}: убедиться, что заказ виден администратору.",
       "parent": "",
       "dependencies": [
         "13-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
       "collection": "e2e_scenarios",
@@ -5193,12 +4943,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-SCN-10",
       "section": "13. END-TO-END ORDER QA",
       "en": "{Scenario}: verify supplier export or processing works",
-      "ru": "{Сценарий}: проверка экспортных или перерабатывающих работ поставщика.",
       "parent": "",
       "dependencies": [
         "13-01"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Set inactive for a scenario when not applicable.",
       "scope": "REPEAT",
       "collection": "e2e_scenarios",
@@ -5211,12 +4960,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "13-SCN-11",
       "section": "13. END-TO-END ORDER QA",
       "en": "{Scenario}: verify the tracking workflow is defined",
-      "ru": "{Сценарий}: проверить, определен ли рабочий процесс отслеживания.",
       "parent": "",
       "dependencies": [
         "13-01"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Set inactive for a scenario when not applicable.",
       "scope": "REPEAT",
       "collection": "e2e_scenarios",
@@ -5229,12 +4977,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-01",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Send the storefront review link to the customer",
-      "ru": "Отправьте клиенту ссылку на отзыв о витрине магазина.",
       "parent": "",
       "dependencies": [
         "12-35"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5247,13 +4994,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-02",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Receive customer review of brands",
-      "ru": "Получайте отзывы клиентов о брендах.",
       "parent": "",
       "dependencies": [
         "14-01",
         "06-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5266,13 +5012,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-03",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Receive customer review of categories",
-      "ru": "Получите отзывы клиентов о категориях",
       "parent": "",
       "dependencies": [
         "14-01",
         "06-02"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5285,14 +5030,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-04",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Receive customer review of pricing",
-      "ru": "Получите отзывы клиентов о ценах.",
       "parent": "",
       "dependencies": [
         "14-01",
         "06-13",
         "06-17"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5305,13 +5049,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-05",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Receive customer review of MMY",
-      "ru": "Получите отзывы клиентов о MMY",
       "parent": "",
       "dependencies": [
         "14-01",
         "08-16"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when MMY applies.",
       "scope": "STATIC",
       "collection": "",
@@ -5324,13 +5067,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-06",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Receive customer review of shipping",
-      "ru": "Получите отзыв клиента о доставке.",
       "parent": "",
       "dependencies": [
         "14-01",
         "11-12"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5343,13 +5085,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-07",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Receive customer review of checkout",
-      "ru": "Получите отзыв покупателя при оформлении заказа.",
       "parent": "",
       "dependencies": [
         "14-01",
         "12-29"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5362,7 +5103,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-08",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Receive the customer feedback list",
-      "ru": "Получите список отзывов клиентов.",
       "parent": "",
       "dependencies": [
         "14-02",
@@ -5372,7 +5112,7 @@ const RUNTIME_MODEL = Object.freeze({
         "14-06",
         "14-07"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5385,12 +5125,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-09",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Resolve all launch-blocking feedback",
-      "ru": "Устранить все отзывы, препятствующие запуску.",
       "parent": "",
       "dependencies": [
         "14-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5403,12 +5142,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-10",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Move non-blocking feedback to separate tasks",
-      "ru": "Перенесите неблокирующую обратную связь в отдельные задачи.",
       "parent": "",
       "dependencies": [
         "14-08"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5421,7 +5159,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "14-11",
       "section": "14. CUSTOMER ACCEPTANCE",
       "en": "Receive written launch approval",
-      "ru": "Получите письменное разрешение на запуск.",
       "parent": "",
       "dependencies": [
         "14-09",
@@ -5441,7 +5178,7 @@ const RUNTIME_MODEL = Object.freeze({
         "13-13",
         "13-SCN-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5454,12 +5191,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-01",
       "section": "15. LAUNCH GATE",
       "en": "Confirm approved brands are fully imported",
-      "ru": "Подтверждено, что все одобренные бренды импортируются.",
       "parent": "",
       "dependencies": [
         "06-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5472,12 +5208,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-02",
       "section": "15. LAUNCH GATE",
       "en": "Confirm all import errors have a resolved or documented disposition",
-      "ru": "Убедитесь, что все ошибки импорта устранены или задокументированы.",
       "parent": "",
       "dependencies": [
         "06-07"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5490,12 +5225,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-03",
       "section": "15. LAUNCH GATE",
       "en": "Confirm scheduled imports have been verified",
-      "ru": "Подтвердите, что запланированные импортные поставки проверены.",
       "parent": "",
       "dependencies": [
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5508,7 +5242,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-04",
       "section": "15. LAUNCH GATE",
       "en": "Confirm repeated imports do not damage catalog data",
-      "ru": "Убедитесь, что повторные импорты не повреждают данные каталога.",
       "parent": "",
       "dependencies": [
         "06-01",
@@ -5530,7 +5263,7 @@ const RUNTIME_MODEL = Object.freeze({
         "06-19",
         "06-20"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5543,14 +5276,13 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-05",
       "section": "15. LAUNCH GATE",
       "en": "Confirm mass pricing errors are absent or resolved",
-      "ru": "Подтвердите отсутствие или устранение ошибок массового ценообразования.",
       "parent": "",
       "dependencies": [
         "06-09",
         "06-13",
         "06-17"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5563,13 +5295,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-06",
       "section": "15. LAUNCH GATE",
       "en": "Confirm mass stock errors are absent or resolved",
-      "ru": "Подтвердите отсутствие или устранение ошибок, связанных с массовыми запасами.",
       "parent": "",
       "dependencies": [
         "06-14",
         "06-15"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5582,12 +5313,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-07",
       "section": "15. LAUNCH GATE",
       "en": "Confirm MMY works correctly",
-      "ru": "Подтвердите корректную работу MMY.",
       "parent": "",
       "dependencies": [
         "08-16"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when MMY applies.",
       "scope": "STATIC",
       "collection": "",
@@ -5600,7 +5330,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-08",
       "section": "15. LAUNCH GATE",
       "en": "Confirm payment passed end-to-end testing",
-      "ru": "Подтверждение прохождения платежа сквозного тестирования.",
       "parent": "",
       "dependencies": [
         "10-PAY-12",
@@ -5619,7 +5348,7 @@ const RUNTIME_MODEL = Object.freeze({
         "13-13",
         "13-SCN-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5632,7 +5361,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-09",
       "section": "15. LAUNCH GATE",
       "en": "Confirm shipping passed end-to-end testing",
-      "ru": "Подтверждение прохождения сквозного тестирования при отгрузке.",
       "parent": "",
       "dependencies": [
         "11-12",
@@ -5651,7 +5379,7 @@ const RUNTIME_MODEL = Object.freeze({
         "13-13",
         "13-SCN-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5664,13 +5392,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-10",
       "section": "15. LAUNCH GATE",
       "en": "Confirm taxes are configured or customer responsibility is documented",
-      "ru": "Убедитесь, что налоги настроены или ответственность клиента за них задокументирована.",
       "parent": "",
       "dependencies": [
         "09-07",
         "14-04"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5683,13 +5410,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-11",
       "section": "15. LAUNCH GATE",
       "en": "Confirm a mixed cart from multiple suppliers was tested",
-      "ru": "Подтвердите, что была протестирована тележка, содержащая товары от разных поставщиков.",
       "parent": "",
       "dependencies": [
         "11-10",
         "13-06"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when multiple suppliers are used.",
       "scope": "STATIC",
       "collection": "",
@@ -5702,7 +5428,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-12",
       "section": "15. LAUNCH GATE",
       "en": "Confirm email notifications work",
-      "ru": "Подтвердите работоспособность уведомлений по электронной почте.",
       "parent": "",
       "dependencies": [
         "09-09",
@@ -5722,7 +5447,7 @@ const RUNTIME_MODEL = Object.freeze({
         "13-13",
         "13-SCN-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5735,12 +5460,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-13",
       "section": "15. LAUNCH GATE",
       "en": "Confirm critical storefront errors are resolved",
-      "ru": "Подтвердите устранение критических ошибок в интерфейсе магазина.",
       "parent": "",
       "dependencies": [
         "12-35"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5753,12 +5477,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-14",
       "section": "15. LAUNCH GATE",
       "en": "Confirm customer launch approval is received",
-      "ru": "Подтвердите получение разрешения на запуск продукта для клиента.",
       "parent": "",
       "dependencies": [
         "14-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5771,12 +5494,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-15",
       "section": "15. LAUNCH GATE",
       "en": "Document the backup and rollback plan",
-      "ru": "Задокументируйте план резервного копирования и отката.",
       "parent": "",
       "dependencies": [
         "14-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5789,12 +5511,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "15-16",
       "section": "15. LAUNCH GATE",
       "en": "Agree the DNS and domain switch time",
-      "ru": "Согласуйте время переключения DNS и домена.",
       "parent": "",
       "dependencies": [
         "14-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
       "collection": "",
@@ -5807,7 +5528,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-01",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Complete the first production import successfully",
-      "ru": "Первый импорт в производство успешно завершен.",
       "parent": "",
       "dependencies": [
         "15-01",
@@ -5827,7 +5547,7 @@ const RUNTIME_MODEL = Object.freeze({
         "15-15",
         "15-16"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5840,12 +5560,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-02",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify scheduled imports at least twice",
-      "ru": "Проверяйте запланированные импортные поставки как минимум дважды.",
       "parent": "",
       "dependencies": [
         "16-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5858,7 +5577,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-03",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Review the first real orders",
-      "ru": "Просмотрите первые реальные заказы.",
       "parent": "",
       "dependencies": [
         "15-01",
@@ -5878,7 +5596,7 @@ const RUNTIME_MODEL = Object.freeze({
         "15-15",
         "15-16"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5891,12 +5609,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-04",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Review payment errors",
-      "ru": "Проверка ошибок при оплате",
       "parent": "",
       "dependencies": [
         "16-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5909,12 +5626,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-05",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Review shipping errors",
-      "ru": "Проверка ошибок при доставке",
       "parent": "",
       "dependencies": [
         "16-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5927,12 +5643,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-06",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify email delivery",
-      "ru": "Подтвердите доставку электронного письма.",
       "parent": "",
       "dependencies": [
         "16-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5945,13 +5660,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-07",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify stock updates",
-      "ru": "Проверьте обновления запасов.",
       "parent": "",
       "dependencies": [
         "16-01",
         "16-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -5964,12 +5678,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-08",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify order export",
-      "ru": "Проверка экспорта заказа",
       "parent": "",
       "dependencies": [
         "16-03"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when order export applies.",
       "scope": "STATIC",
       "collection": "",
@@ -5982,13 +5695,12 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-09",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Resolve critical onboarding tickets",
-      "ru": "Устранение критических проблем, связанных с процессом адаптации новых сотрудников.",
       "parent": "",
       "dependencies": [
         "16-02",
         "16-03"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Positive completion criterion replacing 'No unresolved critical onboarding tickets'.",
       "scope": "STATIC",
       "collection": "",
@@ -6001,7 +5713,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-10",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Resolve all launch-related issues",
-      "ru": "Устранить все проблемы, связанные с запуском.",
       "parent": "",
       "dependencies": [
         "16-04",
@@ -6011,7 +5722,7 @@ const RUNTIME_MODEL = Object.freeze({
         "16-08",
         "16-09"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -6024,12 +5735,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-11",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Receive customer confirmation that no launch blockers remain",
-      "ru": "Получите подтверждение от клиента о том, что препятствий для запуска больше нет.",
       "parent": "",
       "dependencies": [
         "16-10"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -6042,12 +5752,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-12",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Transfer the store to regular Support flow",
-      "ru": "Перевести магазин на обычный поток поддержки.",
       "parent": "",
       "dependencies": [
         "16-11"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -6060,12 +5769,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-13",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify no unresolved critical errors remain in logs",
-      "ru": "Убедитесь, что в журналах не осталось неустраненных критических ошибок.",
       "parent": "",
       "dependencies": [
         "16-10"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "Known resolved errors do not block completion.",
       "scope": "STATIC",
       "collection": "",
@@ -6078,12 +5786,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-14",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify required workers are running",
-      "ru": "Убедитесь, что необходимые рабочие процессы запущены.",
       "parent": "",
       "dependencies": [
         "16-01"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -6096,12 +5803,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-15",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify feeds are generated correctly",
-      "ru": "Убедитесь, что ленты новостей генерируются корректно.",
       "parent": "",
       "dependencies": [
         "16-01"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when feeds are used.",
       "scope": "STATIC",
       "collection": "",
@@ -6114,7 +5820,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-16",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify sitemap.xml is present and generated",
-      "ru": "Убедитесь, что файл sitemap.xml присутствует и сгенерирован.",
       "parent": "",
       "dependencies": [
         "15-01",
@@ -6134,7 +5839,7 @@ const RUNTIME_MODEL = Object.freeze({
         "15-15",
         "15-16"
       ],
-      "defaultApplicable": "ДА",
+      "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
       "collection": "",
@@ -6147,7 +5852,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-17",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify the CloudSearch index works",
-      "ru": "Убедитесь, что индекс CloudSearch работает.",
       "parent": "",
       "dependencies": [
         "15-01",
@@ -6167,7 +5871,7 @@ const RUNTIME_MODEL = Object.freeze({
         "15-15",
         "15-16"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when CloudSearch is used.",
       "scope": "STATIC",
       "collection": "",
@@ -6180,12 +5884,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-18",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify the store is indexed in Google Search Console",
-      "ru": "Убедитесь, что магазин проиндексирован в Google Search Console.",
       "parent": "",
       "dependencies": [
         "16-16"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Post-launch observation. Actual indexing in Google does not block onboarding closure; sitemap submission and the indexing request are the blocking prerequisites.",
       "scope": "STATIC",
       "collection": "",
@@ -6198,7 +5901,6 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-19",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify GA4 is connected",
-      "ru": "Убедитесь, что GA4 подключен.",
       "parent": "",
       "dependencies": [
         "15-01",
@@ -6218,7 +5920,7 @@ const RUNTIME_MODEL = Object.freeze({
         "15-15",
         "15-16"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when GA4 is used. Split from the original combined GA4 / GTM item.",
       "scope": "STATIC",
       "collection": "",
@@ -6231,12 +5933,11 @@ const RUNTIME_MODEL = Object.freeze({
       "id": "16-20",
       "section": "16. POST-LAUNCH STABILIZATION",
       "en": "Verify GA4 has no conflict with GTM",
-      "ru": "Убедитесь, что GA4 не конфликтует с GTM.",
       "parent": "",
       "dependencies": [
         "16-19"
       ],
-      "defaultApplicable": "НЕТ",
+      "defaultApplicable": "NO",
       "comment": "Activate when both GA4 and GTM are used. Split from the original combined item.",
       "scope": "STATIC",
       "collection": "",
@@ -6247,4 +5948,3 @@ const RUNTIME_MODEL = Object.freeze({
     }
   ]
 });
-

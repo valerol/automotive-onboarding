@@ -207,7 +207,7 @@
           </div>
           ${task.waitingFor ? `<div class="wait">Waiting for: ${escapeHtml(task.waitingFor)}</div>` : ''}
           <div class="task-controls">
-            <select ${task.systemControlled ? 'disabled title="Controlled by Configuration"' : ''} onchange="setApplicable('${escapeAttr(task.id)}',this.value)"><option ${task.applicable === 'ДА' ? 'selected' : ''}>ДА</option><option ${task.applicable === 'НЕТ' ? 'selected' : ''}>НЕТ</option></select>
+            <select ${task.systemControlled ? 'disabled title="Controlled by Configuration"' : ''} onchange="setApplicable('${escapeAttr(task.id)}',this.value)"><option ${task.applicable === 'YES' ? 'selected' : ''}>YES</option><option ${task.applicable === 'NO' ? 'selected' : ''}>NO</option></select>
             <input type="text" value="${escapeAttr(task.comment || '')}" placeholder="Comment" onchange="setComment('${escapeAttr(task.id)}',this.value)">
           </div>
         </article>`);

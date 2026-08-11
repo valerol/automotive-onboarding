@@ -1,8 +1,9 @@
 const RUNTIME = Object.freeze({
-  poolSheet: 'ПУЛ ТАСКОВ',
-  checklistSheet: 'ЧЕКЛИСТ',
-  configurationSheet: 'КОНФИГУРАЦИЯ',
-  translationsSheet: '_TRANSLATIONS',
+  poolSheet: 'TASK POOL',
+  checklistSheet: 'CHECKLIST',
+  configurationSheet: 'CONFIGURATION',
+  translationsSheet: '_RUNTIME_DATA',
+  instructionSheet: 'INSTRUCTIONS',
   headerRow: 6,
   firstDataRow: 7,
   firstTaskRow: 8,
@@ -16,10 +17,10 @@ const RUNTIME = Object.freeze({
   fastPathProperty: 'AUTOMOTIVE_FAST_PATH_VERSION',
   modelVersionProperty: 'AUTOMOTIVE_MODEL_VERSION',
   rowIndexCacheKey: 'AUTOMOTIVE_ROW_INDEX_V1',
-  runtimeVersion: 2,
+  runtimeVersion: 3,
   runtimeVersionProperty: 'AUTOMOTIVE_RUNTIME_VERSION',
-  yes: 'ДА',
-  no: 'НЕТ',
+  yes: 'YES',
+  no: 'NO',
   statuses: Object.freeze({inactive: 'INACTIVE', done: 'DONE', blocked: 'BLOCKED', ready: 'READY', waiting: 'WAITING'})
 });
 
@@ -159,19 +160,18 @@ const CONFIGURATION_TASK_RULES = Object.freeze({
 
 const QA_PRODUCT_SAMPLE = Object.freeze({
   code: 'SAMPLE',
-  name: 'Product specified in Comment',
-  nameRu: 'Товар, указанный в комментарии'
+  name: 'Product specified in Comment'
 });
 
 const SHIPPING_METHOD_LABELS = Object.freeze({
-  flat_rate: Object.freeze({code: 'FLAT_RATE', name: 'Flat rate', nameRu: 'Фиксированный тариф'}),
-  supplier_rate: Object.freeze({code: 'SUPPLIER_RATE', name: 'Supplier rate', nameRu: 'Тариф поставщика'}),
-  free_shipping: Object.freeze({code: 'FREE_SHIPPING', name: 'Free shipping', nameRu: 'Бесплатная доставка'}),
-  pickup: Object.freeze({code: 'PICKUP', name: 'Pickup', nameRu: 'Самовывоз'})
+  flat_rate: Object.freeze({code: 'FLAT_RATE', name: 'Flat rate'}),
+  supplier_rate: Object.freeze({code: 'SUPPLIER_RATE', name: 'Supplier rate'}),
+  free_shipping: Object.freeze({code: 'FREE_SHIPPING', name: 'Free shipping'}),
+  pickup: Object.freeze({code: 'PICKUP', name: 'Pickup'})
 });
 
 const CONFIGURATION_UI = Object.freeze({
-  version: 'AUTOMOTIVE_CONFIG_APPLICABILITY_V5',
+  version: 'AUTOMOTIVE_CONFIG_APPLICABILITY_V6_ENGLISH',
   integrationHeaderRow: 4,
   integrationFirstRow: 5,
   integrationLastRow: 12,
@@ -188,45 +188,26 @@ const CONFIGURATION_UI = Object.freeze({
   otherLastRow: 45
 });
 
-const SECTION_RU = Object.freeze({
-  '1. SCOPE AND REQUIREMENTS CONFIRMED': '1. ОБЪЁМ И ТРЕБОВАНИЯ ПОДТВЕРЖДЕНЫ',
-  '2. ACCESS AND ACCOUNTS': '2. ДОСТУПЫ И УЧЁТНЫЕ ЗАПИСИ',
-  '3. CATALOG ARCHITECTURE': '3. АРХИТЕКТУРА КАТАЛОГА',
-  '4. AUTOMOTIVE INTEGRATION CONFIGURATION': '4. НАСТРОЙКА АВТОМОБИЛЬНЫХ ИНТЕГРАЦИЙ',
-  '5. MULTIPLE-SOURCE CONFLICT RULES': '5. ПРАВИЛА КОНФЛИКТОВ ИСТОЧНИКОВ',
-  '6. CATALOG IMPORT COMPLETED': '6. ИМПОРТ КАТАЛОГА ЗАВЕРШЁН',
-  '7. CATALOG QA SAMPLING': '7. ВЫБОРОЧНАЯ ПРОВЕРКА КАТАЛОГА',
-  '8. MMY / FITMENT QA': '8. ПРОВЕРКА MMY / FITMENT',
-  '9. STORE FOUNDATION': '9. БАЗОВАЯ НАСТРОЙКА МАГАЗИНА',
-  '10. PAYMENTS': '10. ПЛАТЕЖИ',
-  '11. SHIPPING': '11. ДОСТАВКА',
-  '12. STOREFRONT, BRANDING & SEO QA': '12. STOREFRONT, БРЕНДИНГ И SEO',
-  '13. END-TO-END ORDER QA': '13. СКВОЗНАЯ ПРОВЕРКА ЗАКАЗОВ',
-  '14. CUSTOMER REVIEW & APPROVAL': '14. ПРОВЕРКА И СОГЛАСОВАНИЕ КЛИЕНТОМ',
-  '15. LAUNCH GATE': '15. ДОПУСК К ЗАПУСКУ',
-  '16. POST-LAUNCH STABILIZATION': '16. СТАБИЛИЗАЦИЯ ПОСЛЕ ЗАПУСКА'
-});
-
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
-  ui.createMenu('ЧЕКЛИСТ')
-    .addItem('Открыть чеклист', 'openChecklist')
-    .addItem('Открыть конфигурацию', 'openChecklistConfiguration')
-    .addItem('Сохранить конфигурацию и пересобрать', 'saveChecklistConfiguration')
+  ui.createMenu('CHECKLIST')
+    .addItem('Open checklist', 'openChecklist')
+    .addItem('Open configuration', 'openChecklistConfiguration')
+    .addItem('Save configuration and rebuild', 'saveChecklistConfiguration')
     .addSeparator()
-    .addItem('Обновить чеклист', 'refreshChecklist')
+    .addItem('Refresh checklist', 'refreshChecklist')
     .addSubMenu(
-      ui.createMenu('Фильтр статусов')
-        .addItem('Выбрать статусы…', 'openChecklistStatusFilter')
-        .addItem('Только READY', 'showReadyTasks')
-        .addItem('Все статусы', 'showAllChecklistTasks')
+      ui.createMenu('Status filter')
+        .addItem('Select statuses…', 'openChecklistStatusFilter')
+        .addItem('READY only', 'showReadyTasks')
+        .addItem('All statuses', 'showAllChecklistTasks')
     )
-    .addItem('Проверить модель', 'showRuntimeValidation')
-    .addItem('Проверить доступ', 'authorizeAndDiagnoseRuntime')
+    .addItem('Validate model', 'showRuntimeValidation')
+    .addItem('Authorize and diagnose', 'authorizeAndDiagnoseRuntime')
     .addSeparator()
-    .addItem('Проверить совместимость runtime', 'showRuntimeCompatibility')
-    .addItem('Применить миграции runtime', 'migrateRuntime')
-    .addItem('Создать onboarding-проект', 'promptCreateOnboardingProject')
+    .addItem('Check runtime compatibility', 'showRuntimeCompatibility')
+    .addItem('Apply runtime migrations', 'migrateRuntime')
+    .addItem('Create onboarding project', 'promptCreateOnboardingProject')
     .addToUi();
 
   try {
@@ -240,7 +221,7 @@ function onOpen() {
     const compatibility = getRuntimeCompatibility();
     if (!compatibility.ok) {
       runtimeToast_(
-        'Требуется миграция runtime: ' + compatibility.storedRuntimeVersion + ' → ' + compatibility.runtimeVersion,
+        'Runtime migration required: ' + compatibility.storedRuntimeVersion + ' → ' + compatibility.runtimeVersion,
         'Automotive Runtime',
         8
       );
@@ -357,7 +338,7 @@ function installChecklistWorkspace() {
   protectPoolSheet_();
   refreshChecklist_();
   spreadsheet.setActiveSheet(checklist);
-  spreadsheet.toast('Рабочая вкладка готова.', 'ЧЕКЛИСТ', 4);
+  spreadsheet.toast('Workspace is ready.', 'CHECKLIST', 4);
 }
 
 function openChecklist() {
@@ -375,7 +356,7 @@ function openChecklistConfiguration() {
 
 function refreshChecklist() {
   refreshChecklist_();
-  runtimeToast_('Данные обновлены.', 'ЧЕКЛИСТ', 3);
+  runtimeToast_('Data refreshed.', 'CHECKLIST', 3);
 }
 
 function showReadyTasks() {
@@ -400,9 +381,9 @@ function saveChecklistConfiguration() {
     writeConfigurationSheet_(getRuntimeConfiguration());
     refreshChecklist_();
     runtimeSpreadsheet_().setActiveSheet(ensureChecklistSheet_());
-    runtimeToast_('Конфигурация сохранена, задачи пересобраны.', 'ЧЕКЛИСТ', 5);
+    runtimeToast_('Configuration saved and tasks rebuilt.', 'CHECKLIST', 5);
   } catch (error) {
-    SpreadsheetApp.getUi().alert('Не удалось сохранить конфигурацию:\n' + formatRuntimeError_(error));
+    SpreadsheetApp.getUi().alert('Unable to save configuration:\n' + formatRuntimeError_(error));
     throw error;
   }
 }
@@ -470,18 +451,18 @@ function handleConfigurationEdit_(e) {
     saveRuntimeConfiguration(config);
     writeConfigurationSheet_(getRuntimeConfiguration());
     refreshChecklist_();
-    runtimeToast_('Конфигурация сохранена, чеклист пересобран.', 'ЧЕКЛИСТ', 5);
+    runtimeToast_('Configuration saved and checklist rebuilt.', 'CHECKLIST', 5);
   } catch (error) {
     if (typeof e.oldValue !== 'undefined') e.range.setValue(e.oldValue);
     else e.range.clearContent();
-    runtimeToast_(formatRuntimeError_(error), 'Конфигурация отклонена', 8);
+    runtimeToast_(formatRuntimeError_(error), 'Configuration rejected', 8);
   }
 }
 
 function handleChecklistEdit_(e) {
   const editLock = runtimeLock_();
   if (!editLock.tryLock(5000)) {
-    runtimeToast_('Предыдущее изменение ещё обрабатывается. Повторите действие.', 'ЧЕКЛИСТ', 5);
+    runtimeToast_('The previous edit is still being processed. Try again.', 'CHECKLIST', 5);
     return;
   }
 
@@ -503,14 +484,14 @@ function handleChecklistEdit_(e) {
     if (e.range.getRow() < RUNTIME.checklistFirstTaskRow) return;
     if (e.range.getNumRows() !== 1 || e.range.getNumColumns() !== 1) {
       refreshChecklist_();
-      runtimeToast_('Вставка диапазона отменена. Изменяйте одну задачу за раз.', 'ЧЕКЛИСТ', 5);
+      runtimeToast_('Range paste was reverted. Edit one task at a time.', 'CHECKLIST', 5);
       return;
     }
 
     const column = e.range.getColumn();
     if ([4, 5, 6].indexOf(column) < 0) {
       refreshChecklist_();
-      runtimeToast_('Редактируются только Актуален, DONE и Комментарий.', 'ЧЕКЛИСТ', 5);
+      runtimeToast_('Only Applicable, DONE, and Comment are editable.', 'CHECKLIST', 5);
       return;
     }
 
@@ -541,7 +522,7 @@ function handleChecklistEdit_(e) {
       if (typeof e.oldValue !== 'undefined') e.range.setValue(e.oldValue);
       else if (column === 5) e.range.setValue(false);
       else e.range.clearContent();
-      runtimeToast_(formatRuntimeError_(error), 'Изменение отклонено', 7);
+      runtimeToast_(formatRuntimeError_(error), 'Edit rejected', 7);
     }
   } finally {
     editLock.releaseLock();
@@ -873,13 +854,12 @@ function refreshChecklist_(lockAlreadyHeld) {
   const state = readOperationalState_();
   const translations = readTranslations_();
   const sheet = ensureChecklistSheet_();
-  const language = checklistLanguage_(sheet);
   const tasks = state.tasks.map(function (task) {
     const translated = translations[task.id] || {};
     return {
       id: task.id,
-      title: language === 'ru' ? (translated.ru || task.title) : (translated.en || task.title),
-      section: language === 'ru' ? (SECTION_RU[task.section] || task.section) : task.section,
+      title: translated.en || task.title,
+      section: task.section,
       status: task.status,
       applicable: task.localApplicable,
       done: task.done,
@@ -999,8 +979,8 @@ function showReadyTasks_(sheet) {
   applyChecklistStatusFilter_(sheet);
   sheet.getRange(RUNTIME.checklistFirstTaskRow, 1).activate();
   runtimeToast_(
-    'Новых READY нет. Показаны задачи со всеми статусами.',
-    'ЧЕКЛИСТ',
+    'No new READY tasks. Tasks with all statuses are shown.',
+    'CHECKLIST',
     6
   );
 }
@@ -1016,8 +996,8 @@ function ensureChecklistSheet_() {
   const needsLayoutUpgrade =
     created ||
     sheet.getRange('A1').getDisplayValue() !== RUNTIME.checklistSheet ||
-    sheet.getRange('C6').getDisplayValue() !== 'Статус' ||
-    sheet.getRange('F2').getDisplayValue() !== 'Язык';
+    sheet.getRange('C6').getDisplayValue() !== 'Status' ||
+    sheet.getRange('F2').getDisplayValue() !== 'Language';
 
   const existingFilter = sheet.getFilter();
   if (existingFilter) existingFilter.remove();
@@ -1029,18 +1009,18 @@ function ensureChecklistSheet_() {
     sheet.getRange('A1:G1').merge().setValue(RUNTIME.checklistSheet)
       .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
     sheet.setRowHeight(1, 46);
-    sheet.getRange('C2').setValue('Статус').setFontWeight('bold');
+    sheet.getRange('C2').setValue('Status').setFontWeight('bold');
     sheet.getRange('D2').setValue('READY');
-    sheet.getRange('F2').setValue('Язык').setFontWeight('bold');
-    sheet.getRange('G2').setValue('RU').setDataValidation(
-      SpreadsheetApp.newDataValidation().requireValueInList(['RU', 'EN'], true).setAllowInvalid(false).build()
+    sheet.getRange('F2').setValue('Language').setFontWeight('bold');
+    sheet.getRange('G2').setValue('EN').setDataValidation(
+      SpreadsheetApp.newDataValidation().requireValueInList(['EN'], true).setAllowInvalid(false).build()
     );
     sheet.getRange('A3:G3').clearContent();
     sheet.setRowHeight(3, 8);
     sheet.getRange('A5:G5').merge()
-      .setValue('Фильтр статусов: ЧЕКЛИСТ → Фильтр статусов. Редактируются только Актуален, DONE и Комментарий.')
+      .setValue('Status filter: CHECKLIST -> Status filter. Only Applicable, DONE, and Comment can be edited.')
       .setBackground('#f4f6f8').setFontColor('#667085');
-    sheet.getRange('A6:G6').setValues([['Task ID', 'Таск', 'Статус', 'Актуален', 'DONE', 'Комментарий', 'Ждёт']])
+    sheet.getRange('A6:G6').setValues([['Task ID', 'Task', 'Status', 'Applicable', 'DONE', 'Comment', 'Waiting for']])
       .setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
     sheet.setFrozenRows(RUNTIME.checklistHeaderRow);
     sheet.setHiddenGridlines(true);
@@ -1054,7 +1034,7 @@ function ensureChecklistSheet_() {
     sheet.setTabColor('#356853');
   } else {
     sheet.getRange('G2').setDataValidation(
-      SpreadsheetApp.newDataValidation().requireValueInList(['RU', 'EN'], true).setAllowInvalid(false).build()
+      SpreadsheetApp.newDataValidation().requireValueInList(['EN'], true).setAllowInvalid(false).build()
     );
     sheet.getRange('A3:G3').clearContent();
   }
@@ -1092,7 +1072,7 @@ function ensureChecklistFormatting_(sheet) {
 }
 
 function checklistLanguage_(sheet) {
-  return String(sheet.getRange('G2').getDisplayValue()).toUpperCase() === 'EN' ? 'en' : 'ru';
+  return 'en';
 }
 
 function openChecklistStatusFilter() {
@@ -1114,14 +1094,14 @@ function openChecklistStatusFilter() {
     'button.primary{background:#356853;color:#fff;border-color:#356853}' +
     '#error{min-height:18px;color:#b3261e;margin-top:8px}' +
     '</style></head><body>' +
-    '<h3>Фильтр статусов</h3>' +
-    '<p>Отметьте один или несколько статусов. Разделы без подходящих задач будут скрыты.</p>' +
+    '<h3>Status filter</h3>' +
+    '<p>Select one or more statuses. Sections without matching tasks will be hidden.</p>' +
     '<div>' + items + '</div>' +
     '<div id="error"></div>' +
     '<div class="actions">' +
-    '<button onclick="selectAll()">Все</button>' +
-    '<button onclick="onlyReady()">Только READY</button>' +
-    '<button class="primary" onclick="applyFilter()">Применить</button>' +
+    '<button onclick="selectAll()">All</button>' +
+    '<button onclick="onlyReady()">READY only</button>' +
+    '<button class="primary" onclick="applyFilter()">Apply</button>' +
     '</div>' +
     '<script>' +
     'function boxes(){return Array.prototype.slice.call(document.querySelectorAll(\'input[name="status"]\'));}' +
@@ -1129,7 +1109,7 @@ function openChecklistStatusFilter() {
     'function onlyReady(){boxes().forEach(function(x){x.checked=x.value==="READY";});}' +
     'function applyFilter(){' +
       'var selected=boxes().filter(function(x){return x.checked;}).map(function(x){return x.value;});' +
-      'if(!selected.length){document.getElementById("error").textContent="Выберите хотя бы один статус.";return;}' +
+      'if(!selected.length){document.getElementById("error").textContent="Select at least one status.";return;}' +
       'document.getElementById("error").textContent="";' +
       'google.script.run.withSuccessHandler(function(){google.script.host.close();})' +
       '.withFailureHandler(function(error){document.getElementById("error").textContent=error.message||String(error);})' +
@@ -1137,7 +1117,7 @@ function openChecklistStatusFilter() {
     '}' +
     '</script></body></html>'
   ).setWidth(420).setHeight(430);
-  SpreadsheetApp.getUi().showModalDialog(html, 'Фильтр статусов');
+  SpreadsheetApp.getUi().showModalDialog(html, 'Status filter');
 }
 
 function applyChecklistStatusSelection(statuses) {
@@ -1181,7 +1161,7 @@ function getChecklistStatusSelection_() {
 
 function setChecklistStatusSelection_(values) {
   const selected = normalizeChecklistStatusSelection_(values);
-  if (!selected.length) throw new Error('Выберите хотя бы один статус.');
+  if (!selected.length) throw new Error('Select at least one status.');
   runtimeProperties_()
     .setProperty(CHECKLIST_FILTER.propertyKey, JSON.stringify(selected));
   return selected;
@@ -1202,7 +1182,7 @@ function repairChecklistFilterControl_(sheet) {
     )
     .setValue(checklistFilterSummary_(selected))
     .setNote(
-      'Выберите ALL или один статус. Для комбинации статусов используйте меню центрального мастера.'
+      'Select ALL or one status. Use the central master menu for a combination of statuses.'
     );
 }
 
@@ -1283,7 +1263,7 @@ function ensureConfigurationSheet_() {
     sheet.setTabColor('#667085');
     sheet.getRange('A1:C1').merge().setValue(RUNTIME.configurationSheet)
       .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
-    sheet.getRange('A3:C3').setValues([['Параметр', 'Значение', 'Формат / назначение']])
+    sheet.getRange('A3:C3').setValues([['Parameter', 'Value', 'Format / purpose']])
       .setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
   }
   if (sheet.getRange('A1').getNote() !== CONFIGURATION_UI.version) {
@@ -1296,7 +1276,7 @@ function renderConfigurationSheet_(sheet, config) {
   sheet.getRange('A4:C50').clear();
   configurationCatalogSections_().forEach(function (section) {
     sheet.getRange(section.headerRow, 1, 1, 3)
-      .setValues([[section.label, 'Используется', 'Системный код']])
+      .setValues([[section.label, 'Enabled', 'System code']])
       .setBackground('#e9edf5')
       .setFontColor('#29375f')
       .setFontWeight('bold');
@@ -1310,15 +1290,15 @@ function renderConfigurationSheet_(sheet, config) {
   });
 
   sheet.getRange('A37:C45').setValues([
-    ['Source: manual', false, 'Ручное создание; новые задачи не добавляются'],
-    ['Source: CSV', false, 'Включает существующие задачи импорта'],
-    ['Source: supplier feed', false, 'Включает задачи импорта и расписания'],
-    ['Shipping: flat rate', false, 'Включает существующую задачу настройки фиксированных тарифов'],
-    ['Shipping: supplier rate', false, 'Включает существующие задачи тарифов поставщика'],
-    ['Shipping: free shipping', false, 'Включает проверку правил и E2E-сценарий бесплатной доставки'],
-    ['Shipping: pickup', false, 'Считается способом доставки; отдельные задачи не создаются'],
-    ['Multiple sources overlap', false, 'Доступно только при 2–3 источниках'],
-    ['MMY / fitment applies', false, 'Управляет уже существующими fitment-задачами и разделом 8']
+    ['Source: manual', false, 'Manual creation; no additional tasks are generated'],
+    ['Source: CSV', false, 'Enables the existing import tasks'],
+    ['Source: supplier feed', false, 'Enables import and scheduled-feed tasks'],
+    ['Shipping: flat rate', false, 'Enables the existing flat-rate setup task'],
+    ['Shipping: supplier rate', false, 'Enables the existing supplier-rate tasks'],
+    ['Shipping: free shipping', false, 'Enables rule verification and a free-shipping E2E scenario'],
+    ['Shipping: pickup', false, 'Counts as a shipping method; no separate tasks are generated'],
+    ['Multiple sources overlap', false, 'Available only when two or three sources are selected'],
+    ['MMY / fitment applies', false, 'Controls the existing fitment tasks and Section 8']
   ]);
   sheet.getRange('B37:B45').insertCheckboxes();
   sheet.getRange('A37:A45').setFontWeight('bold');
@@ -1426,7 +1406,7 @@ function protectPoolSheet_() {
   // The hidden tab prevents accidental direct edits without breaking the runtime.
   protection.setWarningOnly(true);
   sheet.setTabColor('#98a2b3');
-  sheet.getRange('A1').setNote('Техническая вкладка. Работайте через ЧЕКЛИСТ.');
+  sheet.getRange('A1').setNote('Technical sheet. Use CHECKLIST for routine work.');
 
   if (!sheet.isSheetHidden()) {
     spreadsheet.setActiveSheet(sheet);
@@ -1439,7 +1419,7 @@ function protectPoolSheet_() {
 
 function getRuntimeState(language) {
   try {
-    const lang = language === 'ru' ? 'ru' : 'en';
+    const lang = 'en';
     recalculateRuntime();
     const state = readOperationalState_();
     const translations = readTranslations_();
@@ -1447,14 +1427,14 @@ function getRuntimeState(language) {
       const translated = translations[task.id] || {};
       return {
         id: task.id,
-        title: lang === 'ru' ? (translated.ru || task.title) : (translated.en || task.title),
+        title: translated.en || task.title,
         applicable: task.localApplicable,
         done: task.done,
         comment: task.comment,
         status: task.status,
         waitingFor: task.waitingFor,
         systemControlled: Boolean(task.systemApplicable),
-        section: lang === 'ru' ? (SECTION_RU[task.section] || task.section) : task.section
+        section: task.section
       };
     });
     return {
@@ -1899,13 +1879,11 @@ function instantiateModel_(config) {
 function createInstance_(template, item) {
   const code = item ? item.code : '';
   const label = item ? item.name : '';
-  const labelRu = item ? (item.nameRu || item.name) : '';
   return {
     id: item ? instantiateId_(template.id, code) : template.id,
     templateId: template.id,
     section: template.section,
     title: item ? replacePlaceholder_(template.en, label) : template.en,
-    titleRu: item ? replacePlaceholder_(template.ru, labelRu) : template.ru,
     parentTemplate: template.parent || '',
     dependencyTemplates: template.dependencies || [],
     defaultApplicable: template.defaultApplicable,
@@ -1957,7 +1935,7 @@ function readOperationalState_(config) {
       title: String(displayRow[1] || ''),
       parent: String(displayRow[2] || '').trim(),
       dependencies: splitIds_(displayRow[3]),
-      localApplicable: String(displayRow[4] || RUNTIME.yes),
+      localApplicable: normalizeApplicability_(displayRow[4]),
       done: row[5] === true,
       comment: String(displayRow[6] || ''),
       effectiveApplicable: String(displayRow[7] || ''),
@@ -1976,21 +1954,27 @@ function readOperationalState_(config) {
   return {sheet: sheet, tasks: tasks};
 }
 
+function normalizeApplicability_(value) {
+  const normalized = String(value || '').trim().toUpperCase();
+  if (normalized === RUNTIME.no || normalized === '\u041D\u0415\u0422') return RUNTIME.no;
+  return RUNTIME.yes;
+}
+
 function refreshTranslations_(tasks) {
   const sheet = runtimeSpreadsheet_().getSheetByName(RUNTIME.translationsSheet);
   if (!sheet) throw new Error('Missing sheet: ' + RUNTIME.translationsSheet);
-  const rows = [['Task ID', 'English', 'Русский']].concat(tasks.map(function (task) { return [String(task.id), task.title, task.titleRu]; }));
+  const rows = [['Task ID', 'English']].concat(tasks.map(function (task) { return [String(task.id), task.title]; }));
   sheet.getRange(1, 1, sheet.getMaxRows(), 3).clearContent();
   if (sheet.getMaxRows() < rows.length) sheet.insertRowsAfter(sheet.getMaxRows(), rows.length - sheet.getMaxRows());
-  sheet.getRange(1, 1, rows.length, 3).setNumberFormat('@').setValues(rows);
+  sheet.getRange(1, 1, rows.length, 2).setNumberFormat('@').setValues(rows);
 }
 
 function readTranslations_() {
   const sheet = runtimeSpreadsheet_().getSheetByName(RUNTIME.translationsSheet);
   if (!sheet || sheet.getLastRow() < 2) return {};
-  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3).getDisplayValues();
+  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 2).getDisplayValues();
   const map = {};
-  rows.forEach(function (row) { if (row[0]) map[String(row[0])] = {en: row[1], ru: row[2]}; });
+  rows.forEach(function (row) { if (row[0]) map[String(row[0])] = {en: row[1]}; });
   return map;
 }
 
@@ -2102,7 +2086,7 @@ function buildE2eScenarios_(config) {
 
   const taxes = (config.tax_services || []).length
     ? config.tax_services
-    : [{code: 'STORE_TAX', name: 'Store tax configuration', nameRu: 'Налоговая конфигурация магазина'}];
+    : [{code: 'STORE_TAX', name: 'Store tax configuration'}];
   const count = Math.max(payments.length, shipping.length, taxes.length);
   const scenarios = [];
   for (let index = 0; index < count; index++) {
@@ -2111,8 +2095,7 @@ function buildE2eScenarios_(config) {
     const tax = taxes[index % taxes.length];
     scenarios.push({
       code: payment.code + '_' + method.code + '_' + tax.code,
-      name: payment.name + ' + ' + method.name + ' + ' + tax.name,
-      nameRu: payment.name + ' + ' + method.nameRu + ' + ' + (tax.nameRu || tax.name)
+      name: payment.name + ' + ' + method.name + ' + ' + tax.name
     });
   }
   return scenarios;
@@ -2125,7 +2108,7 @@ function e2eShippingOptions_(config) {
     if (String(method).indexOf('carrier:') === 0) {
       const code = String(method).slice('carrier:'.length);
       const carrier = carrierByCode[code];
-      return carrier ? {code: carrier.code, name: carrier.name, nameRu: carrier.name} : null;
+      return carrier ? {code: carrier.code, name: carrier.name} : null;
     }
     return SHIPPING_METHOD_LABELS[method] || null;
   }).filter(Boolean);

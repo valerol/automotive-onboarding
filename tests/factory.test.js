@@ -10,6 +10,7 @@ const codeSource = read('Code.gs');
 const migrationSource = read('RuntimeMigrations.gs');
 const factorySource = read('ProjectFactory.gs');
 const manifest = JSON.parse(read('appsscript.json'));
+const repositorySources = [modelSource, codeSource, migrationSource, factorySource, read('Sidebar.html')];
 const context = vm.createContext({console});
 vm.runInContext(
   modelSource + '\n' + codeSource + '\n' + migrationSource + '\n' + factorySource + `\n;
@@ -29,7 +30,9 @@ vm.runInContext(
 );
 const api = context.factoryTestApi;
 
-assert.equal(api.RUNTIME.runtimeVersion, 2);
+repositorySources.forEach(source => assert.doesNotMatch(source, /[\u0400-\u04FF]/));
+
+assert.equal(api.RUNTIME.runtimeVersion, 3);
 for (let version = 1; version < api.RUNTIME.runtimeVersion; version++) {
   assert.equal(typeof api.RUNTIME_MIGRATIONS[version], 'function', `missing migration ${version} -> ${version + 1}`);
 }
@@ -38,17 +41,17 @@ const config = api.defaultConfiguration_();
 const stable = {
   config,
   tasks: {
-    A: {applicable: 'ДА', done: true, comment: 'preserved'}
+    A: {applicable: 'YES', done: true, comment: 'preserved'}
   }
 };
 api.assertRuntimeDataPreserved_(stable, JSON.parse(JSON.stringify(stable)));
 assert.throws(() => api.assertRuntimeDataPreserved_(stable, {
   config,
-  tasks: {A: {applicable: 'ДА', done: false, comment: 'preserved'}}
+  tasks: {A: {applicable: 'YES', done: false, comment: 'preserved'}}
 }), /changed DONE/);
 assert.throws(() => api.assertRuntimeDataPreserved_(stable, {
   config,
-  tasks: {A: {applicable: 'ДА', done: true, comment: 'changed'}}
+  tasks: {A: {applicable: 'YES', done: true, comment: 'changed'}}
 }), /changed comment/);
 
 const cleanTasks = api.mergeTaskStateForRebuild_(api.instantiateModel_(config), {});
@@ -59,7 +62,7 @@ assert.doesNotMatch(factorySource, /Drive\.Files\.copy/);
 assert.match(factorySource, /supportsAllDrives:\s*true/);
 assert.match(factorySource, /fields:\s*'id,parents,driveId'/);
 assert.match(factorySource, /if \(source\.driveId\) return source\.driveId/);
-assert.match(factorySource, /Оставьте поле пустым/);
+assert.match(factorySource, /Leave this blank/);
 assert.match(factorySource, /SpreadsheetApp\.create/);
 assert.match(factorySource, /\.copyTo\(destination\)/);
 assert.match(factorySource, /resetOnboardingSpreadsheet_/);
@@ -69,8 +72,8 @@ assert.match(factorySource, /\.forSpreadsheet\(spreadsheetId\)/);
 assert.doesNotMatch(factorySource, /token|secret|password/i);
 
 assert.deepEqual(Array.from(api.PROJECT_FACTORY.registryHeaders), [
-  'Название', 'Spreadsheet ID', 'URL', 'Trigger ID', 'Дата создания',
-  'Runtime version', 'Статус миграции'
+  'Project name', 'Spreadsheet ID', 'URL', 'Trigger ID', 'Created at',
+  'Runtime version', 'Migration status'
 ]);
 assert.equal(api.PROJECT_FACTORY.defaultFolderId, 'root');
 assert.match(factorySource, /if \(targetFolderId === 'root'\) return destination/);
@@ -92,7 +95,7 @@ assert.equal(
   api.normalizeDriveFolderId_('https://drive.google.com/open?id=folder_123456789'),
   'folder_123456789'
 );
-assert.throws(() => api.normalizeDriveFolderId_('not a folder'), /Не удалось распознать/);
+assert.throws(() => api.normalizeDriveFolderId_('not a folder'), /Could not recognize/);
 
 console.log(JSON.stringify({
   ok: true,
