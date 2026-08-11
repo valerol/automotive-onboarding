@@ -5,6 +5,11 @@
 There is one control spreadsheet and one container-bound Apps Script project.
 That script is the central runtime for every onboarding project.
 
+The canonical control spreadsheet is `Automotive Onboarding — Master` in
+`X-Cart Support Team / Automotive Onboarding`. Both the spreadsheet and its
+bound Apps Script are owned by that Shared Drive. Do not use the externally
+owned migration backup as a project factory.
+
 The factory creates a new Google Spreadsheet, copies only the sheets and their
 data/formatting, resets operational state, and installs `centralProjectOnEdit`
 for the new spreadsheet. The new spreadsheet has no bound Apps Script project.

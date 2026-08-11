@@ -1,6 +1,16 @@
 # Automotive Onboarding Runtime
 
-Container-bound Google Apps Script for the spreadsheet `Automotive Onboarding — prototype`.
+Container-bound Google Apps Script for the canonical spreadsheet `Automotive Onboarding — Master`.
+
+## Canonical live master
+
+- Spreadsheet: [Automotive Onboarding — Master](https://docs.google.com/spreadsheets/d/1J_ZOrvOkijBczUgvsULNNQ9OJHoOhukmuDdgI3Varow/edit)
+- Shared Drive folder: [X-Cart Support Team / Automotive Onboarding](https://drive.google.com/drive/folders/17Jp97WeO1sT0Yr7mOTSJOd5mz0sZGvte)
+- Bound Apps Script: [Automotive Onboarding](https://script.google.com/home/projects/11zFoNe6_rezHdfUeKLlwACaihbLDUafAIaOgYYLykKZ0i0nbJk7l7kqy/edit)
+
+The Shared Drive owns the master and its bound script. The previous externally
+owned spreadsheet is retained only as a migration backup and must not be used
+to create new onboarding projects or receive future `clasp` deployments.
 
 ## Files
 
@@ -37,10 +47,10 @@ Configuration is stored in each project's `_RUNTIME_DATA!D1:E1`; English task di
 
 ## GitHub / clasp setup
 
-The repository is the source of truth. To bind it to the existing Apps Script project:
+The repository is the source of truth. To bind another checkout to the canonical Apps Script project:
 
 1. Copy `.clasp.json.example` to `.clasp.json`.
-2. Replace `PASTE_SCRIPT_ID_HERE` with the Script ID from **Apps Script → Project Settings → IDs**.
+2. Replace `PASTE_SCRIPT_ID_HERE` with the canonical Script ID shown above (or copy it from **Apps Script → Project Settings → IDs**).
 3. Run `npm install`, then authenticate locally with `npx clasp login`.
 4. Use `npm run status` before `npm run push`.
 
