@@ -1,9 +1,13 @@
 const RUNTIME = Object.freeze({
   poolSheet: 'ПУЛ ТАСКОВ',
+  checklistSheet: 'ЧЕКЛИСТ',
+  configurationSheet: 'КОНФИГУРАЦИЯ',
   translationsSheet: '_TRANSLATIONS',
   headerRow: 6,
   firstDataRow: 7,
   firstTaskRow: 8,
+  checklistHeaderRow: 6,
+  checklistFirstTaskRow: 7,
   columns: Object.freeze({id: 1, task: 2, parent: 3, dependencies: 4, applicable: 5, done: 6, comment: 7, effectiveApplicable: 8, status: 9, waitingFor: 10}),
   configKey: 'AUTOMOTIVE_RUNTIME_CONFIG_V1',
   configKeyCell: 'D1',
@@ -34,11 +38,14 @@ const SECTION_RU = Object.freeze({
 
 function onOpen() {
   SpreadsheetApp.getUi()
-    .createMenu('Automotive Runtime')
-    .addItem('Authorize and diagnose', 'authorizeAndDiagnoseRuntime')
-    .addItem('Open runtime', 'showRuntimeSidebar')
-    .addItem('Recalculate', 'recalculateRuntime')
-    .addItem('Validate model', 'showRuntimeValidation')
+    .createMenu('ЧЕКЛИСТ')
+    .addItem('Открыть чеклист', 'openChecklist')
+    .addItem('Открыть конфигурацию', 'openChecklistConfiguration')
+    .addItem('Сохранить конфигурацию и пересобрать', 'saveChecklistConfiguration')
+    .addSeparator()
+    .addItem('Обновить чеклист', 'refreshChecklist')
+    .addItem('Проверить модель', 'showRuntimeValidation')
+    .addItem('Проверить доступ', 'authorizeAndDiagnoseRuntime')
     .addToUi();
 }
 
@@ -135,6 +142,48 @@ function showRuntimeSidebar() {
   SpreadsheetApp.getUi().showSidebar(html);
 }
 
+function installChecklistWorkspace() {
+  const spreadsheet = SpreadsheetApp.getActive();
+  const checklist = ensureChecklistSheet_();
+  ensureConfigurationSheet_();
+  protectPoolSheet_();
+  refreshChecklist_();
+  spreadsheet.setActiveSheet(checklist);
+  spreadsheet.toast('Рабочая вкладка готова.', 'ЧЕКЛИСТ', 4);
+}
+
+function openChecklist() {
+  const checklist = ensureChecklistSheet_();
+  ensureConfigurationSheet_();
+  protectPoolSheet_();
+  refreshChecklist_();
+  SpreadsheetApp.getActive().setActiveSheet(checklist);
+}
+
+function openChecklistConfiguration() {
+  const sheet = ensureConfigurationSheet_();
+  SpreadsheetApp.getActive().setActiveSheet(sheet);
+}
+
+function refreshChecklist() {
+  refreshChecklist_();
+  SpreadsheetApp.getActive().toast('Данные обновлены.', 'ЧЕКЛИСТ', 3);
+}
+
+function saveChecklistConfiguration() {
+  try {
+    const config = readConfigurationSheet_();
+    saveRuntimeConfiguration(config);
+    writeConfigurationSheet_(getRuntimeConfiguration());
+    refreshChecklist_();
+    SpreadsheetApp.getActive().setActiveSheet(ensureChecklistSheet_());
+    SpreadsheetApp.getActive().toast('Конфигурация сохранена, задачи пересобраны.', 'ЧЕКЛИСТ', 5);
+  } catch (error) {
+    SpreadsheetApp.getUi().alert('Не удалось сохранить конфигурацию:\n' + formatRuntimeError_(error));
+    throw error;
+  }
+}
+
 function showRuntimeValidation() {
   const result = validateRuntimeModel();
   const text = result.ok ? 'Model is valid.' : result.errors.join('\n');
@@ -145,6 +194,11 @@ function showRuntimeValidation() {
 function onEdit(e) {
   if (!e || !e.range) return;
   const sheet = e.range.getSheet();
+  if (sheet.getName() === RUNTIME.checklistSheet) {
+    handleChecklistEdit_(e);
+    return;
+  }
+  if (sheet.getName() === RUNTIME.configurationSheet) return;
   if (sheet.getName() !== RUNTIME.poolSheet || e.range.getRow() < RUNTIME.firstTaskRow) return;
   if (e.range.getNumRows() !== 1 || e.range.getNumColumns() !== 1) {
     recalculateRuntime();
@@ -170,6 +224,271 @@ function onEdit(e) {
   }
 
   recalculateRuntime();
+}
+
+function handleChecklistEdit_(e) {
+  const sheet = e.range.getSheet();
+  if (e.range.getA1Notation() === 'H2') {
+    const language = String(e.range.getDisplayValue()).toUpperCase();
+    if (language !== 'RU' && language !== 'EN') e.range.setValue('RU');
+    refreshChecklist_();
+    return;
+  }
+  if (e.range.getRow() < RUNTIME.checklistFirstTaskRow) return;
+  if (e.range.getNumRows() !== 1 || e.range.getNumColumns() !== 1) {
+    refreshChecklist_();
+    SpreadsheetApp.getActive().toast('Вставка диапазона отменена. Изменяйте одну задачу за раз.', 'ЧЕКЛИСТ', 5);
+    return;
+  }
+
+  const column = e.range.getColumn();
+  if ([5, 6, 7].indexOf(column) < 0) {
+    refreshChecklist_();
+    SpreadsheetApp.getActive().toast('Редактируются только Актуален, DONE и Комментарий.', 'ЧЕКЛИСТ', 5);
+    return;
+  }
+
+  const taskId = String(sheet.getRange(e.range.getRow(), 1).getDisplayValue() || '').trim();
+  if (!taskId) {
+    refreshChecklist_();
+    return;
+  }
+
+  const patch = {language: checklistLanguage_(sheet)};
+  if (column === 5) patch.applicable = String(e.range.getDisplayValue()) === RUNTIME.no ? RUNTIME.no : RUNTIME.yes;
+  if (column === 6) patch.done = String(e.value) === 'TRUE';
+  if (column === 7) patch.comment = String(e.range.getValue() || '');
+
+  try {
+    updateTaskFromSidebar(taskId, patch);
+  } catch (error) {
+    SpreadsheetApp.getActive().toast(formatRuntimeError_(error), 'Изменение отклонено', 7);
+  }
+  refreshChecklist_();
+}
+
+function refreshChecklist_() {
+  recalculateRuntime();
+  const state = readOperationalState_();
+  const translations = readTranslations_();
+  const sheet = ensureChecklistSheet_();
+  const language = checklistLanguage_(sheet);
+  const tasks = state.tasks.map(function (task) {
+    const translated = translations[task.id] || {};
+    return {
+      id: task.id,
+      title: language === 'ru' ? (translated.ru || task.title) : (translated.en || task.title),
+      section: language === 'ru' ? (SECTION_RU[task.section] || task.section) : task.section,
+      status: task.status,
+      applicable: task.localApplicable,
+      done: task.done,
+      comment: task.comment,
+      waitingFor: task.waitingFor
+    };
+  });
+
+  const availableRows = sheet.getMaxRows() - RUNTIME.checklistFirstTaskRow + 1;
+  if (tasks.length > availableRows) sheet.insertRowsAfter(sheet.getMaxRows(), tasks.length - availableRows);
+  const clearRows = sheet.getMaxRows() - RUNTIME.checklistFirstTaskRow + 1;
+  sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, clearRows, 8).clearContent().clearDataValidations();
+
+  if (tasks.length) {
+    const values = tasks.map(function (task) {
+      return [task.id, task.title, task.section, task.status, task.applicable, Boolean(task.done), task.comment, task.waitingFor];
+    });
+    const target = sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, values.length, 8);
+    sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, values.length, 3).setNumberFormat('@');
+    sheet.getRange(RUNTIME.checklistFirstTaskRow, 5, values.length, 1).setDataValidation(
+      SpreadsheetApp.newDataValidation().requireValueInList([RUNTIME.yes, RUNTIME.no], true).setAllowInvalid(false).build()
+    );
+    sheet.getRange(RUNTIME.checklistFirstTaskRow, 6, values.length, 1).insertCheckboxes();
+    target.setValues(values).setVerticalAlignment('middle');
+    sheet.getRange(RUNTIME.checklistFirstTaskRow, 2, values.length, 2).setWrap(true);
+    sheet.getRange(RUNTIME.checklistFirstTaskRow, 7, values.length, 2).setWrap(true);
+  }
+
+  const counts = countStatuses_(tasks);
+  sheet.getRange('A3:H3').setValues([[
+    'МОЖНО СЕЙЧАС', counts.READY || 0,
+    'ЖДУТ', (counts.WAITING || 0) + (counts.BLOCKED || 0),
+    'НЕАКТИВНЫ', counts.INACTIVE || 0,
+    'ГОТОВО', counts.DONE || 0
+  ]]);
+}
+
+function ensureChecklistSheet_() {
+  const spreadsheet = SpreadsheetApp.getActive();
+  let sheet = spreadsheet.getSheetByName(RUNTIME.checklistSheet);
+  const created = !sheet;
+  if (!sheet) sheet = spreadsheet.insertSheet(RUNTIME.checklistSheet);
+  if (sheet.getMaxColumns() < 8) sheet.insertColumnsAfter(sheet.getMaxColumns(), 8 - sheet.getMaxColumns());
+  if (sheet.getMaxRows() < 1000) sheet.insertRowsAfter(sheet.getMaxRows(), 1000 - sheet.getMaxRows());
+
+  if (created || sheet.getRange('A1').getDisplayValue() !== RUNTIME.checklistSheet) {
+    sheet.clear();
+    sheet.getRange('A1:H1').merge().setValue(RUNTIME.checklistSheet)
+      .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
+    sheet.setRowHeight(1, 46);
+    sheet.getRange('G2').setValue('Язык').setFontWeight('bold');
+    sheet.getRange('H2').setValue('RU').setDataValidation(
+      SpreadsheetApp.newDataValidation().requireValueInList(['RU', 'EN'], true).setAllowInvalid(false).build()
+    );
+    sheet.getRange('A5:H5').merge().setValue('Используйте фильтры в строке заголовков. Редактируются только Актуален, DONE и Комментарий.')
+      .setBackground('#f4f6f8').setFontColor('#667085');
+    sheet.getRange('A6:H6').setValues([['Task ID', 'Таск', 'Раздел', 'Статус', 'Актуален', 'DONE', 'Комментарий', 'Ждёт']])
+      .setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
+    sheet.setFrozenRows(RUNTIME.checklistHeaderRow);
+    sheet.setHiddenGridlines(true);
+    sheet.setColumnWidth(1, 90);
+    sheet.setColumnWidth(2, 360);
+    sheet.setColumnWidth(3, 250);
+    sheet.setColumnWidth(4, 100);
+    sheet.setColumnWidth(5, 100);
+    sheet.setColumnWidth(6, 70);
+    sheet.setColumnWidth(7, 360);
+    sheet.setColumnWidth(8, 240);
+    sheet.setTabColor('#356853');
+    ensureChecklistFormatting_(sheet);
+  }
+  if (!sheet.getFilter()) sheet.getRange(RUNTIME.checklistHeaderRow, 1, sheet.getMaxRows() - RUNTIME.checklistHeaderRow + 1, 8).createFilter();
+  return sheet;
+}
+
+function ensureChecklistFormatting_(sheet) {
+  const range = sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, sheet.getMaxRows() - RUNTIME.checklistFirstTaskRow + 1, 8);
+  const rule = function (status, color, fontColor, strike) {
+    let builder = SpreadsheetApp.newConditionalFormatRule()
+      .whenFormulaSatisfied('=$D' + RUNTIME.checklistFirstTaskRow + '="' + status + '"')
+      .setBackground(color)
+      .setRanges([range]);
+    if (fontColor) builder = builder.setFontColor(fontColor);
+    if (strike) builder = builder.setStrikethrough(true);
+    return builder.build();
+  };
+  sheet.setConditionalFormatRules([
+    rule('READY', '#ddefe3', '#202536', false),
+    rule('WAITING', '#fff0cc', '#202536', false),
+    rule('BLOCKED', '#f9d7d7', '#a52626', false),
+    rule('INACTIVE', '#e8ecf1', '#737c8c', true),
+    rule('DONE', '#dbe7ff', '#3c4962', false)
+  ]);
+}
+
+function checklistLanguage_(sheet) {
+  return String(sheet.getRange('H2').getDisplayValue()).toUpperCase() === 'EN' ? 'en' : 'ru';
+}
+
+function ensureConfigurationSheet_() {
+  const spreadsheet = SpreadsheetApp.getActive();
+  let sheet = spreadsheet.getSheetByName(RUNTIME.configurationSheet);
+  if (sheet) return sheet;
+  sheet = spreadsheet.insertSheet(RUNTIME.configurationSheet);
+  sheet.setHiddenGridlines(true);
+  sheet.setFrozenRows(3);
+  sheet.setColumnWidth(1, 250);
+  sheet.setColumnWidth(2, 420);
+  sheet.setColumnWidth(3, 420);
+  sheet.setTabColor('#667085');
+  sheet.getRange('A1:C1').merge().setValue(RUNTIME.configurationSheet)
+    .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
+  sheet.getRange('A3:C3').setValues([['Параметр', 'Значение', 'Формат / назначение']])
+    .setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
+  sheet.getRange('A4:C19').setValues([
+    ['Automotive integrations', '', 'По одному на строку: CODE|Display name'],
+    ['Payment gateways', '', 'По одному на строку: CODE|Display name'],
+    ['Carriers', '', 'По одному на строку: CODE|Display name'],
+    ['Tax services', '', 'По одному на строку: CODE|Display name'],
+    ['QA products', '', 'По одному на строку: CODE|Display name'],
+    ['E2E scenarios', '', 'По одному на строку: CODE|Display name'],
+    ['Source: manual', false, 'Независимый ручной источник'],
+    ['Source: CSV', false, 'Независимый CSV-источник'],
+    ['Source: supplier feed', false, 'Независимый фид поставщика'],
+    ['Shipping: flat rate', false, 'Фиксированная стоимость'],
+    ['Shipping: supplier rate', false, 'Тариф поставщика'],
+    ['Shipping: free shipping', false, 'Бесплатная доставка'],
+    ['Shipping: pickup', false, 'Самовывоз'],
+    ['Multiple sources overlap', false, 'Есть пересечение источников хотя бы в одном домене'],
+    ['MMY / fitment applies', false, 'Для проекта применим MMY / fitment'],
+    ['Turn14 integration code', '', 'Код должен совпадать с одной из integrations']
+  ]);
+  sheet.getRange('B4:B9').setNumberFormat('@').setWrap(true);
+  sheet.getRange('B10:B18').insertCheckboxes();
+  sheet.getRange('A4:A19').setFontWeight('bold');
+  sheet.getRange('A4:C19').setVerticalAlignment('top');
+  writeConfigurationSheet_(getRuntimeConfiguration());
+  return sheet;
+}
+
+function readConfigurationSheet_() {
+  const sheet = ensureConfigurationSheet_();
+  const values = sheet.getRange('B4:B19').getValues();
+  const parseItems = function (value) {
+    return String(value || '').split(/\r?\n/).map(function (line) { return line.trim(); }).filter(Boolean).map(function (line) {
+      const parts = line.split('|');
+      return {code: String(parts.shift() || '').trim(), name: String(parts.join('|') || '').trim()};
+    });
+  };
+  const sourceTypes = [];
+  if (values[6][0] === true) sourceTypes.push('manual');
+  if (values[7][0] === true) sourceTypes.push('csv');
+  if (values[8][0] === true) sourceTypes.push('supplier_feed');
+  const shippingMethods = [];
+  if (values[9][0] === true) shippingMethods.push('flat_rate');
+  if (values[10][0] === true) shippingMethods.push('supplier_rate');
+  if (values[11][0] === true) shippingMethods.push('free_shipping');
+  if (values[12][0] === true) shippingMethods.push('pickup');
+  return {
+    integrations: parseItems(values[0][0]),
+    payment_gateways: parseItems(values[1][0]),
+    carriers: parseItems(values[2][0]),
+    tax_services: parseItems(values[3][0]),
+    qa_products: parseItems(values[4][0]),
+    e2e_scenarios: parseItems(values[5][0]),
+    sourceTypes: sourceTypes,
+    shippingMethods: shippingMethods,
+    sourceOverlap: values[13][0] === true,
+    fitment: values[14][0] === true,
+    turn14IntegrationCode: String(values[15][0] || '')
+  };
+}
+
+function writeConfigurationSheet_(config) {
+  const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.configurationSheet);
+  if (!sheet) return;
+  const formatItems = function (items) {
+    return (items || []).map(function (item) { return item.code + '|' + item.name; }).join('\n');
+  };
+  const sources = config.sourceTypes || [];
+  const shipping = config.shippingMethods || [];
+  sheet.getRange('B4:B19').setValues([
+    [formatItems(config.integrations)],
+    [formatItems(config.payment_gateways)],
+    [formatItems(config.carriers)],
+    [formatItems(config.tax_services)],
+    [formatItems(config.qa_products)],
+    [formatItems(config.e2e_scenarios)],
+    [sources.indexOf('manual') >= 0],
+    [sources.indexOf('csv') >= 0],
+    [sources.indexOf('supplier_feed') >= 0],
+    [shipping.indexOf('flat_rate') >= 0],
+    [shipping.indexOf('supplier_rate') >= 0],
+    [shipping.indexOf('free_shipping') >= 0],
+    [shipping.indexOf('pickup') >= 0],
+    [Boolean(config.sourceOverlap)],
+    [Boolean(config.fitment)],
+    [config.turn14IntegrationCode || '']
+  ]);
+}
+
+function protectPoolSheet_() {
+  const sheet = getPoolSheet_();
+  const description = 'TECHNICAL_TASK_POOL_DO_NOT_EDIT';
+  const protections = sheet.getProtections(SpreadsheetApp.ProtectionType.SHEET);
+  let protection = protections.filter(function (item) { return item.getDescription() === description; })[0];
+  if (!protection) protection = sheet.protect().setDescription(description);
+  protection.setWarningOnly(true);
+  sheet.setTabColor('#98a2b3');
+  sheet.getRange('A1').setNote('Техническая вкладка. Работайте через ЧЕКЛИСТ.');
 }
 
 function getRuntimeState(language) {
