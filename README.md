@@ -6,6 +6,8 @@ Container-bound Google Apps Script for the spreadsheet `Automotive Onboarding �
 
 - `Code.gs` — runtime, dependency enforcement, capabilities/gates, branch instantiation, validation, and the native Google Sheets workspace.
 - `RuntimeModel.gs` — the 299 operator task templates reconstructed from spreadsheet revision 162. The 13 internal graph nodes are not operator tasks.
+- `RuntimeMigrations.gs` — runtime/model compatibility checks and sequential, preservation-checked migrations.
+- `ProjectFactory.gs` — clean-master creation, independent project copies, metadata, and the central project registry.
 - `Sidebar.html` — retained only as a legacy compatibility file; the working interface is no longer a sidebar.
 - `appsscript.json` — V8 manifest.
 
@@ -42,6 +44,39 @@ The repository is the source of truth. To bind it to the existing Apps Script pr
 4. Use `npm run status` before `npm run push`.
 
 `.clasp.json` contains a project identifier rather than credentials, but it is ignored by Git to avoid accidentally binding a fork to the live project. Never commit `.clasprc.json`; it contains OAuth credentials.
+
+## Edit performance
+
+Normal edits no longer call the full checklist rebuild:
+
+- a comment resolves its stable Task ID and writes one pool cell;
+- DONE and user-controlled applicability read the pool once, calculate the graph in memory, and write only changed rows;
+- formatting, conditional formatting, filters, checkboxes, and validations are not recreated by the fast path;
+- a document lock serializes short edits, while cached Task ID row maps are versioned and verified before use.
+
+A full `refreshChecklist_()` remains available for configuration, language/model changes, explicit refresh, migration, and incompatible sheet layouts. See [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md) for the baseline call path and measurement boundaries.
+
+## Safe live update
+
+Do not push a new runtime directly into the working spreadsheet first.
+
+1. Make a Google Drive copy of the working spreadsheet.
+2. Bind a separate local checkout to the copy's Script ID.
+3. Run `npm test`, `npm run status`, then `npm run push -- --force` against the copy.
+4. Open the copy, approve the new Drive/Sheets scopes, and run **ЧЕКЛИСТ → Проверить совместимость runtime**.
+5. Run **Применить миграции runtime** only when requested.
+6. Verify the configuration JSON and compare DONE/comment values by Task ID before and after migration.
+7. Measure a comment edit, DONE on/off, and a manual refresh in Apps Script **Executions**. Local Node.js timings do not measure Google service latency.
+8. Exercise dependency unlock/relock, INACTIVE dependencies, user applicability, language change, and configuration rebuild in the copy.
+9. Only after those checks pass, bind `clasp` to the live Script ID, confirm `clasp show-file-status`, push the reviewed commit, and apply the same migration procedure.
+
+The factory requires full Google Sheets and Drive scopes to initialize a copied spreadsheet. No OAuth client secret or token belongs in this repository.
+
+## Multiple onboarding projects
+
+Use **Создать чистую мастер-копию** once to produce a clean, current master in a selected Drive folder. From that master, use **Создать onboarding-проект** for each independent project. The copy receives its own task pool, configuration, statuses, comments, dynamic branches, metadata, and bound script. The master records the copy in `ПРОЕКТЫ`.
+
+The copied container-bound Script ID is intentionally left blank in the registry because Spreadsheet/Drive services do not expose it reliably. Fill it manually from **Apps Script → Project Settings → IDs** when needed. Detailed creation, migration, update, and recovery instructions are in [`docs/PROJECT_FACTORY.md`](docs/PROJECT_FACTORY.md).
 
 ## Configuration model
 

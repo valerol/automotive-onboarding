@@ -16,6 +16,8 @@ const RUNTIME = Object.freeze({
   fastPathProperty: 'AUTOMOTIVE_FAST_PATH_VERSION',
   modelVersionProperty: 'AUTOMOTIVE_MODEL_VERSION',
   rowIndexCacheKey: 'AUTOMOTIVE_ROW_INDEX_V1',
+  runtimeVersion: 2,
+  runtimeVersionProperty: 'AUTOMOTIVE_RUNTIME_VERSION',
   yes: 'ДА',
   no: 'НЕТ',
   statuses: Object.freeze({inactive: 'INACTIVE', done: 'DONE', blocked: 'BLOCKED', ready: 'READY', waiting: 'WAITING'})
@@ -161,6 +163,11 @@ function onOpen() {
     )
     .addItem('Проверить модель', 'showRuntimeValidation')
     .addItem('Проверить доступ', 'authorizeAndDiagnoseRuntime')
+    .addSeparator()
+    .addItem('Проверить совместимость runtime', 'showRuntimeCompatibility')
+    .addItem('Применить миграции runtime', 'migrateRuntime')
+    .addItem('Создать onboarding-проект', 'promptCreateOnboardingProject')
+    .addItem('Создать чистую мастер-копию', 'promptCreateCleanMasterTemplate')
     .addToUi();
 
   try {
@@ -168,6 +175,19 @@ function onOpen() {
     if (sheet) repairChecklistFilterControl_(sheet);
   } catch (ignored) {
     // The menu must remain available even if a read-only session blocks repair.
+  }
+
+  try {
+    const compatibility = getRuntimeCompatibility();
+    if (!compatibility.ok) {
+      SpreadsheetApp.getActive().toast(
+        'Требуется миграция runtime: ' + compatibility.storedRuntimeVersion + ' → ' + compatibility.runtimeVersion,
+        'Automotive Runtime',
+        8
+      );
+    }
+  } catch (ignored) {
+    // Compatibility diagnostics must not prevent the spreadsheet from opening.
   }
 }
 
@@ -447,6 +467,7 @@ function markRuntimeFastPathCompatible_() {
     const values = {};
     values[RUNTIME.fastPathProperty] = RUNTIME.fastPathVersion;
     values[RUNTIME.modelVersionProperty] = RUNTIME_MODEL.version;
+    values[RUNTIME.runtimeVersionProperty] = String(RUNTIME.runtimeVersion);
     return values;
   })());
 }
@@ -755,8 +776,8 @@ function createRuntimeTimer_(name) {
   };
 }
 
-function refreshChecklist_() {
-  recalculateRuntime();
+function refreshChecklist_(lockAlreadyHeld) {
+  recalculateRuntime(Boolean(lockAlreadyHeld));
   const state = readOperationalState_();
   const translations = readTranslations_();
   const sheet = ensureChecklistSheet_();
@@ -1414,10 +1435,11 @@ function saveRuntimeConfiguration(config) {
   return getRuntimeState('en');
 }
 
-function recalculateRuntime() {
+function recalculateRuntime(lockAlreadyHeld) {
   if (!isConfigured_()) return;
   const lock = LockService.getDocumentLock();
-  if (!lock.tryLock(30000)) throw new Error('Runtime is busy. Try again.');
+  const ownsLock = !lockAlreadyHeld;
+  if (ownsLock && !lock.tryLock(30000)) throw new Error('Runtime is busy. Try again.');
   try {
     const sheet = getPoolSheet_();
     const state = readOperationalState_();
@@ -1489,7 +1511,7 @@ function recalculateRuntime() {
     });
     updateCounters_(sheet, output);
   } finally {
-    lock.releaseLock();
+    if (ownsLock) lock.releaseLock();
   }
 }
 
