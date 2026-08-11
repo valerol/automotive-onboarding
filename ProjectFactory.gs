@@ -405,15 +405,22 @@ function renderEnglishInstructions_(spreadsheet) {
     ['Recovery', 'If creation fails, verify folder access and retry. Failed partial copies are moved to Trash and logged in PROJECTS.']
   ];
   sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();
-  sheet.clearContents();
+  sheet.clear();
   if (sheet.getMaxRows() < rows.length) sheet.insertRowsAfter(sheet.getMaxRows(), rows.length - sheet.getMaxRows());
   if (sheet.getMaxColumns() < 2) sheet.insertColumnsAfter(sheet.getMaxColumns(), 2 - sheet.getMaxColumns());
   sheet.getRange(1, 1, rows.length, 2).setValues(rows).setVerticalAlignment('top');
   sheet.getRange('A1:B1').merge().setBackground('#29375f').setFontColor('#ffffff').setFontSize(18).setFontWeight('bold');
   sheet.getRange(2, 1, rows.length - 1, 1).setFontWeight('bold').setBackground('#e9edf5');
-  sheet.getRange(2, 2, rows.length - 1, 1).setWrap(true);
+  sheet.getRange(2, 2, rows.length - 1, 1).setBackground('#ffffff').setWrap(true);
+  sheet.getRange(2, 1, rows.length - 1, 2).setBorder(
+    true, true, true, true, true, true,
+    '#d5dbe7',
+    SpreadsheetApp.BorderStyle.SOLID
+  );
   sheet.setColumnWidth(1, 190);
   sheet.setColumnWidth(2, 720);
+  sheet.setRowHeight(1, 42);
+  sheet.autoResizeRows(2, rows.length - 1);
   sheet.setFrozenRows(1);
   sheet.setHiddenGridlines(true);
   sheet.setTabColor('#3b82f6');

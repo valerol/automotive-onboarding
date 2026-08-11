@@ -69,6 +69,10 @@ assert.match(factorySource, /resetOnboardingSpreadsheet_/);
 assert.match(factorySource, /appendProjectRegistry_/);
 assert.match(factorySource, /ScriptApp\.newTrigger\('centralProjectOnEdit'\)/);
 assert.match(factorySource, /\.forSpreadsheet\(spreadsheetId\)/);
+assert.match(codeSource, /function refreshInstructionSheet\(\)/);
+assert.match(factorySource, /sheet\.clear\(\)/);
+assert.match(factorySource, /sheet\.autoResizeRows\(2, rows\.length - 1\)/);
+assert.match(factorySource, /SpreadsheetApp\.BorderStyle\.SOLID/);
 assert.doesNotMatch(factorySource, /token|secret|password/i);
 
 assert.deepEqual(Array.from(api.PROJECT_FACTORY.registryHeaders), [

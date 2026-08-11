@@ -282,6 +282,10 @@ function authorizeCentralProjectRuntime() {
   };
 }
 
+function refreshInstructionSheet() {
+  return renderEnglishInstructions_(runtimeSpreadsheet_());
+}
+
 function getRuntimeDiagnostics() {
   const result = {
     ok: false,
