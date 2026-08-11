@@ -363,6 +363,30 @@ function refreshChecklist() {
   runtimeToast_('Data refreshed.', 'CHECKLIST', 3);
 }
 
+function repairRuntimeData() {
+  const lock = runtimeLock_();
+  lock.waitLock(30000);
+  let backupName = '';
+  try {
+    const spreadsheet = runtimeSpreadsheet_();
+    const pool = getPoolSheet_();
+    backupName = 'TASK POOL RECOVERY ' + Utilities.formatDate(new Date(), spreadsheet.getSpreadsheetTimeZone(), 'yyyyMMdd HHmmss');
+    pool.copyTo(spreadsheet).setName(backupName).hideSheet();
+    const config = getRuntimeConfiguration();
+    rebuildOperationalPool_(config);
+    refreshChecklist_(true);
+    const state = readOperationalState_(config);
+    writeProjectMetadata_(spreadsheet, {
+      runtimeVersion: RUNTIME.runtimeVersion,
+      modelVersion: RUNTIME_MODEL.version,
+      migrationStatus: 'CURRENT'
+    });
+    return {ok: true, taskCount: state.tasks.length, backupSheet: backupName};
+  } finally {
+    lock.releaseLock();
+  }
+}
+
 function showReadyTasks() {
   const sheet = ensureChecklistSheet_();
   refreshChecklist_();
@@ -1817,29 +1841,49 @@ function rebuildOperationalPool_(config) {
 
   const taskFormat = sheet.getRange(RUNTIME.firstTaskRow, 1, 1, 10);
   const sectionFormat = sheet.getRange(RUNTIME.firstDataRow, 1, 1, 10);
+  const values = output.map(function (item) {
+    return item.sectionHeader
+      ? ['', item.section, '', '', '', '', '', '', '', '']
+      : [item.id, item.title, item.parent || '', item.dependencies.join(', '), item.localApplicable,
+        Boolean(item.done), item.commentValue || '', '', '', ''];
+  });
+  const body = sheet.getRange(RUNTIME.firstDataRow, 1, output.length, 10);
+  const applicableRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList([RUNTIME.yes, RUNTIME.no], true)
+    .setAllowInvalid(false)
+    .build();
+  const sectionRows = [];
+  const taskBlocks = [];
   let row = RUNTIME.firstDataRow;
+  let taskBlockStart = 0;
+  const flushTaskBlock = function (endRow) {
+    if (!taskBlockStart) return;
+    taskBlocks.push({row: taskBlockStart, count: endRow - taskBlockStart});
+    taskBlockStart = 0;
+  };
   output.forEach(function (item) {
     if (item.sectionHeader) {
-      sectionFormat.copyTo(sheet.getRange(row, 1, 1, 10), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
-      sheet.getRange(row, 2).setValue(item.section);
-      sheet.getRange(row, 2, 1, 9).merge();
-    } else {
-      taskFormat.copyTo(sheet.getRange(row, 1, 1, 10), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
-      // IDs such as 01-05 must stay identifiers. Without an explicit text
-      // format Google Sheets converts them to dates, breaking dependency
-      // lookup and sidebar writes.
-      sheet.getRange(row, 1, 1, 4).setNumberFormat('@');
-      sheet.getRange(row, RUNTIME.columns.waitingFor).setNumberFormat('@');
-      sheet.getRange(row, 1, 1, 7).setValues([[
-        item.id, item.title, item.parent || '', item.dependencies.join(', '), item.localApplicable,
-        Boolean(item.done), item.commentValue || ''
-      ]]);
-      sheet.getRange(row, RUNTIME.columns.applicable).setDataValidation(
-        SpreadsheetApp.newDataValidation().requireValueInList([RUNTIME.yes, RUNTIME.no], true).setAllowInvalid(false).build()
-      );
-      sheet.getRange(row, RUNTIME.columns.done).insertCheckboxes();
+      flushTaskBlock(row);
+      sectionRows.push(row);
+    } else if (!taskBlockStart) {
+      taskBlockStart = row;
     }
     row++;
+  });
+  flushTaskBlock(row);
+  taskBlocks.forEach(function (block) {
+    taskFormat.copyTo(sheet.getRange(block.row, 1, block.count, 10), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+  });
+  sectionRows.forEach(function (sectionRow) {
+    sectionFormat.copyTo(sheet.getRange(sectionRow, 1, 1, 10), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+  });
+  sheet.getRange(RUNTIME.firstDataRow, 1, output.length, 4).setNumberFormat('@');
+  sheet.getRange(RUNTIME.firstDataRow, RUNTIME.columns.waitingFor, output.length, 1).setNumberFormat('@');
+  body.setValues(values);
+  sectionRows.forEach(function (sectionRow) { sheet.getRange(sectionRow, 2, 1, 9).merge(); });
+  taskBlocks.forEach(function (block) {
+    sheet.getRange(block.row, RUNTIME.columns.applicable, block.count, 1).setDataValidation(applicableRule);
+    sheet.getRange(block.row, RUNTIME.columns.done, block.count, 1).insertCheckboxes();
   });
   refreshTranslations_(tasks);
   sheet.getRange(RUNTIME.firstDataRow, 1, output.length, 10).setVerticalAlignment('middle');
@@ -1946,13 +1990,17 @@ function readOperationalState_(config) {
   const lastRow = Math.max(sheet.getLastRow(), RUNTIME.firstTaskRow);
   const range = sheet.getRange(RUNTIME.firstDataRow, 1, lastRow - RUNTIME.firstDataRow + 1, 10);
   const values = range.getValues();
+  // IDs may have been interpreted as dates by older workbook versions.
+  // Display values retain the intended 01-01-style identifiers, while raw
+  // Date objects stringify to long timezone-dependent JavaScript strings.
+  const displayValues = range.getDisplayValues();
   const model = instantiateModel_(config || getRuntimeConfiguration());
   const metadata = {};
   model.forEach(function (task) { metadata[task.id] = task; });
   let section = '';
   const tasks = [];
   values.forEach(function (row, index) {
-    const displayRow = row.map(function (value) { return value == null ? '' : String(value); });
+    const displayRow = displayValues[index].map(function (value) { return value == null ? '' : String(value); });
     const sheetRow = RUNTIME.firstDataRow + index;
     if (!displayRow[0] && displayRow[1]) { section = String(displayRow[1]); return; }
     if (!displayRow[0]) return;

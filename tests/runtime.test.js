@@ -162,6 +162,8 @@ function testCentralRuntimeSourceGuards() {
   assert.match(codeSource, /LockService\.getScriptLock\(\)/);
   assert.match(codeSource, /function handleConfigurationEdit_\(e\)/);
   assert.match(codeSource, /requireValueInList\(\['ALL'\]\.concat\(CHECKLIST_FILTER\.statuses\)/);
+  assert.match(codeSource, /const displayValues = range\.getDisplayValues\(\)/);
+  assert.match(codeSource, /const values = output\.map/);
   assert.doesNotMatch(codeSource, /getDocumentProperties|getDocumentCache|getDocumentLock/);
 }
 

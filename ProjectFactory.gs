@@ -449,28 +449,50 @@ function writeCleanOperationalPool_(spreadsheet, config) {
 
   const taskFormat = sheet.getRange(RUNTIME.firstTaskRow, 1, 1, 10);
   const sectionFormat = sheet.getRange(RUNTIME.firstDataRow, 1, 1, 10);
+  const values = output.map(function (item) {
+    return item.sectionHeader
+      ? ['', item.section, '', '', '', '', '', '', '', '']
+      : [item.id, item.title, item.parent || '', item.dependencies.join(', '), item.localApplicable,
+        false, item.commentValue || '', '', '', ''];
+  });
+  const applicableRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList([RUNTIME.yes, RUNTIME.no], true)
+    .setAllowInvalid(false)
+    .build();
   const stateTasks = [];
+  const sectionRows = [];
+  const taskBlocks = [];
   let row = RUNTIME.firstDataRow;
+  let taskBlockStart = 0;
+  const flushTaskBlock = function (endRow) {
+    if (!taskBlockStart) return;
+    taskBlocks.push({row: taskBlockStart, count: endRow - taskBlockStart});
+    taskBlockStart = 0;
+  };
   output.forEach(function (item) {
     if (item.sectionHeader) {
-      sectionFormat.copyTo(sheet.getRange(row, 1, 1, 10), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
-      sheet.getRange(row, 2).setValue(item.section);
-      sheet.getRange(row, 2, 1, 9).merge();
+      flushTaskBlock(row);
+      sectionRows.push(row);
     } else {
-      taskFormat.copyTo(sheet.getRange(row, 1, 1, 10), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
-      sheet.getRange(row, 1, 1, 4).setNumberFormat('@');
-      sheet.getRange(row, RUNTIME.columns.waitingFor).setNumberFormat('@');
-      sheet.getRange(row, 1, 1, 7).setValues([[
-        item.id, item.title, item.parent || '', item.dependencies.join(', '), item.localApplicable,
-        false, item.commentValue || ''
-      ]]);
-      sheet.getRange(row, RUNTIME.columns.applicable).setDataValidation(
-        SpreadsheetApp.newDataValidation().requireValueInList([RUNTIME.yes, RUNTIME.no], true).setAllowInvalid(false).build()
-      );
-      sheet.getRange(row, RUNTIME.columns.done).insertCheckboxes();
+      if (!taskBlockStart) taskBlockStart = row;
       stateTasks.push(runtimeTaskFromModel_(item, row));
     }
     row++;
+  });
+  flushTaskBlock(row);
+  taskBlocks.forEach(function (block) {
+    taskFormat.copyTo(sheet.getRange(block.row, 1, block.count, 10), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+  });
+  sectionRows.forEach(function (sectionRow) {
+    sectionFormat.copyTo(sheet.getRange(sectionRow, 1, 1, 10), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+  });
+  sheet.getRange(RUNTIME.firstDataRow, 1, output.length, 4).setNumberFormat('@');
+  sheet.getRange(RUNTIME.firstDataRow, RUNTIME.columns.waitingFor, output.length, 1).setNumberFormat('@');
+  sheet.getRange(RUNTIME.firstDataRow, 1, output.length, 10).setValues(values);
+  sectionRows.forEach(function (sectionRow) { sheet.getRange(sectionRow, 2, 1, 9).merge(); });
+  taskBlocks.forEach(function (block) {
+    sheet.getRange(block.row, RUNTIME.columns.applicable, block.count, 1).setDataValidation(applicableRule);
+    sheet.getRange(block.row, RUNTIME.columns.done, block.count, 1).insertCheckboxes();
   });
   const calculated = calculateRuntimeGraph_(stateTasks, config);
   writeContiguousTaskBlocks_(sheet, calculated.tasks, RUNTIME.columns.effectiveApplicable, 2, function (task) {
