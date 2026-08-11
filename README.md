@@ -11,6 +11,8 @@ Container-bound Google Apps Script for the canonical spreadsheet `Automotive Onb
 The Shared Drive owns the master and its bound script. The previous externally
 owned spreadsheet is retained only as a migration backup and must not be used
 to create new onboarding projects or receive future `clasp` deployments.
+Existing test projects and their installed triggers remain attached to that
+legacy backup; they were intentionally not migrated to the canonical runtime.
 
 ## Files
 

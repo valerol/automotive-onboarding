@@ -10,6 +10,11 @@ The canonical control spreadsheet is `Automotive Onboarding — Master` in
 bound Apps Script are owned by that Shared Drive. Do not use the externally
 owned migration backup as a project factory.
 
+The Shared Drive migration starts a new central trigger namespace. Existing
+test projects and their triggers stay with the legacy backup. Create all new
+projects from the canonical master; do not copy registry Trigger IDs from the
+legacy master into the new script.
+
 The factory creates a new Google Spreadsheet, copies only the sheets and their
 data/formatting, resets operational state, and installs `centralProjectOnEdit`
 for the new spreadsheet. The new spreadsheet has no bound Apps Script project.
