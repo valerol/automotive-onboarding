@@ -733,8 +733,8 @@ function ensureConfigurationSheet_() {
     .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
   sheet.getRange('A3:C3').setValues([['Параметр', 'Значение', 'Формат / назначение']])
     .setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
-  sheet.getRange('A4:C19').setValues([
-    ['Automotive integrations', '', 'По одному на строку: CODE|Display name'],
+  sheet.getRange('A4:C18').setValues([
+    ['Automotive integrations', '', 'CODE|Название, по одному на строку. Turn14: T14|Turn14'],
     ['Payment gateways', '', 'По одному на строку: CODE|Display name'],
     ['Carriers', '', 'По одному на строку: CODE|Display name'],
     ['Tax services', '', 'По одному на строку: CODE|Display name'],
@@ -748,20 +748,19 @@ function ensureConfigurationSheet_() {
     ['Shipping: free shipping', false, 'Бесплатная доставка'],
     ['Shipping: pickup', false, 'Самовывоз'],
     ['Multiple sources overlap', false, 'Есть пересечение источников хотя бы в одном домене'],
-    ['MMY / fitment applies', false, 'Для проекта применим MMY / fitment'],
-    ['Turn14 integration code', '', 'Код должен совпадать с одной из integrations']
+    ['MMY / fitment applies', false, 'Для проекта применим MMY / fitment']
   ]);
   sheet.getRange('B4:B9').setNumberFormat('@').setWrap(true);
   sheet.getRange('B10:B18').insertCheckboxes();
-  sheet.getRange('A4:A19').setFontWeight('bold');
-  sheet.getRange('A4:C19').setVerticalAlignment('top');
+  sheet.getRange('A4:A18').setFontWeight('bold');
+  sheet.getRange('A4:C18').setVerticalAlignment('top');
   writeConfigurationSheet_(getRuntimeConfiguration());
   return sheet;
 }
 
 function readConfigurationSheet_() {
   const sheet = ensureConfigurationSheet_();
-  const values = sheet.getRange('B4:B19').getValues();
+  const values = sheet.getRange('B4:B18').getValues();
   const parseItems = function (value) {
     return String(value || '').split(/\r?\n/).map(function (line) { return line.trim(); }).filter(Boolean).map(function (line) {
       const parts = line.split('|');
@@ -787,8 +786,7 @@ function readConfigurationSheet_() {
     sourceTypes: sourceTypes,
     shippingMethods: shippingMethods,
     sourceOverlap: values[13][0] === true,
-    fitment: values[14][0] === true,
-    turn14IntegrationCode: String(values[15][0] || '')
+    fitment: values[14][0] === true
   };
 }
 
@@ -800,7 +798,7 @@ function writeConfigurationSheet_(config) {
   };
   const sources = config.sourceTypes || [];
   const shipping = config.shippingMethods || [];
-  sheet.getRange('B4:B19').setValues([
+  sheet.getRange('B4:B18').setValues([
     [formatItems(config.integrations)],
     [formatItems(config.payment_gateways)],
     [formatItems(config.carriers)],
@@ -815,8 +813,7 @@ function writeConfigurationSheet_(config) {
     [shipping.indexOf('free_shipping') >= 0],
     [shipping.indexOf('pickup') >= 0],
     [Boolean(config.sourceOverlap)],
-    [Boolean(config.fitment)],
-    [config.turn14IntegrationCode || '']
+    [Boolean(config.fitment)]
   ]);
 }
 
@@ -882,6 +879,7 @@ function updateTaskFromSidebar(taskId, patch) {
   patch = patch || {};
 
   if (Object.prototype.hasOwnProperty.call(patch, 'applicable')) {
+    if (taskId === '10-92') throw new Error('10-92 applicability is controlled by integration T14.');
     const value = patch.applicable === RUNTIME.no ? RUNTIME.no : RUNTIME.yes;
     sheet.getRange(row, RUNTIME.columns.applicable).setValue(value);
   }
@@ -940,6 +938,22 @@ function recalculateRuntime() {
     const state = readOperationalState_();
     if (!state.tasks.length) return;
     const config = getRuntimeConfiguration();
+    const turn14Applicable = hasTurn14Integration_(config) ? RUNTIME.yes : RUNTIME.no;
+    let systemApplicabilityChanged = false;
+    state.tasks.forEach(function (task) {
+      if (task.templateId !== '10-92') return;
+      if (task.localApplicable !== turn14Applicable) {
+        sheet.getRange(task.row, RUNTIME.columns.applicable).setValue(turn14Applicable);
+        task.localApplicable = turn14Applicable;
+        systemApplicabilityChanged = true;
+      }
+      if (turn14Applicable === RUNTIME.no && task.done) {
+        sheet.getRange(task.row, RUNTIME.columns.done).setValue(false);
+        task.done = false;
+        systemApplicabilityChanged = true;
+      }
+    });
+    if (systemApplicabilityChanged) SpreadsheetApp.flush();
     const byId = indexById_(state.tasks);
     const activeMemo = {};
 
@@ -1180,8 +1194,13 @@ function rebuildOperationalPool_(config) {
     output.push({sectionHeader: true, section: section});
     tasks.filter(function (task) { return task.section === section; }).forEach(function (task) {
       const old = previousById[task.id];
-      task.localApplicable = old ? old.localApplicable : task.defaultApplicable;
-      task.done = old ? old.done : false;
+      if (task.systemApplicable) {
+        task.localApplicable = task.defaultApplicable;
+        task.done = task.localApplicable === RUNTIME.yes && old ? old.done : false;
+      } else {
+        task.localApplicable = old ? old.localApplicable : task.defaultApplicable;
+        task.done = old ? old.done : false;
+      }
       task.commentValue = old ? old.comment : task.comment;
       output.push(task);
     });
@@ -1231,6 +1250,7 @@ function instantiateModel_(config) {
     qa_products: config.qa_products,
     e2e_scenarios: config.e2e_scenarios
   };
+  const turn14Configured = hasTurn14Integration_(config);
   const byTemplate = {};
   RUNTIME_MODEL.tasks.forEach(function (task) { byTemplate[task.id] = task; });
   const instances = [];
@@ -1244,13 +1264,17 @@ function instantiateModel_(config) {
     const target = byTemplate[ref];
     if (!target || target.scope !== 'REPEAT') return [ref];
     if (owner.collection && owner.collection === target.collection) return [instantiateId_(ref, owner.instanceCode)];
-    if (owner.templateId === '10-92' && target.collection === 'integrations' && config.turn14IntegrationCode) {
-      return [instantiateId_(ref, config.turn14IntegrationCode)];
+    if (owner.templateId === '10-92' && target.collection === 'integrations') {
+      return turn14Configured ? [instantiateId_(ref, 'T14')] : [];
     }
     return (collections[target.collection] || []).map(function (item) { return instantiateId_(ref, item.code); });
   }
 
   instances.forEach(function (instance) {
+    if (instance.templateId === '10-92') {
+      instance.defaultApplicable = turn14Configured ? RUNTIME.yes : RUNTIME.no;
+      instance.systemApplicable = true;
+    }
     instance.parent = instance.parentTemplate ? resolveReference(instance.parentTemplate, instance)[0] || '' : '';
     instance.dependencies = unique_([].concat.apply([], instance.dependencyTemplates.map(function (ref) { return resolveReference(ref, instance); })));
   });
@@ -1365,7 +1389,7 @@ function updateCounters_(sheet, output) {
 function defaultConfiguration_() {
   return {
     integrations: [], payment_gateways: [], carriers: [], tax_services: [], qa_products: [], e2e_scenarios: [],
-    shippingMethods: [], sourceTypes: ['manual'], sourceOverlap: false, fitment: false, turn14IntegrationCode: ''
+    shippingMethods: [], sourceTypes: ['manual'], sourceOverlap: false, fitment: false
   };
 }
 
@@ -1383,7 +1407,6 @@ function normalizeConfiguration_(input) {
   base.sourceTypes = unique_((Array.isArray(input.sourceTypes) ? input.sourceTypes : ['manual']).map(String));
   base.sourceOverlap = Boolean(input.sourceOverlap);
   base.fitment = Boolean(input.fitment);
-  base.turn14IntegrationCode = normalizeCode_(input.turn14IntegrationCode || '');
   base.carriers.forEach(function (item) {
     const key = 'carrier:' + item.code;
     if (base.shippingMethods.indexOf(key) < 0) base.shippingMethods.push(key);
@@ -1400,9 +1423,6 @@ function validateConfiguration_(config) {
     });
   });
   if (unique_(allCodes).length !== allCodes.length) throw new Error('Duplicate instance code in one collection.');
-  if (config.turn14IntegrationCode && !config.integrations.some(function (x) { return x.code === config.turn14IntegrationCode; })) {
-    throw new Error('Turn14 integration code is not present in integrations.');
-  }
 }
 
 function getPoolSheet_() {
@@ -1437,6 +1457,9 @@ function isConfigured_() {
   const sheet = getTranslationsSheet_();
   return String(sheet.getRange(RUNTIME.configKeyCell).getDisplayValue() || '') === RUNTIME.configKey &&
     Boolean(String(sheet.getRange(RUNTIME.configValueCell).getValue() || ''));
+}
+function hasTurn14Integration_(config) {
+  return Boolean(config && (config.integrations || []).some(function (item) { return item.code === 'T14'; }));
 }
 function taskIsEffectivelyApplicable_(task) {
   if (!task || task.localApplicable === RUNTIME.no) return false;
