@@ -423,6 +423,7 @@ function renderEnglishInstructions_(spreadsheet) {
 function writeCleanOperationalPool_(spreadsheet, config) {
   const sheet = spreadsheet.getSheetByName(RUNTIME.poolSheet);
   if (!sheet) throw new Error('Copy is missing ' + RUNTIME.poolSheet);
+  renderEnglishPoolHeader_(sheet);
   const tasks = mergeTaskStateForRebuild_(instantiateModel_(config), {});
   const sections = [];
   tasks.forEach(function (task) { if (sections.indexOf(task.section) < 0) sections.push(task.section); });
