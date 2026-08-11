@@ -2,93 +2,55 @@
 
 ## Architecture
 
-The clean master is a normal Google Spreadsheet with this container-bound Apps
-Script project. `ProjectFactory.gs` copies the complete spreadsheet into a
-selected Drive folder. Google copies the bound script together with the
-spreadsheet, so every onboarding project owns its configuration, task pool,
-DONE values, comments, dynamic branches, document properties, and runtime
-metadata.
+There is one control spreadsheet and one container-bound Apps Script project.
+That script is the central runtime for every onboarding project.
 
-The factory does not create installable triggers and the normal `onEdit` path
-does not call an Apps Script Library. Existing copies therefore remain
-independent and do not share runtime state.
+The factory creates a new Google Spreadsheet, copies only the sheets and their
+data/formatting, resets operational state, and installs `centralProjectOnEdit`
+for the new spreadsheet. The new spreadsheet has no bound Apps Script project.
+The installable trigger belongs to the account that runs the factory and runs
+under that account, so project operators do not authorize the runtime.
 
-Creating a copy resets it to the default configuration, recreates the
-operational pool from the model, restores model-provided default comments,
-sets every DONE value to false, removes dynamic instance branches, and renders
-a clean checklist. It never modifies the source spreadsheet.
-
-If initialization fails, the newly created partial copy is moved to Google
-Drive trash so source-project data is not left in the selected folder. The
-failed attempt remains visible in the registry as `RESET_FAILED_TRASHED` and
-the trashed copy is recoverable through Drive.
+Runtime properties and caches are stored in the central script and namespaced
+by Spreadsheet ID. Projects therefore share code but never share configuration,
+DONE values, comments, filters, indexes, or migration markers.
 
 ## Required authorization
 
-The factory needs two Google scopes that the checkbox runtime itself does not:
+The owner of the central master grants Sheets, Drive, and trigger-management
+access once. Creating a project may ask that owner to approve a newly added
+scope after a deployment. Other project users receive access only to the data
+spreadsheet and are not asked to authorize Apps Script.
 
-- full Google Sheets access, to initialize the newly copied spreadsheet;
-- Google Drive access, to copy the master into the selected folder.
+## Create a project
 
-They are declared in `appsscript.json`. Google asks for consent when the
-factory is run for the first time. No OAuth client, token, password, GitHub
-credential, or Apps Script API credential is stored by the project.
-
-## Create a clean master
-
-1. Deploy the reviewed code to a non-production copy first.
-2. Open that spreadsheet and authorize the runtime.
-3. Select **ЧЕКЛИСТ → Создать чистую мастер-копию**.
-4. Enter the master name and the destination Google Drive folder URL or ID. Leave
-   the folder field blank to save the copy beside the current spreadsheet.
-5. Open the returned spreadsheet and run **Проверить совместимость runtime**.
-6. If requested, run **Применить миграции runtime**.
-7. Confirm the clean master has zero DONE values and the default configuration.
-
-## Create an onboarding project
-
-1. Open the clean master.
+1. Open the central master.
 2. Select **ЧЕКЛИСТ → Создать onboarding-проект**.
-3. Enter the project name and destination Google Drive folder URL or ID. Leave
-   the folder field blank to save the project beside the current spreadsheet.
-4. Open the returned URL.
-5. Run **Проверить совместимость runtime** and apply a migration only if the
-   check requests it.
-6. Configure the project in `КОНФИГУРАЦИЯ`, then use **Сохранить конфигурацию и
-   пересобрать**.
+3. Enter the project name.
+4. Paste the destination folder URL/ID, or leave it blank to use the master's
+   current folder.
+5. Open the returned spreadsheet and work in `ЧЕКЛИСТ`. Use the dropdown in
+   `D2` for status filtering. Supported edits in `КОНФИГУРАЦИЯ` are saved and
+   rebuild the checklist automatically.
 
-The master adds one row to `ПРОЕКТЫ` with name, Spreadsheet ID, URL, an empty
-Script ID field, creation date, runtime version, and migration status. Google
-does not expose the copied container-bound Script ID reliably through the
-Spreadsheet or Drive services, so the field is intentionally left blank. It
-can be filled manually from **Apps Script → Project Settings → IDs**.
+The `ПРОЕКТЫ` registry stores the Spreadsheet ID, URL, central Trigger ID,
+runtime version, and status `CENTRAL_ACTIVE`.
 
-## Versions and migrations
+## Important limits
 
-`RUNTIME.runtimeVersion` is the runtime schema version. `RUNTIME_MODEL.version`
-is tracked separately. `RuntimeMigrations.gs` contains sequential `N → N+1`
-steps; missing steps stop migration. `onOpen` reports incompatibility without
-silently migrating the spreadsheet.
+Google allows 20 installable triggers per user per script. This implementation
+uses one trigger per project, so one central master supports at most 20 active
+projects for its owner. Split projects between additional central masters only
+when that limit is reached.
 
-Migration snapshots configuration and task state by stable Task ID. When a
-model refresh is required, the operational pool is rebuilt using the existing
-stable-ID merge. The migration then verifies configuration, applicability,
-DONE, and comments. A failed preservation check restores the snapshot and
-leaves the project marked as requiring migration.
+## Master copies
 
-## Updating existing projects
-
-This minimal version intentionally does not push code into existing copies.
-Centralized updates would require the Apps Script API and a separate controlled
-deployment identity. Keep the new code in Git, test it against a copy, then
-update each bound script with `clasp` and run the documented migration. Do not
-store `.clasprc.json`, OAuth tokens, or GitHub tokens in the spreadsheet or
-repository.
+Do not copy the master. A second master would create a second runtime and split
+trigger ownership and version control. Keep one central master and create only
+data-only onboarding projects from it.
 
 ## Recovery
 
-Before updating a project, make a Drive copy of its spreadsheet. If migration
-fails, keep the failed copy for diagnosis and continue using the pre-update
-copy. The migration itself restores its in-sheet snapshot when a preservation
-check fails, but the Drive copy protects against permission errors, manual
-changes, and failures outside the migration code.
+If initialization or trigger installation fails, the newly created partial
+spreadsheet is moved to Drive trash and the failed registry entry is recorded
+as `RESET_FAILED_TRASHED`. The source master is never modified by the copy.

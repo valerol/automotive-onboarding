@@ -40,7 +40,7 @@ latency for a single checkbox.
   checkboxes, and validations are not recreated.
 - Source/configuration rules remain in `configuredTaskApplicable_()` and
   `configuredLocalApplicability_()`; the fast path does not create tasks.
-- A document lock serializes edits. The comment path holds it only around row
+- A central script lock serializes edits. The comment path holds it only around row
   verification and one write. No Apps Script Library is used.
 
 ## Indexes and invalidation

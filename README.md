@@ -7,7 +7,7 @@ Container-bound Google Apps Script for the spreadsheet `Automotive Onboarding �
 - `Code.gs` — runtime, dependency enforcement, capabilities/gates, branch instantiation, validation, and the native Google Sheets workspace.
 - `RuntimeModel.gs` — the 299 operator task templates reconstructed from spreadsheet revision 162. The 13 internal graph nodes are not operator tasks.
 - `RuntimeMigrations.gs` — runtime/model compatibility checks and sequential, preservation-checked migrations.
-- `ProjectFactory.gs` — clean-master creation, independent project copies, metadata, and the central project registry.
+- `ProjectFactory.gs` — data-only project creation, central triggers, metadata, and the project registry.
 - `Sidebar.html` — retained only as a legacy compatibility file; the working interface is no longer a sidebar.
 - `appsscript.json` — V8 manifest.
 
@@ -22,15 +22,15 @@ Container-bound Google Apps Script for the spreadsheet `Automotive Onboarding �
 7. Save the project.
 8. Run `onOpen` once from the editor.
 9. Reload the spreadsheet and select **ЧЕКЛИСТ → Проверить доступ**. If the runtime displays an authorization window, select **Grant access**, approve access in Google, then run **Проверить доступ** again.
-10. Confirm that the diagnostic reports access to `ПУЛ ТАСКОВ`, `_TRANSLATIONS`, and the document lock.
+10. Confirm that the diagnostic reports access to `ПУЛ ТАСКОВ`, `_TRANSLATIONS`, and the runtime lock.
 11. Run `installChecklistWorkspace` once from the Apps Script editor, or select **ЧЕКЛИСТ → Открыть чеклист** after reloading the spreadsheet.
 
-The runtime uses only the current spreadsheet. Configuration is stored in `_TRANSLATIONS!D1:E1`; task translations remain in `A:C`. It does not use `PropertiesService`, Drive, URL fetches, or external storage. The manifest requests only current-spreadsheet and container-UI scopes.
+Configuration is stored in each project's `_TRANSLATIONS!D1:E1`; task translations remain in `A:C`. Runtime properties and caches live in the central script and are namespaced by Spreadsheet ID.
 
 ## Workspace
 
 - `ЧЕКЛИСТ` is the full-width working tab. It contains a persistent native filter. Users edit only `Актуален`, `DONE`, and `Комментарий`.
-- `КОНФИГУРАЦИЯ` is the structured project-configuration tab. Use **ЧЕКЛИСТ → Сохранить конфигурацию и пересобрать** after making changes.
+- `КОНФИГУРАЦИЯ` is the structured project-configuration tab. In data-only projects every supported edit is saved and rebuilds the checklist automatically.
 - `ИНСТРУКЦИЯ` is the operator-facing quick start, configuration map, state reference, and safe-edit guide. Keep it aligned with this README whenever runtime behavior changes.
 - `ПУЛ ТАСКОВ` is the protected technical state and graph tab. Its protection warns against direct edits; Google Sheets owners can still override any protection, so routine work must happen in `ЧЕКЛИСТ`.
 - `_TRANSLATIONS` remains hidden.
@@ -53,31 +53,26 @@ Normal edits no longer call the full checklist rebuild:
 - a comment resolves its stable Task ID and writes one pool cell;
 - DONE and user-controlled applicability read the pool once, calculate the graph in memory, and write only changed rows;
 - formatting, conditional formatting, filters, checkboxes, and validations are not recreated by the fast path;
-- a document lock serializes short edits, while cached Task ID row maps are versioned and verified before use.
+- a central script lock serializes short edits, while per-spreadsheet cached Task ID row maps are versioned and verified before use.
 
 A full `refreshChecklist_()` remains available for configuration, language/model changes, explicit refresh, migration, and incompatible sheet layouts. See [`docs/PERFORMANCE.md`](docs/PERFORMANCE.md) for the baseline call path and measurement boundaries.
 
 ## Safe live update
 
-Do not push a new runtime directly into the working spreadsheet first.
-
-1. Make a Google Drive copy of the working spreadsheet.
-2. Bind a separate local checkout to the copy's Script ID.
-3. Run `npm test`, `npm run status`, then `npm run push -- --force` against the copy.
-4. Open the copy, approve the new Drive/Sheets scopes, and run **ЧЕКЛИСТ → Проверить совместимость runtime**.
-5. Run **Применить миграции runtime** only when requested.
-6. Verify the configuration JSON and compare DONE/comment values by Task ID before and after migration.
-7. Measure a comment edit, DONE on/off, and a manual refresh in Apps Script **Executions**. Local Node.js timings do not measure Google service latency.
-8. Exercise dependency unlock/relock, INACTIVE dependencies, user applicability, language change, and configuration rebuild in the copy.
-9. Only after those checks pass, bind `clasp` to the live Script ID, confirm `clasp show-file-status`, push the reviewed commit, and apply the same migration procedure.
+Back up the central master, run `npm test`, verify `clasp show-file-status`, and
+deploy only the reviewed commit to the master's Script ID. Existing data-only
+projects immediately use the updated handler on their next edit; they do not
+receive code copies and do not need separate authorization or `clasp` updates.
+Schema migrations remain explicit and must preserve configuration, DONE, and
+comments by stable Task ID.
 
 The factory requires full Google Sheets and Drive scopes to initialize a copied spreadsheet. No OAuth client secret or token belongs in this repository.
 
 ## Multiple onboarding projects
 
-Use **Создать чистую мастер-копию** once to produce a clean, current master in a selected Drive folder. From that master, use **Создать onboarding-проект** for each independent project. The copy receives its own task pool, configuration, statuses, comments, dynamic branches, metadata, and bound script. The master records the copy in `ПРОЕКТЫ`.
+Keep one central master. Use **Создать onboarding-проект** for each project. The factory creates a data-only spreadsheet, initializes its independent task state, installs a central `onEdit` trigger, and records its Trigger ID in `ПРОЕКТЫ`. Project users do not authorize Apps Script; the trigger runs as the account that created it.
 
-The copied container-bound Script ID is intentionally left blank in the registry because Spreadsheet/Drive services do not expose it reliably. Fill it manually from **Apps Script → Project Settings → IDs** when needed. Detailed creation, migration, update, and recovery instructions are in [`docs/PROJECT_FACTORY.md`](docs/PROJECT_FACTORY.md).
+One central script supports up to 20 installable project triggers for its owner. Detailed creation and recovery instructions are in [`docs/PROJECT_FACTORY.md`](docs/PROJECT_FACTORY.md).
 
 ## Configuration model
 
@@ -85,7 +80,7 @@ Automotive integrations, payment gateways, carriers, and tax services are select
 
 ### Applying catalog selections
 
-Checkboxes in `КОНФИГУРАЦИЯ` are a draft until the user selects **ЧЕКЛИСТ → Сохранить конфигурацию и пересобрать**. The configuration sheet does not rebuild the checklist from a normal cell edit.
+Checkboxes and supported values in `КОНФИГУРАЦИЯ` are applied automatically by the central installable trigger. The central master also retains its menu command for administrative use.
 
 After a successful rebuild:
 

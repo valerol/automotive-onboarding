@@ -7,7 +7,7 @@ const RUNTIME_MIGRATIONS = Object.freeze({
 });
 
 function getRuntimeCompatibility() {
-  const properties = PropertiesService.getDocumentProperties();
+  const properties = runtimeProperties_();
   const storedRuntimeVersion = Number(properties.getProperty(RUNTIME.runtimeVersionProperty) || 1);
   const storedModelVersion = properties.getProperty(RUNTIME.modelVersionProperty) || '';
   return {
@@ -32,9 +32,9 @@ function showRuntimeCompatibility() {
 }
 
 function migrateRuntime() {
-  const lock = LockService.getDocumentLock();
+  const lock = runtimeLock_();
   lock.waitLock(30000);
-  const properties = PropertiesService.getDocumentProperties();
+  const properties = runtimeProperties_();
   const oldRuntimeVersion = properties.getProperty(RUNTIME.runtimeVersionProperty);
   const oldModelVersion = properties.getProperty(RUNTIME.modelVersionProperty);
   let before;
@@ -61,7 +61,7 @@ function migrateRuntime() {
       modelRebuilt = true;
     }
     const currentState = readOperationalState_(before.config);
-    const checklist = SpreadsheetApp.getActive().getSheetByName(RUNTIME.checklistSheet);
+    const checklist = runtimeSpreadsheet_().getSheetByName(RUNTIME.checklistSheet);
     const checklistIndex = checklist ? readChecklistRowIndex_(checklist) : {byId: {}, sectionRowById: {}, lastRow: 0};
     if (!checklist || modelRebuilt || !runtimeChecklistStructureMatches_(currentState.tasks, checklistIndex)) {
       refreshChecklist_(true);
@@ -71,7 +71,7 @@ function migrateRuntime() {
     }
     const after = snapshotRuntimeData_();
     assertRuntimeDataPreserved_(before, after);
-    writeProjectMetadata_(SpreadsheetApp.getActive(), {
+    writeProjectMetadata_(runtimeSpreadsheet_(), {
       runtimeVersion: RUNTIME.runtimeVersion,
       modelVersion: RUNTIME_MODEL.version,
       migrationStatus: 'CURRENT'

@@ -28,6 +28,66 @@ const CHECKLIST_FILTER = Object.freeze({
   statuses: Object.freeze(['READY', 'WAITING', 'BLOCKED', 'INACTIVE', 'DONE'])
 });
 
+let RUNTIME_SPREADSHEET_CONTEXT_ = null;
+
+function withRuntimeSpreadsheet_(spreadsheet, callback) {
+  const previous = RUNTIME_SPREADSHEET_CONTEXT_;
+  RUNTIME_SPREADSHEET_CONTEXT_ = spreadsheet;
+  try {
+    return callback();
+  } finally {
+    RUNTIME_SPREADSHEET_CONTEXT_ = previous;
+  }
+}
+
+function runtimeSpreadsheet_() {
+  const spreadsheet = RUNTIME_SPREADSHEET_CONTEXT_ || SpreadsheetApp.getActiveSpreadsheet();
+  if (!spreadsheet) throw new Error('No runtime spreadsheet context is available.');
+  return spreadsheet;
+}
+
+function runtimeStoragePrefix_() {
+  return 'SPREADSHEET:' + runtimeSpreadsheet_().getId() + ':';
+}
+
+function runtimeProperties_() {
+  const properties = PropertiesService.getScriptProperties();
+  const prefix = runtimeStoragePrefix_();
+  return {
+    getProperty: function (key) { return properties.getProperty(prefix + key); },
+    setProperty: function (key, value) { properties.setProperty(prefix + key, String(value)); return this; },
+    setProperties: function (values) {
+      const namespaced = {};
+      Object.keys(values || {}).forEach(function (key) { namespaced[prefix + key] = String(values[key]); });
+      properties.setProperties(namespaced);
+      return this;
+    },
+    deleteProperty: function (key) { properties.deleteProperty(prefix + key); return this; }
+  };
+}
+
+function runtimeCache_() {
+  const cache = CacheService.getScriptCache();
+  const prefix = runtimeStoragePrefix_();
+  return {
+    get: function (key) { return cache.get(prefix + key); },
+    put: function (key, value, expiration) { cache.put(prefix + key, value, expiration); },
+    remove: function (key) { cache.remove(prefix + key); }
+  };
+}
+
+function runtimeLock_() {
+  return LockService.getScriptLock();
+}
+
+function runtimeToast_(message, title, seconds) {
+  try {
+    runtimeSpreadsheet_().toast(message, title, seconds);
+  } catch (ignored) {
+    console.warn(String(title || 'Automotive Runtime') + ': ' + String(message));
+  }
+}
+
 const AUTOMOTIVE_INTEGRATION_CATALOG = Object.freeze([
   Object.freeze({code: 'T14', name: 'Turn14 Distribution'}),
   Object.freeze({code: 'MEYER', name: 'Meyer Distributing'}),
@@ -167,11 +227,10 @@ function onOpen() {
     .addItem('Проверить совместимость runtime', 'showRuntimeCompatibility')
     .addItem('Применить миграции runtime', 'migrateRuntime')
     .addItem('Создать onboarding-проект', 'promptCreateOnboardingProject')
-    .addItem('Создать чистую мастер-копию', 'promptCreateCleanMasterTemplate')
     .addToUi();
 
   try {
-    const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.checklistSheet);
+    const sheet = runtimeSpreadsheet_().getSheetByName(RUNTIME.checklistSheet);
     if (sheet) repairChecklistFilterControl_(sheet);
   } catch (ignored) {
     // The menu must remain available even if a read-only session blocks repair.
@@ -180,7 +239,7 @@ function onOpen() {
   try {
     const compatibility = getRuntimeCompatibility();
     if (!compatibility.ok) {
-      SpreadsheetApp.getActive().toast(
+      runtimeToast_(
         'Требуется миграция runtime: ' + compatibility.storedRuntimeVersion + ' → ' + compatibility.runtimeVersion,
         'Automotive Runtime',
         8
@@ -249,7 +308,7 @@ function getRuntimeDiagnostics() {
 
   try {
     result.stage = 'open-current-spreadsheet';
-    const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+    const spreadsheet = runtimeSpreadsheet_();
     if (!spreadsheet) throw new Error('The script is not bound to an active spreadsheet.');
     result.spreadsheetId = spreadsheet.getId();
     result.spreadsheetName = spreadsheet.getName();
@@ -267,7 +326,7 @@ function getRuntimeDiagnostics() {
     translations.getRange(1, 1).getDisplayValue();
 
     result.stage = 'document-lock';
-    const lock = LockService.getDocumentLock();
+    const lock = runtimeLock_();
     result.documentLock = lock.tryLock(1000);
     if (result.documentLock) lock.releaseLock();
 
@@ -285,7 +344,7 @@ function showRuntimeSidebar() {
 }
 
 function installChecklistWorkspace() {
-  const spreadsheet = SpreadsheetApp.getActive();
+  const spreadsheet = runtimeSpreadsheet_();
   const checklist = ensureChecklistSheet_();
   ensureConfigurationSheet_();
   protectPoolSheet_();
@@ -299,17 +358,17 @@ function openChecklist() {
   ensureConfigurationSheet_();
   protectPoolSheet_();
   refreshChecklist_();
-  SpreadsheetApp.getActive().setActiveSheet(checklist);
+  runtimeSpreadsheet_().setActiveSheet(checklist);
 }
 
 function openChecklistConfiguration() {
   const sheet = ensureConfigurationSheet_();
-  SpreadsheetApp.getActive().setActiveSheet(sheet);
+  runtimeSpreadsheet_().setActiveSheet(sheet);
 }
 
 function refreshChecklist() {
   refreshChecklist_();
-  SpreadsheetApp.getActive().toast('Данные обновлены.', 'ЧЕКЛИСТ', 3);
+  runtimeToast_('Данные обновлены.', 'ЧЕКЛИСТ', 3);
 }
 
 function showReadyTasks() {
@@ -323,7 +382,7 @@ function showAllChecklistTasks() {
   setChecklistStatusSelection_(CHECKLIST_FILTER.statuses);
   repairChecklistFilterControl_(sheet);
   applyChecklistStatusFilter_(sheet);
-  SpreadsheetApp.getActive().setActiveSheet(sheet);
+  runtimeSpreadsheet_().setActiveSheet(sheet);
   sheet.getRange(RUNTIME.checklistFirstTaskRow, 1).activate();
 }
 
@@ -333,8 +392,8 @@ function saveChecklistConfiguration() {
     saveRuntimeConfiguration(config);
     writeConfigurationSheet_(getRuntimeConfiguration());
     refreshChecklist_();
-    SpreadsheetApp.getActive().setActiveSheet(ensureChecklistSheet_());
-    SpreadsheetApp.getActive().toast('Конфигурация сохранена, задачи пересобраны.', 'ЧЕКЛИСТ', 5);
+    runtimeSpreadsheet_().setActiveSheet(ensureChecklistSheet_());
+    runtimeToast_('Конфигурация сохранена, задачи пересобраны.', 'ЧЕКЛИСТ', 5);
   } catch (error) {
     SpreadsheetApp.getUi().alert('Не удалось сохранить конфигурацию:\n' + formatRuntimeError_(error));
     throw error;
@@ -350,12 +409,26 @@ function showRuntimeValidation() {
 
 function onEdit(e) {
   if (!e || !e.range) return;
+  return withRuntimeSpreadsheet_(e.source || e.range.getSheet().getParent(), function () {
+    return handleRuntimeEdit_(e);
+  });
+}
+
+function centralProjectOnEdit(e) {
+  return onEdit(e);
+}
+
+function handleRuntimeEdit_(e) {
+  if (!e || !e.range) return;
   const sheet = e.range.getSheet();
   if (sheet.getName() === RUNTIME.checklistSheet) {
     handleChecklistEdit_(e);
     return;
   }
-  if (sheet.getName() === RUNTIME.configurationSheet) return;
+  if (sheet.getName() === RUNTIME.configurationSheet) {
+    handleConfigurationEdit_(e);
+    return;
+  }
   if (sheet.getName() !== RUNTIME.poolSheet || e.range.getRow() < RUNTIME.firstTaskRow) return;
   if (e.range.getNumRows() !== 1 || e.range.getNumColumns() !== 1) {
     recalculateRuntime();
@@ -367,7 +440,7 @@ function onEdit(e) {
     const check = canCompleteTask_(String(sheet.getRange(e.range.getRow(), RUNTIME.columns.id).getDisplayValue()));
     if (!check.allowed) {
       e.range.setValue(false);
-      SpreadsheetApp.getActive().toast(check.reason, 'DONE rejected', 6);
+      runtimeToast_(check.reason, 'DONE rejected', 6);
     }
   }
 
@@ -376,30 +449,42 @@ function onEdit(e) {
     if (!validation.ok) {
       if (typeof e.oldValue !== 'undefined') e.range.setValue(e.oldValue);
       else e.range.clearContent();
-      SpreadsheetApp.getActive().toast(validation.errors[0], 'Invalid graph edit', 8);
+      runtimeToast_(validation.errors[0], 'Invalid graph edit', 8);
     }
   }
 
   recalculateRuntime();
 }
 
+function handleConfigurationEdit_(e) {
+  if (e.range.getRow() < 4 || e.range.getColumn() > 2) return;
+  try {
+    const config = readConfigurationSheet_();
+    saveRuntimeConfiguration(config);
+    writeConfigurationSheet_(getRuntimeConfiguration());
+    refreshChecklist_();
+    runtimeToast_('Конфигурация сохранена, чеклист пересобран.', 'ЧЕКЛИСТ', 5);
+  } catch (error) {
+    if (typeof e.oldValue !== 'undefined') e.range.setValue(e.oldValue);
+    else e.range.clearContent();
+    runtimeToast_(formatRuntimeError_(error), 'Конфигурация отклонена', 8);
+  }
+}
+
 function handleChecklistEdit_(e) {
-  const editLock = LockService.getDocumentLock();
+  const editLock = runtimeLock_();
   if (!editLock.tryLock(5000)) {
-    SpreadsheetApp.getActive().toast('Предыдущее изменение ещё обрабатывается. Повторите действие.', 'ЧЕКЛИСТ', 5);
+    runtimeToast_('Предыдущее изменение ещё обрабатывается. Повторите действие.', 'ЧЕКЛИСТ', 5);
     return;
   }
 
   try {
     const sheet = e.range.getSheet();
     if (e.range.getA1Notation() === 'D2') {
+      const requested = String(e.range.getDisplayValue() || '').toUpperCase();
+      setChecklistStatusSelection_(requested === 'ALL' ? CHECKLIST_FILTER.statuses : [requested]);
       repairChecklistFilterControl_(sheet);
       applyChecklistStatusFilter_(sheet);
-      SpreadsheetApp.getActive().toast(
-        'Фильтр изменяется через меню ЧЕКЛИСТ → Фильтр статусов.',
-        'Изменение отменено',
-        5
-      );
       return;
     }
     if (e.range.getA1Notation() === 'G2') {
@@ -411,14 +496,14 @@ function handleChecklistEdit_(e) {
     if (e.range.getRow() < RUNTIME.checklistFirstTaskRow) return;
     if (e.range.getNumRows() !== 1 || e.range.getNumColumns() !== 1) {
       refreshChecklist_();
-      SpreadsheetApp.getActive().toast('Вставка диапазона отменена. Изменяйте одну задачу за раз.', 'ЧЕКЛИСТ', 5);
+      runtimeToast_('Вставка диапазона отменена. Изменяйте одну задачу за раз.', 'ЧЕКЛИСТ', 5);
       return;
     }
 
     const column = e.range.getColumn();
     if ([4, 5, 6].indexOf(column) < 0) {
       refreshChecklist_();
-      SpreadsheetApp.getActive().toast('Редактируются только Актуален, DONE и Комментарий.', 'ЧЕКЛИСТ', 5);
+      runtimeToast_('Редактируются только Актуален, DONE и Комментарий.', 'ЧЕКЛИСТ', 5);
       return;
     }
 
@@ -449,7 +534,7 @@ function handleChecklistEdit_(e) {
       if (typeof e.oldValue !== 'undefined') e.range.setValue(e.oldValue);
       else if (column === 5) e.range.setValue(false);
       else e.range.clearContent();
-      SpreadsheetApp.getActive().toast(formatRuntimeError_(error), 'Изменение отклонено', 7);
+      runtimeToast_(formatRuntimeError_(error), 'Изменение отклонено', 7);
     }
   } finally {
     editLock.releaseLock();
@@ -457,13 +542,13 @@ function handleChecklistEdit_(e) {
 }
 
 function runtimeFastPathCompatible_() {
-  const properties = PropertiesService.getDocumentProperties();
+  const properties = runtimeProperties_();
   return properties.getProperty(RUNTIME.fastPathProperty) === RUNTIME.fastPathVersion &&
     properties.getProperty(RUNTIME.modelVersionProperty) === RUNTIME_MODEL.version;
 }
 
 function markRuntimeFastPathCompatible_() {
-  PropertiesService.getDocumentProperties().setProperties((function () {
+  runtimeProperties_().setProperties((function () {
     const values = {};
     values[RUNTIME.fastPathProperty] = RUNTIME.fastPathVersion;
     values[RUNTIME.modelVersionProperty] = RUNTIME_MODEL.version;
@@ -473,7 +558,7 @@ function markRuntimeFastPathCompatible_() {
 }
 
 function invalidateRuntimeIndexes_() {
-  CacheService.getDocumentCache().remove(RUNTIME.rowIndexCacheKey);
+  runtimeCache_().remove(RUNTIME.rowIndexCacheKey);
 }
 
 function fastUpdateComment_(taskId, comment) {
@@ -722,7 +807,7 @@ function updateCountersFromTasks_(sheet, tasks) {
 function cacheRuntimeRowIndex_(tasks, checklistIndex) {
   const poolById = {};
   tasks.forEach(function (task) { poolById[task.id] = task.row; });
-  CacheService.getDocumentCache().put(RUNTIME.rowIndexCacheKey, JSON.stringify({
+  runtimeCache_().put(RUNTIME.rowIndexCacheKey, JSON.stringify({
     poolById: poolById,
     checklistById: checklistIndex.byId,
     modelVersion: RUNTIME_MODEL.version,
@@ -731,7 +816,7 @@ function cacheRuntimeRowIndex_(tasks, checklistIndex) {
 }
 
 function findTaskRowCached_(sheet, taskId) {
-  const cache = CacheService.getDocumentCache();
+  const cache = runtimeCache_();
   const raw = cache.get(RUNTIME.rowIndexCacheKey);
   if (raw) {
     try {
@@ -896,7 +981,7 @@ function showReadyTasks_(sheet) {
   }
 
   SpreadsheetApp.flush();
-  SpreadsheetApp.getActive().setActiveSheet(sheet);
+  runtimeSpreadsheet_().setActiveSheet(sheet);
   if (firstReadyRow) {
     sheet.getRange(firstReadyRow, 1).activate();
     return;
@@ -906,7 +991,7 @@ function showReadyTasks_(sheet) {
   repairChecklistFilterControl_(sheet);
   applyChecklistStatusFilter_(sheet);
   sheet.getRange(RUNTIME.checklistFirstTaskRow, 1).activate();
-  SpreadsheetApp.getActive().toast(
+  runtimeToast_(
     'Новых READY нет. Показаны задачи со всеми статусами.',
     'ЧЕКЛИСТ',
     6
@@ -914,7 +999,7 @@ function showReadyTasks_(sheet) {
 }
 
 function ensureChecklistSheet_() {
-  const spreadsheet = SpreadsheetApp.getActive();
+  const spreadsheet = runtimeSpreadsheet_();
   let sheet = spreadsheet.getSheetByName(RUNTIME.checklistSheet);
   const created = !sheet;
   if (!sheet) sheet = spreadsheet.insertSheet(RUNTIME.checklistSheet);
@@ -1053,7 +1138,7 @@ function applyChecklistStatusSelection(statuses) {
   const sheet = ensureChecklistSheet_();
   repairChecklistFilterControl_(sheet);
   applyChecklistStatusFilter_(sheet);
-  SpreadsheetApp.getActive().setActiveSheet(sheet);
+  runtimeSpreadsheet_().setActiveSheet(sheet);
   sheet.getRange(RUNTIME.checklistFirstTaskRow, 1).activate();
   return {ok: true, selected: selected};
 }
@@ -1066,7 +1151,7 @@ function normalizeChecklistStatusSelection_(values) {
 }
 
 function getChecklistStatusSelection_() {
-  const properties = PropertiesService.getDocumentProperties();
+  const properties = runtimeProperties_();
   const stored = properties.getProperty(CHECKLIST_FILTER.propertyKey);
   if (stored) {
     try {
@@ -1077,7 +1162,7 @@ function getChecklistStatusSelection_() {
     }
   }
 
-  const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.checklistSheet);
+  const sheet = runtimeSpreadsheet_().getSheetByName(RUNTIME.checklistSheet);
   const legacyValue = sheet ? String(sheet.getRange('D2').getDisplayValue() || '').toUpperCase() : '';
   const selected = legacyValue === 'ALL'
     ? CHECKLIST_FILTER.statuses.slice()
@@ -1090,7 +1175,7 @@ function getChecklistStatusSelection_() {
 function setChecklistStatusSelection_(values) {
   const selected = normalizeChecklistStatusSelection_(values);
   if (!selected.length) throw new Error('Выберите хотя бы один статус.');
-  PropertiesService.getDocumentProperties()
+  runtimeProperties_()
     .setProperty(CHECKLIST_FILTER.propertyKey, JSON.stringify(selected));
   return selected;
 }
@@ -1102,11 +1187,15 @@ function checklistFilterSummary_(selected) {
 function repairChecklistFilterControl_(sheet) {
   const selected = getChecklistStatusSelection_();
   sheet.getRange('D2')
-    .clearDataValidations()
+    .setDataValidation(
+      SpreadsheetApp.newDataValidation()
+        .requireValueInList(['ALL'].concat(CHECKLIST_FILTER.statuses), true)
+        .setAllowInvalid(false)
+        .build()
+    )
     .setValue(checklistFilterSummary_(selected))
     .setNote(
-      'Системный индикатор. Фильтр изменяется через меню ЧЕКЛИСТ → Фильтр статусов. ' +
-      'Прямые изменения этой ячейки автоматически отменяются.'
+      'Выберите ALL или один статус. Для комбинации статусов используйте меню центрального мастера.'
     );
 }
 
@@ -1175,7 +1264,7 @@ function setChecklistHiddenRows_(sheet, rows) {
 }
 
 function ensureConfigurationSheet_() {
-  const spreadsheet = SpreadsheetApp.getActive();
+  const spreadsheet = runtimeSpreadsheet_();
   let sheet = spreadsheet.getSheetByName(RUNTIME.configurationSheet);
   if (!sheet) {
     sheet = spreadsheet.insertSheet(RUNTIME.configurationSheet);
@@ -1309,7 +1398,7 @@ function writeCatalogSelection_(sheet, section, selectedItems) {
 }
 
 function writeConfigurationSheet_(config) {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.configurationSheet);
+  const sheet = runtimeSpreadsheet_().getSheetByName(RUNTIME.configurationSheet);
   if (!sheet) return;
   if (sheet.getRange('A1').getNote() !== CONFIGURATION_UI.version) {
     renderConfigurationSheet_(sheet, config);
@@ -1319,7 +1408,7 @@ function writeConfigurationSheet_(config) {
 }
 
 function protectPoolSheet_() {
-  const spreadsheet = SpreadsheetApp.getActive();
+  const spreadsheet = runtimeSpreadsheet_();
   const sheet = getPoolSheet_();
   const description = 'TECHNICAL_TASK_POOL_DO_NOT_EDIT';
   const protections = sheet.getProtections(SpreadsheetApp.ProtectionType.SHEET);
@@ -1420,7 +1509,7 @@ function getRuntimeConfiguration() {
 function saveRuntimeConfiguration(config) {
   const normalized = normalizeConfiguration_(config || {});
   validateConfiguration_(normalized);
-  const lock = LockService.getDocumentLock();
+  const lock = runtimeLock_();
   lock.waitLock(30000);
   try {
     const sheet = getTranslationsSheet_();
@@ -1437,7 +1526,7 @@ function saveRuntimeConfiguration(config) {
 
 function recalculateRuntime(lockAlreadyHeld) {
   if (!isConfigured_()) return;
-  const lock = LockService.getDocumentLock();
+  const lock = runtimeLock_();
   const ownsLock = !lockAlreadyHeld;
   if (ownsLock && !lock.tryLock(30000)) throw new Error('Runtime is busy. Try again.');
   try {
@@ -1881,7 +1970,7 @@ function readOperationalState_(config) {
 }
 
 function refreshTranslations_(tasks) {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.translationsSheet);
+  const sheet = runtimeSpreadsheet_().getSheetByName(RUNTIME.translationsSheet);
   if (!sheet) throw new Error('Missing sheet: ' + RUNTIME.translationsSheet);
   const rows = [['Task ID', 'English', 'Русский']].concat(tasks.map(function (task) { return [String(task.id), task.title, task.titleRu]; }));
   sheet.getRange(1, 1, sheet.getMaxRows(), 3).clearContent();
@@ -1890,7 +1979,7 @@ function refreshTranslations_(tasks) {
 }
 
 function readTranslations_() {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.translationsSheet);
+  const sheet = runtimeSpreadsheet_().getSheetByName(RUNTIME.translationsSheet);
   if (!sheet || sheet.getLastRow() < 2) return {};
   const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 3).getDisplayValues();
   const map = {};
@@ -2036,13 +2125,13 @@ function e2eShippingOptions_(config) {
 }
 
 function getPoolSheet_() {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.poolSheet);
+  const sheet = runtimeSpreadsheet_().getSheetByName(RUNTIME.poolSheet);
   if (!sheet) throw new Error('Missing sheet: ' + RUNTIME.poolSheet);
   return sheet;
 }
 
 function getTranslationsSheet_() {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.translationsSheet);
+  const sheet = runtimeSpreadsheet_().getSheetByName(RUNTIME.translationsSheet);
   if (!sheet) throw new Error('Missing sheet: ' + RUNTIME.translationsSheet);
   return sheet;
 }

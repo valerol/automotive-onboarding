@@ -2,7 +2,7 @@ const PROJECT_FACTORY = Object.freeze({
   registrySheet: 'ПРОЕКТЫ',
   metadataSheet: '_PROJECT_METADATA',
   registryHeaders: Object.freeze([
-    'Название', 'Spreadsheet ID', 'URL', 'Script ID', 'Дата создания',
+    'Название', 'Spreadsheet ID', 'URL', 'Trigger ID', 'Дата создания',
     'Runtime version', 'Статус миграции'
   ])
 });
@@ -29,26 +29,16 @@ function promptCreateOnboardingProject() {
 
 function promptCreateCleanMasterTemplate() {
   const ui = SpreadsheetApp.getUi();
-  const nameResult = ui.prompt('Чистая мастер-копия', 'Название мастер-таблицы', ui.ButtonSet.OK_CANCEL);
-  if (nameResult.getSelectedButton() !== ui.Button.OK) return;
-  const folderResult = ui.prompt(
-    'Папка Google Drive',
-    'Введите ссылку или ID папки. Оставьте поле пустым, чтобы сохранить рядом с текущей таблицей.',
-    ui.ButtonSet.OK_CANCEL
+  ui.alert(
+    'Используется один центральный мастер',
+    'Мастер больше не копируется: его Apps Script является общим runtime для всех onboarding-проектов. ' +
+      'Создавайте новые проекты командой «Создать onboarding-проект».',
+    ui.ButtonSet.OK
   );
-  if (folderResult.getSelectedButton() !== ui.Button.OK) return;
-  try {
-    const result = createCleanMasterTemplateInFolder(nameResult.getResponseText(), folderResult.getResponseText());
-    ui.alert('Чистая мастер-копия создана:\n' + result.url);
-    return result;
-  } catch (error) {
-    ui.alert('Не удалось создать мастер-копию', error.message, ui.ButtonSet.OK);
-    throw error;
-  }
 }
 
 function createCleanMasterTemplateInFolder(name, folderId) {
-  return createOnboardingCopy_(name, folderId, 'MASTER');
+  throw new Error('Мастер является единым центральным runtime и больше не копируется.');
 }
 
 function createOnboardingProjectInFolder(name, folderId) {
@@ -59,35 +49,44 @@ function createOnboardingCopy_(name, folderId, kind) {
   const projectName = String(name || '').trim();
   if (!projectName) throw new Error('Project name is required.');
 
-  const master = SpreadsheetApp.getActive();
+  if (kind !== 'PROJECT') throw new Error('Only data-only onboarding projects can be created.');
+
+  const master = runtimeSpreadsheet_();
   const targetFolderId = resolveDriveFolderId_(folderId, master.getId());
   assertDriveDestinationWritable_(targetFolderId);
-  const copiedFile = Drive.Files.copy({
-    name: projectName,
-    parents: [targetFolderId]
-  }, master.getId(), {
-    supportsAllDrives: true,
-    fields: 'id,name,webViewLink'
-  });
-  const copiedFileId = copiedFile.id;
-  const copiedFileUrl = copiedFile.webViewLink ||
+  const copy = createDataOnlySpreadsheetCopy_(master, projectName, targetFolderId);
+  const copiedFileId = copy.getId();
+  const copiedFileUrl =
     'https://docs.google.com/spreadsheets/d/' + copiedFileId + '/edit';
   let status = 'RESET_FAILED';
+  let trigger = null;
   try {
-    const copy = SpreadsheetApp.openById(copiedFileId);
     resetOnboardingSpreadsheet_(copy, {
       kind: kind,
       name: projectName,
       sourceSpreadsheetId: master.getId(),
       createdAt: new Date()
     });
-    status = 'CURRENT';
+    trigger = installCentralProjectTrigger_(copy);
+    writeProjectMetadata_(copy, {
+      kind: kind,
+      projectName: projectName,
+      sourceSpreadsheetId: master.getId(),
+      createdAt: new Date(),
+      runtimeVersion: RUNTIME.runtimeVersion,
+      modelVersion: RUNTIME_MODEL.version,
+      triggerId: trigger.getUniqueId(),
+      runtimeMode: 'CENTRAL_INSTALLABLE_TRIGGER',
+      migrationStatus: 'CENTRAL_ACTIVE'
+    });
+    status = 'CENTRAL_ACTIVE';
   } catch (error) {
     // A partially reset copy may still contain source-project data. Move only
     // the newly created copy to Drive trash; the source spreadsheet is never
     // modified and the registry records the failed attempt.
     status = 'RESET_FAILED_TRASHED';
     try {
+      if (trigger) ScriptApp.deleteTrigger(trigger);
       Drive.Files.update({trashed: true}, copiedFileId, null, {supportsAllDrives: true});
     } catch (trashError) {
       console.error('Unable to trash failed onboarding copy ' + copiedFileId + ': ' + trashError.message);
@@ -98,7 +97,7 @@ function createOnboardingCopy_(name, folderId, kind) {
       name: projectName,
       spreadsheetId: copiedFileId,
       url: copiedFileUrl,
-      scriptId: '',
+      triggerId: trigger ? trigger.getUniqueId() : '',
       createdAt: new Date(),
       runtimeVersion: RUNTIME.runtimeVersion,
       migrationStatus: status
@@ -108,10 +107,67 @@ function createOnboardingCopy_(name, folderId, kind) {
     name: projectName,
     spreadsheetId: copiedFileId,
     url: copiedFileUrl,
-    scriptId: '',
+    triggerId: trigger ? trigger.getUniqueId() : '',
     runtimeVersion: RUNTIME.runtimeVersion,
     migrationStatus: status
   };
+}
+
+function createDataOnlySpreadsheetCopy_(source, name, targetFolderId) {
+  const destination = SpreadsheetApp.create(name);
+  try {
+    const defaultSheet = destination.getSheets()[0];
+    const copiedSheets = [];
+    source.getSheets().forEach(function (sourceSheet) {
+      if (sourceSheet.getName() === PROJECT_FACTORY.registrySheet) return;
+      const copied = sourceSheet.copyTo(destination).setName(sourceSheet.getName());
+      copiedSheets.push({sheet: copied, hidden: sourceSheet.isSheetHidden()});
+    });
+    if (!copiedSheets.length) throw new Error('Master has no project sheets to copy.');
+    destination.deleteSheet(defaultSheet);
+    copiedSheets.forEach(function (item) {
+      if (item.hidden && !item.sheet.isSheetHidden()) item.sheet.hideSheet();
+    });
+
+    const file = Drive.Files.get(destination.getId(), {
+      supportsAllDrives: true,
+      fields: 'id,parents'
+    });
+    const currentParents = file.parents || [];
+    const moveOptions = {
+      addParents: targetFolderId,
+      supportsAllDrives: true,
+      fields: 'id,parents'
+    };
+    if (currentParents.length) moveOptions.removeParents = currentParents.join(',');
+    Drive.Files.update({}, destination.getId(), null, moveOptions);
+    return destination;
+  } catch (error) {
+    try {
+      Drive.Files.update({trashed: true}, destination.getId(), null, {supportsAllDrives: true});
+    } catch (trashError) {
+      console.error('Unable to trash failed data-only copy ' + destination.getId() + ': ' + trashError.message);
+    }
+    throw error;
+  }
+}
+
+function installCentralProjectTrigger_(spreadsheet) {
+  const spreadsheetId = spreadsheet.getId();
+  const existing = ScriptApp.getProjectTriggers().filter(function (trigger) {
+    return trigger.getHandlerFunction() === 'centralProjectOnEdit' &&
+      trigger.getTriggerSourceId() === spreadsheetId;
+  });
+  if (existing.length) return existing[0];
+
+  const projectTriggers = ScriptApp.getProjectTriggers();
+  if (projectTriggers.length >= 20) {
+    throw new Error('Достигнут лимит Google Apps Script: 20 onboarding-проектов на один центральный runtime.');
+  }
+  return ScriptApp.newTrigger('centralProjectOnEdit')
+    .forSpreadsheet(spreadsheetId)
+    .onEdit()
+    .create();
 }
 
 function resolveDriveFolderId_(folderInput, sourceFileId) {
@@ -358,7 +414,7 @@ function appendProjectRegistry_(spreadsheet, project) {
     project.name,
     project.spreadsheetId,
     project.url,
-    project.scriptId || '',
+    project.triggerId || '',
     project.createdAt,
     project.runtimeVersion,
     project.migrationStatus

@@ -55,21 +55,24 @@ const cleanTasks = api.mergeTaskStateForRebuild_(api.instantiateModel_(config), 
 assert.equal(cleanTasks.some(task => task.done), false);
 assert.equal(new Set(cleanTasks.map(task => task.id)).size, cleanTasks.length);
 
-assert.match(factorySource, /Drive\.Files\.copy/);
+assert.doesNotMatch(factorySource, /Drive\.Files\.copy/);
 assert.match(factorySource, /supportsAllDrives:\s*true/);
 assert.match(factorySource, /Оставьте поле пустым/);
-assert.match(factorySource, /SpreadsheetApp\.openById/);
+assert.match(factorySource, /SpreadsheetApp\.create/);
+assert.match(factorySource, /\.copyTo\(destination\)/);
 assert.match(factorySource, /resetOnboardingSpreadsheet_/);
 assert.match(factorySource, /appendProjectRegistry_/);
-assert.doesNotMatch(factorySource, /newTrigger|ScriptApp\.newTrigger/);
+assert.match(factorySource, /ScriptApp\.newTrigger\('centralProjectOnEdit'\)/);
+assert.match(factorySource, /\.forSpreadsheet\(spreadsheetId\)/);
 assert.doesNotMatch(factorySource, /token|secret|password/i);
 
 assert.deepEqual(Array.from(api.PROJECT_FACTORY.registryHeaders), [
-  'Название', 'Spreadsheet ID', 'URL', 'Script ID', 'Дата создания',
+  'Название', 'Spreadsheet ID', 'URL', 'Trigger ID', 'Дата создания',
   'Runtime version', 'Статус миграции'
 ]);
 assert.ok(manifest.oauthScopes.includes('https://www.googleapis.com/auth/drive'));
 assert.ok(manifest.oauthScopes.includes('https://www.googleapis.com/auth/spreadsheets'));
+assert.ok(manifest.oauthScopes.includes('https://www.googleapis.com/auth/script.scriptapp'));
 assert.deepEqual(manifest.dependencies.enabledAdvancedServices, [{
   userSymbol: 'Drive',
   version: 'v3',

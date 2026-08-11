@@ -153,6 +153,17 @@ function testFastPathSourceGuards() {
   assert.doesNotMatch(fastFunctions, /clearContent|clearFormat|clearDataValidations|insertCheckboxes|setDataValidation|setConditionalFormatRules/);
 }
 
+function testCentralRuntimeSourceGuards() {
+  assert.match(codeSource, /function centralProjectOnEdit\(e\)/);
+  assert.match(codeSource, /withRuntimeSpreadsheet_\(e\.source/);
+  assert.match(codeSource, /PropertiesService\.getScriptProperties\(\)/);
+  assert.match(codeSource, /CacheService\.getScriptCache\(\)/);
+  assert.match(codeSource, /LockService\.getScriptLock\(\)/);
+  assert.match(codeSource, /function handleConfigurationEdit_\(e\)/);
+  assert.match(codeSource, /requireValueInList\(\['ALL'\]\.concat\(CHECKLIST_FILTER\.statuses\)/);
+  assert.doesNotMatch(codeSource, /getDocumentProperties|getDocumentCache|getDocumentLock/);
+}
+
 function testRapidSequentialChanges() {
   let state = calculate([task('A'), task('B', ['A'], {row: 11}), task('C', ['B'], {row: 12})]);
   for (let index = 0; index < 20; index++) {
@@ -171,6 +182,7 @@ const tests = [
   testDynamicBranchesAndGraphIntegrity,
   testRebuildPreservesStableState,
   testFastPathSourceGuards,
+  testCentralRuntimeSourceGuards,
   testRapidSequentialChanges
 ];
 
