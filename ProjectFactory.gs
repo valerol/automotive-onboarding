@@ -289,12 +289,17 @@ function migrateAllWorkbooksToEnglish() {
 
   const registry = master.getSheetByName(PROJECT_FACTORY.registrySheet);
   if (registry && registry.getLastRow() >= 2) {
-    const ids = registry.getRange(2, 2, registry.getLastRow() - 1, 1).getDisplayValues();
+    const rows = registry.getRange(2, 1, registry.getLastRow() - 1, 2).getDisplayValues();
     const seen = {};
-    ids.forEach(function (row) {
-      const id = String(row[0] || '').trim();
+    rows.forEach(function (row) {
+      const projectName = String(row[0] || '').trim();
+      const id = String(row[1] || '').trim();
       if (!id || seen[id]) return;
       seen[id] = true;
+      if (/test/i.test(projectName)) {
+        results.push({spreadsheetId: id, name: projectName, status: 'SKIPPED_TEST_PROJECT'});
+        return;
+      }
       try {
         const child = SpreadsheetApp.openById(id);
         if (workbookNeedsEnglishMigration_(child)) {
