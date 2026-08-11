@@ -39,7 +39,8 @@ credential, or Apps Script API credential is stored by the project.
 1. Deploy the reviewed code to a non-production copy first.
 2. Open that spreadsheet and authorize the runtime.
 3. Select **ЧЕКЛИСТ → Создать чистую мастер-копию**.
-4. Enter the master name and the destination Google Drive folder URL or ID.
+4. Enter the master name and the destination Google Drive folder URL or ID. Leave
+   the folder field blank to save the copy beside the current spreadsheet.
 5. Open the returned spreadsheet and run **Проверить совместимость runtime**.
 6. If requested, run **Применить миграции runtime**.
 7. Confirm the clean master has zero DONE values and the default configuration.
@@ -48,7 +49,8 @@ credential, or Apps Script API credential is stored by the project.
 
 1. Open the clean master.
 2. Select **ЧЕКЛИСТ → Создать onboarding-проект**.
-3. Enter the project name and destination Google Drive folder URL or ID.
+3. Enter the project name and destination Google Drive folder URL or ID. Leave
+   the folder field blank to save the project beside the current spreadsheet.
 4. Open the returned URL.
 5. Run **Проверить совместимость runtime** and apply a migration only if the
    check requests it.

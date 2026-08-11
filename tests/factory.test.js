@@ -18,6 +18,7 @@ vm.runInContext(
       RUNTIME_MODEL: RUNTIME_MODEL,
       RUNTIME_MIGRATIONS: RUNTIME_MIGRATIONS,
       PROJECT_FACTORY: PROJECT_FACTORY,
+      resolveDriveFolderId_: resolveDriveFolderId_,
       normalizeDriveFolderId_: normalizeDriveFolderId_,
       assertRuntimeDataPreserved_: assertRuntimeDataPreserved_,
       defaultConfiguration_: defaultConfiguration_,
@@ -56,6 +57,7 @@ assert.equal(new Set(cleanTasks.map(task => task.id)).size, cleanTasks.length);
 
 assert.match(factorySource, /Drive\.Files\.copy/);
 assert.match(factorySource, /supportsAllDrives:\s*true/);
+assert.match(factorySource, /Оставьте поле пустым/);
 assert.match(factorySource, /SpreadsheetApp\.openById/);
 assert.match(factorySource, /resetOnboardingSpreadsheet_/);
 assert.match(factorySource, /appendProjectRegistry_/);

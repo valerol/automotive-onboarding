@@ -13,7 +13,7 @@ function promptCreateOnboardingProject() {
   if (nameResult.getSelectedButton() !== ui.Button.OK) return;
   const folderResult = ui.prompt(
     'Папка Google Drive',
-    'Введите ссылку или ID выбранной папки Google Drive',
+    'Введите ссылку или ID папки. Оставьте поле пустым, чтобы сохранить рядом с текущей таблицей.',
     ui.ButtonSet.OK_CANCEL
   );
   if (folderResult.getSelectedButton() !== ui.Button.OK) return;
@@ -33,7 +33,7 @@ function promptCreateCleanMasterTemplate() {
   if (nameResult.getSelectedButton() !== ui.Button.OK) return;
   const folderResult = ui.prompt(
     'Папка Google Drive',
-    'Введите ссылку или ID выбранной папки Google Drive',
+    'Введите ссылку или ID папки. Оставьте поле пустым, чтобы сохранить рядом с текущей таблицей.',
     ui.ButtonSet.OK_CANCEL
   );
   if (folderResult.getSelectedButton() !== ui.Button.OK) return;
@@ -58,9 +58,9 @@ function createOnboardingProjectInFolder(name, folderId) {
 function createOnboardingCopy_(name, folderId, kind) {
   const projectName = String(name || '').trim();
   if (!projectName) throw new Error('Project name is required.');
-  const targetFolderId = normalizeDriveFolderId_(folderId);
 
   const master = SpreadsheetApp.getActive();
+  const targetFolderId = resolveDriveFolderId_(folderId, master.getId());
   assertDriveDestinationWritable_(targetFolderId);
   const copiedFile = Drive.Files.copy({
     name: projectName,
@@ -114,6 +114,22 @@ function createOnboardingCopy_(name, folderId, kind) {
   };
 }
 
+function resolveDriveFolderId_(folderInput, sourceFileId) {
+  const value = String(folderInput || '').trim();
+  if (value) return normalizeDriveFolderId_(value);
+
+  try {
+    const source = Drive.Files.get(sourceFileId, {
+      supportsAllDrives: true,
+      fields: 'id,parents'
+    });
+    if (source.parents && source.parents.length) return source.parents[0];
+  } catch (error) {
+    throw new Error('Не удалось определить папку текущей таблицы. Детали: ' + error.message);
+  }
+  throw new Error('У текущей таблицы нет доступной родительской папки. Укажите ссылку или ID папки Google Drive.');
+}
+
 function normalizeDriveFolderId_(folderInput) {
   const value = String(folderInput || '').trim();
   if (!value) throw new Error('Укажите ссылку или ID папки Google Drive.');
@@ -137,7 +153,9 @@ function assertDriveDestinationWritable_(folderId) {
     });
   } catch (error) {
     throw new Error(
-      'Не удалось открыть папку Google Drive. Проверьте ссылку и доступ аккаунта, который запускает команду. ' +
+      'Google Drive не нашёл папку «' + folderId + '». В это поле нельзя вводить название проекта или папки: ' +
+      'вставьте ссылку/ID существующей папки либо оставьте поле пустым, чтобы сохранить рядом с текущей таблицей. ' +
+      'Также проверьте доступ аккаунта, который запускает команду. ' +
       'Детали: ' + error.message
     );
   }
