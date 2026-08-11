@@ -59,6 +59,26 @@ const TAX_SERVICE_CATALOG = Object.freeze([
   Object.freeze({code: 'AVATAX', name: 'AvaTax'})
 ]);
 
+const SOURCE_TYPE_CATALOG = Object.freeze(['manual', 'csv', 'supplier_feed']);
+
+// Source selection never creates task instances. It only controls the
+// effective applicability of existing static or integration tasks.
+const SOURCE_TASK_RULES = Object.freeze({
+  import: Object.freeze([
+    '01-08', '01-09', '01-18', '01-19', '03-13',
+    '06-01', '06-02', '06-03', '06-04', '06-05', '06-06', '06-07',
+    '06-08', '06-09', '06-10', '06-11', '06-12', '06-13', '06-14',
+    '06-15', '06-17', '06-18', '06-19',
+    '15-01', '15-02', '15-04', '16-01'
+  ]),
+  supplierFeed: Object.freeze([
+    '06-20', '15-03', '16-02'
+  ]),
+  automotiveIntegration: Object.freeze([
+    '01-06', '01-17', '06-16'
+  ])
+});
+
 const QA_PRODUCT_SAMPLE = Object.freeze({
   code: 'SAMPLE',
   name: 'Product specified in Comment',
@@ -73,7 +93,7 @@ const SHIPPING_METHOD_LABELS = Object.freeze({
 });
 
 const CONFIGURATION_UI = Object.freeze({
-  version: 'AUTOMOTIVE_CONFIG_CATALOGS_V3',
+  version: 'AUTOMOTIVE_CONFIG_SOURCES_V4',
   integrationHeaderRow: 4,
   integrationFirstRow: 5,
   integrationLastRow: 12,
@@ -826,14 +846,14 @@ function renderConfigurationSheet_(sheet, config) {
   });
 
   sheet.getRange('A37:C45').setValues([
-    ['Source: manual', false, 'Независимый ручной источник'],
-    ['Source: CSV', false, 'Независимый CSV-источник'],
-    ['Source: supplier feed', false, 'Независимый фид поставщика'],
+    ['Source: manual', false, 'Ручное создание; новые задачи не добавляются'],
+    ['Source: CSV', false, 'Включает существующие задачи импорта'],
+    ['Source: supplier feed', false, 'Включает задачи импорта и расписания'],
     ['Shipping: flat rate', false, 'Фиксированная стоимость'],
     ['Shipping: supplier rate', false, 'Тариф поставщика'],
     ['Shipping: free shipping', false, 'Бесплатная доставка'],
     ['Shipping: pickup', false, 'Самовывоз'],
-    ['Multiple sources overlap', false, 'Есть пересечение источников хотя бы в одном домене'],
+    ['Multiple sources overlap', false, 'Доступно только при 2–3 источниках'],
     ['MMY / fitment applies', false, 'Для проекта применим MMY / fitment']
   ]);
   sheet.getRange('B37:B45').insertCheckboxes();
@@ -1072,6 +1092,7 @@ function recalculateRuntime() {
 
     function isActive(task, trail) {
       if (Object.prototype.hasOwnProperty.call(activeMemo, task.id)) return activeMemo[task.id];
+      if (task.configurationApplicable === false) return (activeMemo[task.id] = false);
       if (task.localApplicable === RUNTIME.no) return (activeMemo[task.id] = false);
       if (!task.parent) return (activeMemo[task.id] = true);
       if ((trail || []).indexOf(task.id) >= 0) return (activeMemo[task.id] = false);
@@ -1392,6 +1413,7 @@ function instantiateModel_(config) {
     }
     instance.parent = instance.parentTemplate ? resolveReference(instance.parentTemplate, instance)[0] || '' : '';
     instance.dependencies = unique_([].concat.apply([], instance.dependencyTemplates.map(function (ref) { return resolveReference(ref, instance); })));
+    instance.configurationApplicable = configuredTaskApplicable_(instance, config);
   });
   return instances;
 }
@@ -1469,6 +1491,7 @@ function readOperationalState_() {
       gate: meta.gate || '',
       collection: meta.collection || '',
       instanceCode: meta.instanceCode || '',
+      configurationApplicable: meta.configurationApplicable !== false,
       templateId: meta.templateId || String(row[0])
     });
   });
@@ -1520,8 +1543,9 @@ function normalizeConfiguration_(input) {
     base[key] = normalizeItems(input[key]);
   });
   base.shippingMethods = unique_((Array.isArray(input.shippingMethods) ? input.shippingMethods : []).map(String));
-  base.sourceTypes = unique_((Array.isArray(input.sourceTypes) ? input.sourceTypes : ['manual']).map(String));
-  base.sourceOverlap = Boolean(input.sourceOverlap);
+  base.sourceTypes = unique_((Array.isArray(input.sourceTypes) ? input.sourceTypes : ['manual']).map(String))
+    .filter(function (value) { return SOURCE_TYPE_CATALOG.indexOf(value) >= 0; });
+  base.sourceOverlap = Boolean(input.sourceOverlap) && base.sourceTypes.length >= 2;
   base.fitment = Boolean(input.fitment);
   base.carriers.forEach(function (item) {
     const key = 'carrier:' + item.code;
@@ -1548,6 +1572,23 @@ function validateConfiguration_(config) {
       if (item.name !== catalogByCode[item.code]) throw new Error(section.label + ' name does not match catalog for ' + item.code);
     });
   });
+}
+
+function configuredTaskApplicable_(task, config) {
+  const sources = config.sourceTypes || [];
+  const importSelected = sources.indexOf('csv') >= 0 || sources.indexOf('supplier_feed') >= 0;
+  const supplierFeedSelected = sources.indexOf('supplier_feed') >= 0;
+
+  if (task.contour === 'SOURCE_COORDINATION') {
+    return Boolean(config.sourceOverlap && sources.length >= 2);
+  }
+  if (task.collection === 'integrations') return supplierFeedSelected;
+  if (SOURCE_TASK_RULES.automotiveIntegration.indexOf(task.templateId) >= 0) {
+    return supplierFeedSelected && (config.integrations || []).length > 0;
+  }
+  if (SOURCE_TASK_RULES.supplierFeed.indexOf(task.templateId) >= 0) return supplierFeedSelected;
+  if (SOURCE_TASK_RULES.import.indexOf(task.templateId) >= 0) return importSelected;
+  return true;
 }
 
 function qaProductSamples_() {
