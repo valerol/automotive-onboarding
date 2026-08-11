@@ -1,6 +1,7 @@
 const PROJECT_FACTORY = Object.freeze({
   registrySheet: 'ПРОЕКТЫ',
   metadataSheet: '_PROJECT_METADATA',
+  defaultFolderId: '0ADsXCL4a35J8Uk9PVA',
   registryHeaders: Object.freeze([
     'Название', 'Spreadsheet ID', 'URL', 'Trigger ID', 'Дата создания',
     'Runtime version', 'Статус миграции'
@@ -186,6 +187,7 @@ function resolveDriveFolderId_(folderInput, sourceFileId) {
   } catch (error) {
     throw new Error('Не удалось определить папку текущей таблицы. Детали: ' + error.message);
   }
+  if (PROJECT_FACTORY.defaultFolderId) return PROJECT_FACTORY.defaultFolderId;
   throw new Error('У текущей таблицы нет доступной родительской папки. Укажите ссылку или ID папки Google Drive.');
 }
 
