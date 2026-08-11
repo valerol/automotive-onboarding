@@ -47,6 +47,9 @@
     .help { margin-top:3px; color:var(--muted); font-size:11px; }
     .checkline { display:flex; gap:10px; flex-wrap:wrap; margin:6px 0 12px; }
     .checkline label { font-weight:400; }
+    .catalog { display:grid; gap:5px; padding:8px; border:1px solid var(--line); border-radius:6px; }
+    .catalog label { display:flex; gap:8px; align-items:flex-start; margin:0; font-weight:400; }
+    .catalog code { margin-left:auto; color:var(--muted); font-size:11px; }
     .error { color:#a12626; white-space:pre-wrap; }
     .success { color:#246b3c; }
     #message { min-height:18px; margin:8px 0; }
@@ -83,13 +86,11 @@
     </section>
 
     <section id="view-config" class="view">
-      <p class="notice">One line per instance: <code>CODE|Display name</code>. Saving rebuilds repeatable branches while preserving matching Task IDs.</p>
-      <div class="field"><label>Automotive integrations</label><textarea id="cfg-integrations"></textarea><div class="help">Use an empty list for NONE.</div></div>
-      <div class="field"><label>Payment gateways</label><textarea id="cfg-payments"></textarea></div>
-      <div class="field"><label>Carriers</label><textarea id="cfg-carriers"></textarea></div>
-      <div class="field"><label>Tax services</label><textarea id="cfg-tax"></textarea></div>
-      <div class="field"><label>QA products</label><textarea id="cfg-products"></textarea><div class="help">Example: SKU123|Brake pad SKU123</div></div>
-      <div class="field"><label>E2E scenarios</label><textarea id="cfg-scenarios"></textarea><div class="help">Example: STANDARD|Standard order</div></div>
+      <p class="notice">Select the services used by the project. System codes and names are fixed. QA products are recorded in task comments; E2E scenarios are generated automatically.</p>
+      <div class="field"><label>Automotive integrations</label><div id="cfg-integrations" class="catalog"></div></div>
+      <div class="field"><label>Payment gateways</label><div id="cfg-payments" class="catalog"></div></div>
+      <div class="field"><label>Carriers</label><div id="cfg-carriers" class="catalog"></div></div>
+      <div class="field"><label>Tax services</label><div id="cfg-tax" class="catalog"></div></div>
 
       <div class="field"><label>Independent source types</label>
         <div class="checkline">
@@ -108,7 +109,6 @@
       </div>
       <div class="field"><label><input id="cfg-overlap" type="checkbox"> Multiple sources overlap in at least one data domain</label></div>
       <div class="field"><label><input id="cfg-fitment" type="checkbox"> MMY / fitment applies</label></div>
-      <div class="field"><label>Turn14 integration code</label><input id="cfg-turn14" type="text"><div class="help">Optional. Must match one integration code.</div></div>
       <button class="primary" onclick="saveConfiguration()">Save and rebuild runtime</button>
     </section>
   </main>
@@ -116,6 +116,24 @@
   <script>
     let state = {tasks:[], counts:{}, config:{}};
     let language = 'en';
+    const CONFIG_CATALOGS = {
+      integrations: [
+        {code:'T14', name:'Turn14 Distribution'}, {code:'MEYER', name:'Meyer Distributing'},
+        {code:'KEYSTONE', name:'Keystone Automotive Operations'}, {code:'ATD', name:'American Tire Distributors (ATD)'},
+        {code:'WHEEL_PROS', name:'Wheel Pros'}, {code:'APG', name:'APG Wholesale – ex. Premier Performance'},
+        {code:'DIX', name:'Dix Performance North'}, {code:'MOTOR_STATE', name:'Motor State Distributing'}
+      ],
+      payment_gateways: [
+        {code:'ACIMA', name:'Acima'}, {code:'PAYTOMORROW', name:'Paytomorrow'}, {code:'AFFIRM', name:'Affirm'},
+        {code:'XPAYMENTS', name:'X-Payments'}, {code:'SQUARE', name:'Square'}, {code:'BRAINTREE', name:'Braintree'},
+        {code:'AMAZON', name:'Amazon'}, {code:'STRIPE', name:'Stripe'}, {code:'PAYPAL', name:'PayPal'}
+      ],
+      carriers: [
+        {code:'DHL', name:'DHL'}, {code:'CANADA_POST', name:'CanadaPost'}, {code:'UPS', name:'UPS'},
+        {code:'FEDEX', name:'FedEx'}, {code:'USPS', name:'USPS'}, {code:'AUSTRALIA_POST', name:'Australia Post'}
+      ],
+      tax_services: [{code:'TAXJAR', name:'TaxJar'}, {code:'AVATAX', name:'AvaTax'}]
+    };
 
     function server(name, ...args) {
       return new Promise((resolve, reject) => {
@@ -217,37 +235,40 @@
       } catch (error) { showMessage(error.message, 'error'); }
     }
 
-    function parseLines(id) {
-      return document.getElementById(id).value.split(/\r?\n/).map(line => line.trim()).filter(Boolean).map(line => {
-        const parts = line.split('|');
-        return {code:(parts.shift() || '').trim(), name:(parts.join('|') || '').trim()};
-      });
+    function renderCatalog(id, key) {
+      document.getElementById(id).innerHTML = CONFIG_CATALOGS[key].map(item =>
+        `<label><input type="checkbox" name="catalog-${escapeAttr(key)}" value="${escapeAttr(item.code)}">` +
+        `<span>${escapeHtml(item.name)}</span><code>${escapeHtml(item.code)}</code></label>`
+      ).join('');
     }
-    function formatLines(items) { return (items || []).map(item => `${item.code}|${item.name}`).join('\n'); }
+    function selectedCatalogItems(key) {
+      const selected = new Set(checkedValues(`catalog-${key}`));
+      return CONFIG_CATALOGS[key].filter(item => selected.has(item.code));
+    }
+    function setCatalogSelection(key, items) {
+      const selected = new Set((items || []).map(item => item.code));
+      document.querySelectorAll(`input[name="catalog-${key}"]`).forEach(node => node.checked = selected.has(node.value));
+    }
     function checkedValues(name) { return Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(node => node.value); }
 
     function fillConfiguration(config) {
-      document.getElementById('cfg-integrations').value = formatLines(config.integrations);
-      document.getElementById('cfg-payments').value = formatLines(config.payment_gateways);
-      document.getElementById('cfg-carriers').value = formatLines(config.carriers);
-      document.getElementById('cfg-tax').value = formatLines(config.tax_services);
-      document.getElementById('cfg-products').value = formatLines(config.qa_products);
-      document.getElementById('cfg-scenarios').value = formatLines(config.e2e_scenarios);
+      setCatalogSelection('integrations', config.integrations);
+      setCatalogSelection('payment_gateways', config.payment_gateways);
+      setCatalogSelection('carriers', config.carriers);
+      setCatalogSelection('tax_services', config.tax_services);
       document.querySelectorAll('input[name="source"]').forEach(node => node.checked = (config.sourceTypes || []).includes(node.value));
       document.querySelectorAll('input[name="shipping"]').forEach(node => node.checked = (config.shippingMethods || []).includes(node.value));
       document.getElementById('cfg-overlap').checked = Boolean(config.sourceOverlap);
       document.getElementById('cfg-fitment').checked = Boolean(config.fitment);
-      document.getElementById('cfg-turn14').value = config.turn14IntegrationCode || '';
     }
 
     async function saveConfiguration() {
       if (!confirm('Rebuild repeatable branches from this configuration? Matching Task IDs keep their state.')) return;
       const config = {
-        integrations:parseLines('cfg-integrations'), payment_gateways:parseLines('cfg-payments'), carriers:parseLines('cfg-carriers'),
-        tax_services:parseLines('cfg-tax'), qa_products:parseLines('cfg-products'), e2e_scenarios:parseLines('cfg-scenarios'),
+        integrations:selectedCatalogItems('integrations'), payment_gateways:selectedCatalogItems('payment_gateways'),
+        carriers:selectedCatalogItems('carriers'), tax_services:selectedCatalogItems('tax_services'),
         sourceTypes:checkedValues('source'), shippingMethods:checkedValues('shipping'),
-        sourceOverlap:document.getElementById('cfg-overlap').checked, fitment:document.getElementById('cfg-fitment').checked,
-        turn14IntegrationCode:document.getElementById('cfg-turn14').value
+        sourceOverlap:document.getElementById('cfg-overlap').checked, fitment:document.getElementById('cfg-fitment').checked
       };
       showMessage('Saving configuration and rebuilding…');
       try { state = await server('saveRuntimeConfiguration', config); renderCounters(); renderTasks(); showView('tasks'); showMessage('Configuration applied.', 'success'); }
@@ -256,6 +277,10 @@
 
     function escapeHtml(value) { return String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
     function escapeAttr(value) { return escapeHtml(value).replace(/`/g, '&#96;'); }
+    renderCatalog('cfg-integrations', 'integrations');
+    renderCatalog('cfg-payments', 'payment_gateways');
+    renderCatalog('cfg-carriers', 'carriers');
+    renderCatalog('cfg-tax', 'tax_services');
     loadState();
   </script>
 </body>
