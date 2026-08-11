@@ -385,7 +385,7 @@ function renderEnglishInstructions_(spreadsheet) {
     ['Technical sheets', 'TASK POOL, _RUNTIME_DATA, and _PROJECT_METADATA are runtime-managed. Do not edit them directly.'],
     ['Recovery', 'If creation fails, verify folder access and retry. Failed partial copies are moved to Trash and logged in PROJECTS.']
   ];
-  sheet.getDataRange().breakApart();
+  sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();
   sheet.clearContents();
   if (sheet.getMaxRows() < rows.length) sheet.insertRowsAfter(sheet.getMaxRows(), rows.length - sheet.getMaxRows());
   if (sheet.getMaxColumns() < 2) sheet.insertColumnsAfter(sheet.getMaxColumns(), 2 - sheet.getMaxColumns());
