@@ -94,10 +94,11 @@
 
       <div class="field"><label>Independent source types</label>
         <div class="checkline">
-          <label><input type="checkbox" name="source" value="manual"> manual</label>
-          <label><input type="checkbox" name="source" value="csv"> CSV</label>
-          <label><input type="checkbox" name="source" value="supplier_feed"> supplier feed</label>
+          <label><input type="checkbox" name="source" value="manual" onchange="updateSourceOverlapAvailability()"> manual</label>
+          <label><input type="checkbox" name="source" value="csv" onchange="updateSourceOverlapAvailability()"> CSV</label>
+          <label><input type="checkbox" name="source" value="supplier_feed" onchange="updateSourceOverlapAvailability()"> supplier feed</label>
         </div>
+        <div class="help">Source choices only activate or deactivate existing tasks; they never add task rows.</div>
       </div>
       <div class="field"><label>Non-carrier shipping methods</label>
         <div class="checkline">
@@ -107,7 +108,7 @@
           <label><input type="checkbox" name="shipping" value="pickup"> pickup</label>
         </div>
       </div>
-      <div class="field"><label><input id="cfg-overlap" type="checkbox"> Multiple sources overlap in at least one data domain</label></div>
+      <div class="field"><label><input id="cfg-overlap" type="checkbox"> Multiple sources overlap in at least one data domain</label><div id="cfg-overlap-help" class="help"></div></div>
       <div class="field"><label><input id="cfg-fitment" type="checkbox"> MMY / fitment applies</label></div>
       <button class="primary" onclick="saveConfiguration()">Save and rebuild runtime</button>
     </section>
@@ -260,6 +261,18 @@
       document.querySelectorAll('input[name="shipping"]').forEach(node => node.checked = (config.shippingMethods || []).includes(node.value));
       document.getElementById('cfg-overlap').checked = Boolean(config.sourceOverlap);
       document.getElementById('cfg-fitment').checked = Boolean(config.fitment);
+      updateSourceOverlapAvailability();
+    }
+
+    function updateSourceOverlapAvailability() {
+      const sourceCount = checkedValues('source').length;
+      const overlap = document.getElementById('cfg-overlap');
+      const available = sourceCount >= 2;
+      overlap.disabled = !available;
+      if (!available) overlap.checked = false;
+      document.getElementById('cfg-overlap-help').textContent = available
+        ? 'Enable only when the selected sources overlap in at least one data domain.'
+        : 'Select at least two source types to enable this setting.';
     }
 
     async function saveConfiguration() {
