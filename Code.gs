@@ -17,6 +17,11 @@ const RUNTIME = Object.freeze({
   statuses: Object.freeze({inactive: 'INACTIVE', done: 'DONE', blocked: 'BLOCKED', ready: 'READY', waiting: 'WAITING'})
 });
 
+const CHECKLIST_FILTER = Object.freeze({
+  propertyKey: 'CHECKLIST_STATUS_FILTER_V2',
+  statuses: Object.freeze(['READY', 'WAITING', 'BLOCKED', 'INACTIVE', 'DONE'])
+});
+
 const SECTION_RU = Object.freeze({
   '1. SCOPE AND REQUIREMENTS CONFIRMED': '1. ОБЪЁМ И ТРЕБОВАНИЯ ПОДТВЕРЖДЕНЫ',
   '2. ACCESS AND ACCOUNTS': '2. ДОСТУПЫ И УЧЁТНЫЕ ЗАПИСИ',
@@ -37,18 +42,29 @@ const SECTION_RU = Object.freeze({
 });
 
 function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('ЧЕКЛИСТ')
+  const ui = SpreadsheetApp.getUi();
+  ui.createMenu('ЧЕКЛИСТ')
     .addItem('Открыть чеклист', 'openChecklist')
     .addItem('Открыть конфигурацию', 'openChecklistConfiguration')
     .addItem('Сохранить конфигурацию и пересобрать', 'saveChecklistConfiguration')
     .addSeparator()
     .addItem('Обновить чеклист', 'refreshChecklist')
-    .addItem('Показать READY', 'showReadyTasks')
-    .addItem('Показать все статусы', 'showAllChecklistTasks')
+    .addSubMenu(
+      ui.createMenu('Фильтр статусов')
+        .addItem('Выбрать статусы…', 'openChecklistStatusFilter')
+        .addItem('Только READY', 'showReadyTasks')
+        .addItem('Все статусы', 'showAllChecklistTasks')
+    )
     .addItem('Проверить модель', 'showRuntimeValidation')
     .addItem('Проверить доступ', 'authorizeAndDiagnoseRuntime')
     .addToUi();
+
+  try {
+    const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.checklistSheet);
+    if (sheet) repairChecklistFilterControl_(sheet);
+  } catch (ignored) {
+    // The menu must remain available even if a read-only session blocks repair.
+  }
 }
 
 function authorizeAndDiagnoseRuntime() {
@@ -180,7 +196,8 @@ function showReadyTasks() {
 
 function showAllChecklistTasks() {
   const sheet = ensureChecklistSheet_();
-  sheet.getRange('D2').setValue('ALL');
+  setChecklistStatusSelection_(CHECKLIST_FILTER.statuses);
+  repairChecklistFilterControl_(sheet);
   applyChecklistStatusFilter_(sheet);
   SpreadsheetApp.getActive().setActiveSheet(sheet);
   sheet.getRange(RUNTIME.checklistFirstTaskRow, 1).activate();
@@ -252,7 +269,13 @@ function handleChecklistEdit_(e) {
   try {
     const sheet = e.range.getSheet();
     if (e.range.getA1Notation() === 'D2') {
+      repairChecklistFilterControl_(sheet);
       applyChecklistStatusFilter_(sheet);
+      SpreadsheetApp.getActive().toast(
+        'Фильтр изменяется через меню ЧЕКЛИСТ → Фильтр статусов.',
+        'Изменение отменено',
+        5
+      );
       return;
     }
     if (e.range.getA1Notation() === 'G2') {
@@ -397,7 +420,8 @@ function refreshChecklist_() {
 }
 
 function showReadyTasks_(sheet) {
-  sheet.getRange('D2').setValue(RUNTIME.statuses.ready);
+  setChecklistStatusSelection_([RUNTIME.statuses.ready]);
+  repairChecklistFilterControl_(sheet);
   applyChecklistStatusFilter_(sheet);
 
   const lastRow = Math.max(sheet.getLastRow(), RUNTIME.checklistFirstTaskRow);
@@ -422,7 +446,8 @@ function showReadyTasks_(sheet) {
     return;
   }
 
-  sheet.getRange('D2').setValue('ALL');
+  setChecklistStatusSelection_(CHECKLIST_FILTER.statuses);
+  repairChecklistFilterControl_(sheet);
   applyChecklistStatusFilter_(sheet);
   sheet.getRange(RUNTIME.checklistFirstTaskRow, 1).activate();
   SpreadsheetApp.getActive().toast(
@@ -457,12 +482,7 @@ function ensureChecklistSheet_() {
       .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
     sheet.setRowHeight(1, 46);
     sheet.getRange('C2').setValue('Статус').setFontWeight('bold');
-    sheet.getRange('D2').setValue('READY').setDataValidation(
-      SpreadsheetApp.newDataValidation()
-        .requireValueInList(['ALL', 'READY', 'WAITING', 'BLOCKED', 'INACTIVE', 'DONE'], true)
-        .setAllowInvalid(false)
-        .build()
-    );
+    sheet.getRange('D2').setValue('READY');
     sheet.getRange('F2').setValue('Язык').setFontWeight('bold');
     sheet.getRange('G2').setValue('RU').setDataValidation(
       SpreadsheetApp.newDataValidation().requireValueInList(['RU', 'EN'], true).setAllowInvalid(false).build()
@@ -485,18 +505,13 @@ function ensureChecklistSheet_() {
     sheet.setColumnWidth(7, 240);
     sheet.setTabColor('#356853');
   } else {
-    sheet.getRange('D2').setDataValidation(
-      SpreadsheetApp.newDataValidation()
-        .requireValueInList(['ALL', 'READY', 'WAITING', 'BLOCKED', 'INACTIVE', 'DONE'], true)
-        .setAllowInvalid(false)
-        .build()
-    );
     sheet.getRange('G2').setDataValidation(
       SpreadsheetApp.newDataValidation().requireValueInList(['RU', 'EN'], true).setAllowInvalid(false).build()
     );
     sheet.getRange('A3:G3').clearContent();
   }
 
+  repairChecklistFilterControl_(sheet);
   sheet.showColumns(1, 7);
   if (sheet.getMaxColumns() > 7) sheet.hideColumns(8, sheet.getMaxColumns() - 7);
   ensureChecklistFormatting_(sheet);
@@ -532,11 +547,115 @@ function checklistLanguage_(sheet) {
   return String(sheet.getRange('G2').getDisplayValue()).toUpperCase() === 'EN' ? 'en' : 'ru';
 }
 
+function openChecklistStatusFilter() {
+  const selected = getChecklistStatusSelection_();
+  const items = CHECKLIST_FILTER.statuses.map(function (status) {
+    const checked = selected.indexOf(status) >= 0 ? ' checked' : '';
+    return '<label style="display:flex;gap:10px;align-items:center;padding:7px 0">' +
+      '<input type="checkbox" name="status" value="' + status + '"' + checked + '>' +
+      '<span>' + status + '</span></label>';
+  }).join('');
+
+  const html = HtmlService.createHtmlOutput(
+    '<!doctype html><html><head><base target="_top"><style>' +
+    'body{font:14px Arial,sans-serif;color:#202124;padding:18px;margin:0}' +
+    'h3{margin:0 0 8px;font-size:17px}' +
+    'p{margin:0 0 12px;color:#5f6368;line-height:1.4}' +
+    '.actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px}' +
+    'button{border:1px solid #dadce0;background:#fff;border-radius:4px;padding:8px 12px;cursor:pointer}' +
+    'button.primary{background:#356853;color:#fff;border-color:#356853}' +
+    '#error{min-height:18px;color:#b3261e;margin-top:8px}' +
+    '</style></head><body>' +
+    '<h3>Фильтр статусов</h3>' +
+    '<p>Отметьте один или несколько статусов. Разделы без подходящих задач будут скрыты.</p>' +
+    '<div>' + items + '</div>' +
+    '<div id="error"></div>' +
+    '<div class="actions">' +
+    '<button onclick="selectAll()">Все</button>' +
+    '<button onclick="onlyReady()">Только READY</button>' +
+    '<button class="primary" onclick="applyFilter()">Применить</button>' +
+    '</div>' +
+    '<script>' +
+    'function boxes(){return Array.prototype.slice.call(document.querySelectorAll(\'input[name="status"]\'));}' +
+    'function selectAll(){boxes().forEach(function(x){x.checked=true;});}' +
+    'function onlyReady(){boxes().forEach(function(x){x.checked=x.value==="READY";});}' +
+    'function applyFilter(){' +
+      'var selected=boxes().filter(function(x){return x.checked;}).map(function(x){return x.value;});' +
+      'if(!selected.length){document.getElementById("error").textContent="Выберите хотя бы один статус.";return;}' +
+      'document.getElementById("error").textContent="";' +
+      'google.script.run.withSuccessHandler(function(){google.script.host.close();})' +
+      '.withFailureHandler(function(error){document.getElementById("error").textContent=error.message||String(error);})' +
+      '.applyChecklistStatusSelection(selected);' +
+    '}' +
+    '</script></body></html>'
+  ).setWidth(420).setHeight(430);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Фильтр статусов');
+}
+
+function applyChecklistStatusSelection(statuses) {
+  const selected = setChecklistStatusSelection_(statuses);
+  const sheet = ensureChecklistSheet_();
+  repairChecklistFilterControl_(sheet);
+  applyChecklistStatusFilter_(sheet);
+  SpreadsheetApp.getActive().setActiveSheet(sheet);
+  sheet.getRange(RUNTIME.checklistFirstTaskRow, 1).activate();
+  return {ok: true, selected: selected};
+}
+
+function normalizeChecklistStatusSelection_(values) {
+  const requested = Array.isArray(values) ? values : [];
+  return CHECKLIST_FILTER.statuses.filter(function (status) {
+    return requested.map(function (value) { return String(value).toUpperCase(); }).indexOf(status) >= 0;
+  });
+}
+
+function getChecklistStatusSelection_() {
+  const properties = PropertiesService.getDocumentProperties();
+  const stored = properties.getProperty(CHECKLIST_FILTER.propertyKey);
+  if (stored) {
+    try {
+      const selected = normalizeChecklistStatusSelection_(JSON.parse(stored));
+      if (selected.length) return selected;
+    } catch (ignored) {
+      // Migrate invalid legacy state below.
+    }
+  }
+
+  const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.checklistSheet);
+  const legacyValue = sheet ? String(sheet.getRange('D2').getDisplayValue() || '').toUpperCase() : '';
+  const selected = legacyValue === 'ALL'
+    ? CHECKLIST_FILTER.statuses.slice()
+    : normalizeChecklistStatusSelection_(legacyValue.match(/READY|WAITING|BLOCKED|INACTIVE|DONE/g) || []);
+  const migrated = selected.length ? selected : [RUNTIME.statuses.ready];
+  properties.setProperty(CHECKLIST_FILTER.propertyKey, JSON.stringify(migrated));
+  return migrated;
+}
+
+function setChecklistStatusSelection_(values) {
+  const selected = normalizeChecklistStatusSelection_(values);
+  if (!selected.length) throw new Error('Выберите хотя бы один статус.');
+  PropertiesService.getDocumentProperties()
+    .setProperty(CHECKLIST_FILTER.propertyKey, JSON.stringify(selected));
+  return selected;
+}
+
+function checklistFilterSummary_(selected) {
+  return selected.length === CHECKLIST_FILTER.statuses.length ? 'ALL' : selected.join(' + ');
+}
+
+function repairChecklistFilterControl_(sheet) {
+  const selected = getChecklistStatusSelection_();
+  sheet.getRange('D2')
+    .clearDataValidations()
+    .setValue(checklistFilterSummary_(selected))
+    .setNote(
+      'Системный индикатор. Фильтр изменяется через меню ЧЕКЛИСТ → Фильтр статусов. ' +
+      'Прямые изменения этой ячейки автоматически отменяются.'
+    );
+}
+
 function checklistStatusFilter_(sheet) {
-  const value = String(sheet.getRange('D2').getDisplayValue() || 'READY').toUpperCase();
-  return ['ALL', 'READY', 'WAITING', 'BLOCKED', 'INACTIVE', 'DONE'].indexOf(value) >= 0
-    ? value
-    : 'READY';
+  return getChecklistStatusSelection_();
 }
 
 function applyChecklistStatusFilter_(sheet) {
@@ -573,7 +692,7 @@ function applyChecklistStatusFilter_(sheet) {
       return;
     }
 
-    const matches = selected === 'ALL' || status === selected;
+    const matches = selected.indexOf(status) >= 0;
     if (matches) sectionHasMatch = true;
     else hiddenRows.push(sheetRow);
   });
