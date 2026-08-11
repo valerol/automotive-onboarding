@@ -490,7 +490,7 @@ function ensureChecklistSheet_() {
     sheet.getRange('A3:G3').clearContent();
     sheet.setRowHeight(3, 8);
     sheet.getRange('A5:G5').merge()
-      .setValue('Выберите статус сверху. Редактируются только Актуален, DONE и Комментарий.')
+      .setValue('Фильтр статусов: ЧЕКЛИСТ → Фильтр статусов. Редактируются только Актуален, DONE и Комментарий.')
       .setBackground('#f4f6f8').setFontColor('#667085');
     sheet.getRange('A6:G6').setValues([['Task ID', 'Таск', 'Статус', 'Актуален', 'DONE', 'Комментарий', 'Ждёт']])
       .setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
