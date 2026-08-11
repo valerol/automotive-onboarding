@@ -45,9 +45,19 @@ The repository is the source of truth. To bind it to the existing Apps Script pr
 
 ## Configuration model
 
-Repeat collections are entered as `CODE|Display name`:
+Automotive integrations are selected with checkboxes from the fixed catalog in `КОНФИГУРАЦИЯ`:
 
-- integrations;
+- `T14` — Turn14 Distribution;
+- `MEYER` — Meyer Distributing;
+- `KEYSTONE` — Keystone Automotive Operations;
+- `ATD` — American Tire Distributors (ATD);
+- `WHEEL_PROS` — Wheel Pros;
+- `APG` — APG Wholesale – ex. Premier Performance;
+- `DIX` — Dix Performance North;
+- `MOTOR_STATE` — Motor State Distributing.
+
+Other repeat collections are entered as `CODE|Display name`:
+
 - payment gateways;
 - carriers;
 - tax services;
