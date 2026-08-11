@@ -1,7 +1,7 @@
 const PROJECT_FACTORY = Object.freeze({
   registrySheet: 'ПРОЕКТЫ',
   metadataSheet: '_PROJECT_METADATA',
-  defaultFolderId: '0ADsXCL4a35J8Uk9PVA',
+  defaultFolderId: 'root',
   registryHeaders: Object.freeze([
     'Название', 'Spreadsheet ID', 'URL', 'Trigger ID', 'Дата создания',
     'Runtime version', 'Статус миграции'
@@ -130,6 +130,8 @@ function createDataOnlySpreadsheetCopy_(source, name, targetFolderId) {
       if (item.hidden && !item.sheet.isSheetHidden()) item.sheet.hideSheet();
     });
 
+    if (targetFolderId === 'root') return destination;
+
     const file = Drive.Files.get(destination.getId(), {
       supportsAllDrives: true,
       fields: 'id,parents'
@@ -206,6 +208,7 @@ function normalizeDriveFolderId_(folderInput) {
 }
 
 function assertDriveDestinationWritable_(folderId) {
+  if (folderId === 'root') return {id: 'root', name: 'My Drive'};
   let folder;
   try {
     folder = Drive.Files.get(folderId, {

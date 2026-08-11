@@ -72,7 +72,8 @@ assert.deepEqual(Array.from(api.PROJECT_FACTORY.registryHeaders), [
   'Название', 'Spreadsheet ID', 'URL', 'Trigger ID', 'Дата создания',
   'Runtime version', 'Статус миграции'
 ]);
-assert.equal(api.PROJECT_FACTORY.defaultFolderId, '0ADsXCL4a35J8Uk9PVA');
+assert.equal(api.PROJECT_FACTORY.defaultFolderId, 'root');
+assert.match(factorySource, /if \(targetFolderId === 'root'\) return destination/);
 assert.ok(manifest.oauthScopes.includes('https://www.googleapis.com/auth/drive'));
 assert.ok(manifest.oauthScopes.includes('https://www.googleapis.com/auth/spreadsheets'));
 assert.ok(manifest.oauthScopes.includes('https://www.googleapis.com/auth/script.scriptapp'));

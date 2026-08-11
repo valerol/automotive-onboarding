@@ -27,9 +27,10 @@ spreadsheet and are not asked to authorize Apps Script.
 1. Open the central master.
 2. Select **ЧЕКЛИСТ → Создать onboarding-проект**.
 3. Enter the project name.
-4. Paste the destination folder URL/ID, or leave it blank to use the master's
-   current folder. In this deployment, a file stored directly in the Shared
-   Drive root falls back to root ID `0ADsXCL4a35J8Uk9PVA`.
+4. Paste the destination folder URL/ID, or leave it blank. If the master's
+   parent folder is not exposed to the executing account, the project remains
+   in that account's **My Drive** root. In the live deployment this is the
+   `valerol@x-cart.com` account.
 5. Open the returned spreadsheet and work in `ЧЕКЛИСТ`. Use the dropdown in
    `D2` for status filtering. Supported edits in `КОНФИГУРАЦИЯ` are saved and
    rebuild the checklist automatically.
