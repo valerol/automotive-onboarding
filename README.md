@@ -59,6 +59,7 @@ Saving configuration rebuilds repeatable branches and preserves state for Task I
 - empty payment, shipping, QA-product, or E2E-scenario sets produce `BLOCKED` where the capability is mandatory;
 - premature `DONE` is rejected and reset;
 - dependency and parent cycles are rejected.
+- task IDs, parent IDs, and dependency IDs are always read and written as text, so values such as `01-05` cannot be converted to dates by Google Sheets.
 
 ## First smoke test
 
@@ -68,6 +69,7 @@ Saving configuration rebuilds repeatable branches and preserves state for Task I
 4. Attempt to complete a waiting task: the checkbox must be reset.
 5. Set a parent task to `НЕТ`: its child rows must become `INACTIVE` and their checked `DONE` values must be cleared.
 6. Switch EN/RU in the sidebar: task titles must change without reading external storage.
+7. Confirm that task `01-05` is shown as `01-05`, not as a JavaScript date, and can be changed between `ДА` and `НЕТ` from the sidebar.
 
 ## Important
 
