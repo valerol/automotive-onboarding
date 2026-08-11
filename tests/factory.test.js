@@ -18,6 +18,7 @@ vm.runInContext(
       RUNTIME_MODEL: RUNTIME_MODEL,
       RUNTIME_MIGRATIONS: RUNTIME_MIGRATIONS,
       PROJECT_FACTORY: PROJECT_FACTORY,
+      normalizeDriveFolderId_: normalizeDriveFolderId_,
       assertRuntimeDataPreserved_: assertRuntimeDataPreserved_,
       defaultConfiguration_: defaultConfiguration_,
       instantiateModel_: instantiateModel_,
@@ -53,7 +54,8 @@ const cleanTasks = api.mergeTaskStateForRebuild_(api.instantiateModel_(config), 
 assert.equal(cleanTasks.some(task => task.done), false);
 assert.equal(new Set(cleanTasks.map(task => task.id)).size, cleanTasks.length);
 
-assert.match(factorySource, /makeCopy\(projectName, folder\)/);
+assert.match(factorySource, /Drive\.Files\.copy/);
+assert.match(factorySource, /supportsAllDrives:\s*true/);
 assert.match(factorySource, /SpreadsheetApp\.openById/);
 assert.match(factorySource, /resetOnboardingSpreadsheet_/);
 assert.match(factorySource, /appendProjectRegistry_/);
@@ -66,6 +68,22 @@ assert.deepEqual(Array.from(api.PROJECT_FACTORY.registryHeaders), [
 ]);
 assert.ok(manifest.oauthScopes.includes('https://www.googleapis.com/auth/drive'));
 assert.ok(manifest.oauthScopes.includes('https://www.googleapis.com/auth/spreadsheets'));
+assert.deepEqual(manifest.dependencies.enabledAdvancedServices, [{
+  userSymbol: 'Drive',
+  version: 'v3',
+  serviceId: 'drive'
+}]);
+
+assert.equal(api.normalizeDriveFolderId_('folder_123456789'), 'folder_123456789');
+assert.equal(
+  api.normalizeDriveFolderId_('https://drive.google.com/drive/folders/folder_123456789?usp=sharing'),
+  'folder_123456789'
+);
+assert.equal(
+  api.normalizeDriveFolderId_('https://drive.google.com/open?id=folder_123456789'),
+  'folder_123456789'
+);
+assert.throws(() => api.normalizeDriveFolderId_('not a folder'), /Не удалось распознать/);
 
 console.log(JSON.stringify({
   ok: true,

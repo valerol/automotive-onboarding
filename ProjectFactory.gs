@@ -13,13 +13,18 @@ function promptCreateOnboardingProject() {
   if (nameResult.getSelectedButton() !== ui.Button.OK) return;
   const folderResult = ui.prompt(
     'Папка Google Drive',
-    'Введите ID выбранной папки Google Drive',
+    'Введите ссылку или ID выбранной папки Google Drive',
     ui.ButtonSet.OK_CANCEL
   );
   if (folderResult.getSelectedButton() !== ui.Button.OK) return;
-  const result = createOnboardingProjectInFolder(nameResult.getResponseText(), folderResult.getResponseText());
-  ui.alert('Проект создан:\n' + result.url);
-  return result;
+  try {
+    const result = createOnboardingProjectInFolder(nameResult.getResponseText(), folderResult.getResponseText());
+    ui.alert('Проект создан:\n' + result.url);
+    return result;
+  } catch (error) {
+    ui.alert('Не удалось создать onboarding-проект', error.message, ui.ButtonSet.OK);
+    throw error;
+  }
 }
 
 function promptCreateCleanMasterTemplate() {
@@ -28,13 +33,18 @@ function promptCreateCleanMasterTemplate() {
   if (nameResult.getSelectedButton() !== ui.Button.OK) return;
   const folderResult = ui.prompt(
     'Папка Google Drive',
-    'Введите ID выбранной папки Google Drive',
+    'Введите ссылку или ID выбранной папки Google Drive',
     ui.ButtonSet.OK_CANCEL
   );
   if (folderResult.getSelectedButton() !== ui.Button.OK) return;
-  const result = createCleanMasterTemplateInFolder(nameResult.getResponseText(), folderResult.getResponseText());
-  ui.alert('Чистая мастер-копия создана:\n' + result.url);
-  return result;
+  try {
+    const result = createCleanMasterTemplateInFolder(nameResult.getResponseText(), folderResult.getResponseText());
+    ui.alert('Чистая мастер-копия создана:\n' + result.url);
+    return result;
+  } catch (error) {
+    ui.alert('Не удалось создать мастер-копию', error.message, ui.ButtonSet.OK);
+    throw error;
+  }
 }
 
 function createCleanMasterTemplateInFolder(name, folderId) {
@@ -47,16 +57,24 @@ function createOnboardingProjectInFolder(name, folderId) {
 
 function createOnboardingCopy_(name, folderId, kind) {
   const projectName = String(name || '').trim();
-  const targetFolderId = String(folderId || '').trim();
   if (!projectName) throw new Error('Project name is required.');
-  if (!targetFolderId) throw new Error('Google Drive folder ID is required.');
+  const targetFolderId = normalizeDriveFolderId_(folderId);
 
   const master = SpreadsheetApp.getActive();
-  const folder = DriveApp.getFolderById(targetFolderId);
-  const copiedFile = DriveApp.getFileById(master.getId()).makeCopy(projectName, folder);
+  assertDriveDestinationWritable_(targetFolderId);
+  const copiedFile = Drive.Files.copy({
+    name: projectName,
+    parents: [targetFolderId]
+  }, master.getId(), {
+    supportsAllDrives: true,
+    fields: 'id,name,webViewLink'
+  });
+  const copiedFileId = copiedFile.id;
+  const copiedFileUrl = copiedFile.webViewLink ||
+    'https://docs.google.com/spreadsheets/d/' + copiedFileId + '/edit';
   let status = 'RESET_FAILED';
   try {
-    const copy = SpreadsheetApp.openById(copiedFile.getId());
+    const copy = SpreadsheetApp.openById(copiedFileId);
     resetOnboardingSpreadsheet_(copy, {
       kind: kind,
       name: projectName,
@@ -69,13 +87,17 @@ function createOnboardingCopy_(name, folderId, kind) {
     // the newly created copy to Drive trash; the source spreadsheet is never
     // modified and the registry records the failed attempt.
     status = 'RESET_FAILED_TRASHED';
-    copiedFile.setTrashed(true);
+    try {
+      Drive.Files.update({trashed: true}, copiedFileId, null, {supportsAllDrives: true});
+    } catch (trashError) {
+      console.error('Unable to trash failed onboarding copy ' + copiedFileId + ': ' + trashError.message);
+    }
     throw error;
   } finally {
     appendProjectRegistry_(master, {
       name: projectName,
-      spreadsheetId: copiedFile.getId(),
-      url: copiedFile.getUrl(),
+      spreadsheetId: copiedFileId,
+      url: copiedFileUrl,
       scriptId: '',
       createdAt: new Date(),
       runtimeVersion: RUNTIME.runtimeVersion,
@@ -84,12 +106,52 @@ function createOnboardingCopy_(name, folderId, kind) {
   }
   return {
     name: projectName,
-    spreadsheetId: copiedFile.getId(),
-    url: copiedFile.getUrl(),
+    spreadsheetId: copiedFileId,
+    url: copiedFileUrl,
     scriptId: '',
     runtimeVersion: RUNTIME.runtimeVersion,
     migrationStatus: status
   };
+}
+
+function normalizeDriveFolderId_(folderInput) {
+  const value = String(folderInput || '').trim();
+  if (!value) throw new Error('Укажите ссылку или ID папки Google Drive.');
+
+  const folderUrlMatch = value.match(/\/folders\/([A-Za-z0-9_-]+)/);
+  if (folderUrlMatch) return folderUrlMatch[1];
+
+  const idParameterMatch = value.match(/[?&]id=([A-Za-z0-9_-]+)/);
+  if (idParameterMatch) return idParameterMatch[1];
+
+  if (/^[A-Za-z0-9_-]{10,}$/.test(value)) return value;
+  throw new Error('Не удалось распознать папку Google Drive. Вставьте полную ссылку на папку или её ID.');
+}
+
+function assertDriveDestinationWritable_(folderId) {
+  let folder;
+  try {
+    folder = Drive.Files.get(folderId, {
+      supportsAllDrives: true,
+      fields: 'id,name,mimeType,capabilities(canAddChildren)'
+    });
+  } catch (error) {
+    throw new Error(
+      'Не удалось открыть папку Google Drive. Проверьте ссылку и доступ аккаунта, который запускает команду. ' +
+      'Детали: ' + error.message
+    );
+  }
+
+  if (folder.mimeType !== 'application/vnd.google-apps.folder') {
+    throw new Error('Указанный ID относится не к папке Google Drive: ' + folderId);
+  }
+  if (folder.capabilities && folder.capabilities.canAddChildren === false) {
+    throw new Error(
+      'Нет права создавать файлы в папке «' + (folder.name || folderId) + '». ' +
+      'Для Shared Drive требуется роль Content manager или Manager.'
+    );
+  }
+  return folder;
 }
 
 function resetOnboardingSpreadsheet_(spreadsheet, metadata) {
