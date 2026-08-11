@@ -1273,6 +1273,10 @@ function ensureConfigurationSheet_() {
 }
 
 function renderConfigurationSheet_(sheet, config) {
+  sheet.getRange('A1:C1').breakApart().merge().setValue(RUNTIME.configurationSheet)
+    .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
+  sheet.getRange('A3:C3').setValues([['Parameter', 'Value', 'Format / purpose']])
+    .setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
   sheet.getRange('A4:C50').clear();
   configurationCatalogSections_().forEach(function (section) {
     sheet.getRange(section.headerRow, 1, 1, 3)
@@ -1405,6 +1409,7 @@ function protectPoolSheet_() {
   // Warning-only protection keeps checklist writes available to every operator.
   // The hidden tab prevents accidental direct edits without breaking the runtime.
   protection.setWarningOnly(true);
+  renderEnglishPoolHeader_(sheet);
   sheet.setTabColor('#98a2b3');
   sheet.getRange('A1').setNote('Technical sheet. Use CHECKLIST for routine work.');
 
@@ -1415,6 +1420,16 @@ function protectPoolSheet_() {
     if (checklist) spreadsheet.setActiveSheet(checklist);
     sheet.hideSheet();
   }
+}
+
+function renderEnglishPoolHeader_(sheet) {
+  sheet.getRange('A1').setValue(RUNTIME.poolSheet);
+  sheet.getRange('A3').setValue('READY');
+  sheet.getRange('A4').setValue('WAITING');
+  sheet.getRange('A6:J6').setValues([[
+    'Task ID', 'Task', 'Parent ID', 'Dependencies', 'Applicable',
+    'DONE', 'Comment', 'Effective applicability', 'Status', 'Waiting for'
+  ]]);
 }
 
 function getRuntimeState(language) {
@@ -1830,6 +1845,9 @@ function mergeTaskStateForRebuild_(tasks, previousById) {
       task.done = old ? old.done : false;
     }
     task.commentValue = old ? old.comment : task.comment;
+    if (task.id === '10-92' && /[\u0400-\u04FF]/.test(task.commentValue)) {
+      task.commentValue = task.comment;
+    }
   });
   return tasks;
 }
