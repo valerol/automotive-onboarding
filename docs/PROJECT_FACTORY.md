@@ -22,6 +22,9 @@ access once. Creating a project may ask that owner to approve a newly added
 scope after a deployment. Other project users receive access only to the data
 spreadsheet and are not asked to authorize Apps Script.
 
+After the trigger scope is first deployed, run `authorizeCentralProjectRuntime`
+once from the master Apps Script editor and approve the requested permissions.
+
 ## Create a project
 
 1. Open the central master.

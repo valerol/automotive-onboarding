@@ -294,6 +294,14 @@ function authorizeAndDiagnoseRuntime() {
   return result;
 }
 
+function authorizeCentralProjectRuntime() {
+  return {
+    ok: true,
+    effectiveUser: Session.getEffectiveUser().getEmail(),
+    installableTriggerCount: ScriptApp.getProjectTriggers().length
+  };
+}
+
 function getRuntimeDiagnostics() {
   const result = {
     ok: false,

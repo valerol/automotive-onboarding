@@ -155,6 +155,7 @@ function testFastPathSourceGuards() {
 
 function testCentralRuntimeSourceGuards() {
   assert.match(codeSource, /function centralProjectOnEdit\(e\)/);
+  assert.match(codeSource, /function authorizeCentralProjectRuntime\(\)/);
   assert.match(codeSource, /withRuntimeSpreadsheet_\(e\.source/);
   assert.match(codeSource, /PropertiesService\.getScriptProperties\(\)/);
   assert.match(codeSource, /CacheService\.getScriptCache\(\)/);
