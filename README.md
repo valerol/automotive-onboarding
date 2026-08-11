@@ -45,7 +45,9 @@ The repository is the source of truth. To bind it to the existing Apps Script pr
 
 ## Configuration model
 
-Automotive integrations are selected with checkboxes from the fixed catalog in `КОНФИГУРАЦИЯ`:
+Automotive integrations, payment gateways, carriers, and tax services are selected with checkboxes from fixed catalogs in `КОНФИГУРАЦИЯ`.
+
+Automotive integrations:
 
 - `T14` — Turn14 Distribution;
 - `MEYER` — Meyer Distributing;
@@ -56,13 +58,33 @@ Automotive integrations are selected with checkboxes from the fixed catalog in `
 - `DIX` — Dix Performance North;
 - `MOTOR_STATE` — Motor State Distributing.
 
-Other repeat collections are entered as `CODE|Display name`:
+Payment gateways:
 
-- payment gateways;
-- carriers;
-- tax services;
-- QA products;
-- E2E scenarios.
+- `ACIMA` — Acima;
+- `PAYTOMORROW` — Paytomorrow;
+- `AFFIRM` — Affirm;
+- `XPAYMENTS` — X-Payments;
+- `SQUARE` — Square;
+- `BRAINTREE` — Braintree;
+- `AMAZON` — Amazon;
+- `STRIPE` — Stripe;
+- `PAYPAL` — PayPal.
+
+Carriers:
+
+- `DHL` — DHL;
+- `CANADA_POST` — CanadaPost;
+- `UPS` — UPS;
+- `FEDEX` — FedEx;
+- `USPS` — USPS;
+- `AUSTRALIA_POST` — Australia Post.
+
+Tax services:
+
+- `TAXJAR` — TaxJar;
+- `AVATAX` — AvaTax.
+
+QA products are recorded in the task `Комментарий` field. The runtime creates one system QA sample branch. E2E scenarios are generated automatically from the selected payment gateways, shipping methods, and tax services. The minimum scenario set covers every selected payment gateway, shipping method, and tax service at least once.
 
 Saving configuration rebuilds repeatable branches and preserves state for Task IDs that still exist. The following static rules are enforced:
 
@@ -73,7 +95,8 @@ Saving configuration rebuilds repeatable branches and preserves state for Task I
 - checkout requires any verified payment method, any verified shipping method, tax readiness, and completed checkout verification;
 - launch requires all declared payment and shipping methods;
 - pickup is verified by `11-11 + 11-12`; `12-29` separately verifies checkout;
-- empty payment, shipping, QA-product, or E2E-scenario sets produce `BLOCKED` where the capability is mandatory;
+- empty payment or shipping sets produce `BLOCKED` where the capability is mandatory;
+- an E2E scenario set is generated only when at least one payment gateway and one shipping method are selected;
 - premature `DONE` is rejected and reset;
 - dependency and parent cycles are rejected.
 - task IDs, parent IDs, and dependency IDs are always read and written as text, so values such as `01-05` cannot be converted to dates by Google Sheets.
