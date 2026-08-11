@@ -3816,7 +3816,7 @@ const RUNTIME_MODEL = Object.freeze({
         "04-INT-14"
       ],
       "defaultApplicable": "НЕТ",
-      "comment": "Activate only when the customer uses Turn14 order export; replace INT with the Turn14 integration code during instantiation.",
+      "comment": "System-controlled: active when T14|Turn14 is configured in Automotive integrations.",
       "scope": "STATIC",
       "collection": "",
       "family": "",
