@@ -86,6 +86,14 @@ Tax services:
 
 QA products are recorded in the task `Комментарий` field. The runtime creates one system QA sample branch. E2E scenarios are generated automatically from the selected payment gateways, shipping methods, and tax services. The minimum scenario set covers every selected payment gateway, shipping method, and tax service at least once.
 
+Catalog source types do not create task instances. They only control the effective applicability of existing tasks:
+
+- common catalog and QA tasks remain available for every source type;
+- `CSV` and `supplier_feed` activate existing import tasks;
+- `supplier_feed` additionally activates integration and scheduled-import tasks;
+- `manual` uses the common catalog workflow, including task `03-02`, without a separate generated branch;
+- source-conflict tasks become applicable only when at least two source types are selected and `Multiple sources overlap` is enabled.
+
 Saving configuration rebuilds repeatable branches and preserves state for Task IDs that still exist. The following static rules are enforced:
 
 - `Dependencies` is AND;
