@@ -33,13 +33,93 @@ const AUTOMOTIVE_INTEGRATION_CATALOG = Object.freeze([
   Object.freeze({code: 'MOTOR_STATE', name: 'Motor State Distributing'})
 ]);
 
+const PAYMENT_GATEWAY_CATALOG = Object.freeze([
+  Object.freeze({code: 'ACIMA', name: 'Acima'}),
+  Object.freeze({code: 'PAYTOMORROW', name: 'Paytomorrow'}),
+  Object.freeze({code: 'AFFIRM', name: 'Affirm'}),
+  Object.freeze({code: 'XPAYMENTS', name: 'X-Payments'}),
+  Object.freeze({code: 'SQUARE', name: 'Square'}),
+  Object.freeze({code: 'BRAINTREE', name: 'Braintree'}),
+  Object.freeze({code: 'AMAZON', name: 'Amazon'}),
+  Object.freeze({code: 'STRIPE', name: 'Stripe'}),
+  Object.freeze({code: 'PAYPAL', name: 'PayPal'})
+]);
+
+const CARRIER_CATALOG = Object.freeze([
+  Object.freeze({code: 'DHL', name: 'DHL'}),
+  Object.freeze({code: 'CANADA_POST', name: 'CanadaPost'}),
+  Object.freeze({code: 'UPS', name: 'UPS'}),
+  Object.freeze({code: 'FEDEX', name: 'FedEx'}),
+  Object.freeze({code: 'USPS', name: 'USPS'}),
+  Object.freeze({code: 'AUSTRALIA_POST', name: 'Australia Post'})
+]);
+
+const TAX_SERVICE_CATALOG = Object.freeze([
+  Object.freeze({code: 'TAXJAR', name: 'TaxJar'}),
+  Object.freeze({code: 'AVATAX', name: 'AvaTax'})
+]);
+
+const SOURCE_TYPE_CATALOG = Object.freeze(['manual', 'csv', 'supplier_feed']);
+
+// Source selection never creates task instances. It only controls the
+// effective applicability of existing static or integration tasks.
+const SOURCE_TASK_RULES = Object.freeze({
+  import: Object.freeze([
+    '01-08', '01-09', '01-18', '01-19', '03-13',
+    '06-01', '06-02', '06-03', '06-04', '06-05', '06-06', '06-07',
+    '06-08', '06-09', '06-10', '06-11', '06-12', '06-13', '06-14',
+    '06-15', '06-17', '06-18', '06-19',
+    '15-01', '15-02', '15-04', '16-01'
+  ]),
+  supplierFeed: Object.freeze([
+    '06-20', '15-03', '16-02'
+  ]),
+  automotiveIntegration: Object.freeze([
+    '01-06', '01-17', '06-16'
+  ])
+});
+
+const CONFIGURATION_TASK_RULES = Object.freeze({
+  fitmentRequired: Object.freeze([
+    '04-INT-12', '06-19', '07-06', '13-04', '14-05', '15-07'
+  ]),
+  fitmentOptional: Object.freeze([
+    '05-05', '07-PRODUCT-11'
+  ]),
+  flatRate: Object.freeze(['11-02']),
+  supplierRate: Object.freeze(['04-INT-13', '11-03']),
+  freeShipping: Object.freeze(['11-04', '13-10'])
+});
+
+const QA_PRODUCT_SAMPLE = Object.freeze({
+  code: 'SAMPLE',
+  name: 'Product specified in Comment',
+  nameRu: 'Товар, указанный в комментарии'
+});
+
+const SHIPPING_METHOD_LABELS = Object.freeze({
+  flat_rate: Object.freeze({code: 'FLAT_RATE', name: 'Flat rate', nameRu: 'Фиксированный тариф'}),
+  supplier_rate: Object.freeze({code: 'SUPPLIER_RATE', name: 'Supplier rate', nameRu: 'Тариф поставщика'}),
+  free_shipping: Object.freeze({code: 'FREE_SHIPPING', name: 'Free shipping', nameRu: 'Бесплатная доставка'}),
+  pickup: Object.freeze({code: 'PICKUP', name: 'Pickup', nameRu: 'Самовывоз'})
+});
+
 const CONFIGURATION_UI = Object.freeze({
-  version: 'AUTOMOTIVE_CONFIG_INTEGRATIONS_V2',
+  version: 'AUTOMOTIVE_CONFIG_APPLICABILITY_V5',
   integrationHeaderRow: 4,
   integrationFirstRow: 5,
   integrationLastRow: 12,
-  otherFirstRow: 14,
-  otherLastRow: 27
+  paymentHeaderRow: 14,
+  paymentFirstRow: 15,
+  paymentLastRow: 23,
+  carrierHeaderRow: 25,
+  carrierFirstRow: 26,
+  carrierLastRow: 31,
+  taxHeaderRow: 33,
+  taxFirstRow: 34,
+  taxLastRow: 35,
+  otherFirstRow: 37,
+  otherLastRow: 45
 });
 
 const SECTION_RU = Object.freeze({
@@ -761,109 +841,76 @@ function ensureConfigurationSheet_() {
 }
 
 function renderConfigurationSheet_(sheet, config) {
-  sheet.getRange('A4:C30').clear();
-  sheet.getRange('A4:C4')
-    .setValues([['Automotive integrations', 'Используется', 'Системный код']])
-    .setBackground('#e9edf5')
-    .setFontColor('#29375f')
-    .setFontWeight('bold');
-
-  const integrationRows = AUTOMOTIVE_INTEGRATION_CATALOG.map(function (item) {
-    return [item.name, false, item.code];
+  sheet.getRange('A4:C50').clear();
+  configurationCatalogSections_().forEach(function (section) {
+    sheet.getRange(section.headerRow, 1, 1, 3)
+      .setValues([[section.label, 'Используется', 'Системный код']])
+      .setBackground('#e9edf5')
+      .setFontColor('#29375f')
+      .setFontWeight('bold');
+    sheet.getRange(section.firstRow, 1, section.catalog.length, 3)
+      .setValues(section.catalog.map(function (item) { return [item.name, false, item.code]; }));
+    sheet.getRange(section.firstRow, 2, section.catalog.length, 1).insertCheckboxes();
+    sheet.getRange(section.firstRow, 1, section.catalog.length, 1).setFontWeight('bold');
+    sheet.getRange(section.firstRow, 3, section.catalog.length, 1)
+      .setFontColor('#667085')
+      .setNumberFormat('@');
   });
-  sheet.getRange(
-    CONFIGURATION_UI.integrationFirstRow,
-    1,
-    integrationRows.length,
-    3
-  ).setValues(integrationRows);
-  sheet.getRange('B5:B12').insertCheckboxes();
-  sheet.getRange('A5:A12').setFontWeight('bold');
-  sheet.getRange('C5:C12').setFontColor('#667085').setNumberFormat('@');
 
-  sheet.getRange('A14:C27').setValues([
-    ['Payment gateways', '', 'По одному на строку: CODE|Display name'],
-    ['Carriers', '', 'По одному на строку: CODE|Display name'],
-    ['Tax services', '', 'По одному на строку: CODE|Display name'],
-    ['QA products', '', 'По одному на строку: CODE|Display name'],
-    ['E2E scenarios', '', 'По одному на строку: CODE|Display name'],
-    ['Source: manual', false, 'Независимый ручной источник'],
-    ['Source: CSV', false, 'Независимый CSV-источник'],
-    ['Source: supplier feed', false, 'Независимый фид поставщика'],
-    ['Shipping: flat rate', false, 'Фиксированная стоимость'],
-    ['Shipping: supplier rate', false, 'Тариф поставщика'],
-    ['Shipping: free shipping', false, 'Бесплатная доставка'],
-    ['Shipping: pickup', false, 'Самовывоз'],
-    ['Multiple sources overlap', false, 'Есть пересечение источников хотя бы в одном домене'],
-    ['MMY / fitment applies', false, 'Для проекта применим MMY / fitment']
+  sheet.getRange('A37:C45').setValues([
+    ['Source: manual', false, 'Ручное создание; новые задачи не добавляются'],
+    ['Source: CSV', false, 'Включает существующие задачи импорта'],
+    ['Source: supplier feed', false, 'Включает задачи импорта и расписания'],
+    ['Shipping: flat rate', false, 'Включает существующую задачу настройки фиксированных тарифов'],
+    ['Shipping: supplier rate', false, 'Включает существующие задачи тарифов поставщика'],
+    ['Shipping: free shipping', false, 'Включает проверку правил и E2E-сценарий бесплатной доставки'],
+    ['Shipping: pickup', false, 'Считается способом доставки; отдельные задачи не создаются'],
+    ['Multiple sources overlap', false, 'Доступно только при 2–3 источниках'],
+    ['MMY / fitment applies', false, 'Управляет уже существующими fitment-задачами и разделом 8']
   ]);
-  sheet.getRange('B14:B18').setNumberFormat('@').setWrap(true);
-  sheet.getRange('B19:B27').insertCheckboxes();
-  sheet.getRange('A14:A27').setFontWeight('bold');
-  sheet.getRange('A4:C27').setVerticalAlignment('top');
+  sheet.getRange('B37:B45').insertCheckboxes();
+  sheet.getRange('A37:A45').setFontWeight('bold');
+  sheet.getRange('A4:C45').setVerticalAlignment('top');
   sheet.getRange('A1').setNote(CONFIGURATION_UI.version);
   writeConfigurationValues_(sheet, config);
 }
 
 function readConfigurationSheet_() {
   const sheet = ensureConfigurationSheet_();
-  const integrationFlags = sheet.getRange('B5:B12').getValues();
-  const integrations = AUTOMOTIVE_INTEGRATION_CATALOG.filter(function (item, index) {
-    return integrationFlags[index][0] === true;
-  }).map(function (item) {
-    return {code: item.code, name: item.name};
+  const selected = {};
+  configurationCatalogSections_().forEach(function (section) {
+    selected[section.key] = readCatalogSelection_(sheet, section);
   });
 
-  const values = sheet.getRange('B14:B27').getValues();
-  const parseItems = function (value) {
-    return String(value || '').split(/\r?\n/).map(function (line) { return line.trim(); }).filter(Boolean).map(function (line) {
-      const parts = line.split('|');
-      return {code: String(parts.shift() || '').trim(), name: String(parts.join('|') || '').trim()};
-    });
-  };
+  const values = sheet.getRange('B37:B45').getValues();
   const sourceTypes = [];
-  if (values[5][0] === true) sourceTypes.push('manual');
-  if (values[6][0] === true) sourceTypes.push('csv');
-  if (values[7][0] === true) sourceTypes.push('supplier_feed');
+  if (values[0][0] === true) sourceTypes.push('manual');
+  if (values[1][0] === true) sourceTypes.push('csv');
+  if (values[2][0] === true) sourceTypes.push('supplier_feed');
   const shippingMethods = [];
-  if (values[8][0] === true) shippingMethods.push('flat_rate');
-  if (values[9][0] === true) shippingMethods.push('supplier_rate');
-  if (values[10][0] === true) shippingMethods.push('free_shipping');
-  if (values[11][0] === true) shippingMethods.push('pickup');
+  if (values[3][0] === true) shippingMethods.push('flat_rate');
+  if (values[4][0] === true) shippingMethods.push('supplier_rate');
+  if (values[5][0] === true) shippingMethods.push('free_shipping');
+  if (values[6][0] === true) shippingMethods.push('pickup');
   return {
-    integrations: integrations,
-    payment_gateways: parseItems(values[0][0]),
-    carriers: parseItems(values[1][0]),
-    tax_services: parseItems(values[2][0]),
-    qa_products: parseItems(values[3][0]),
-    e2e_scenarios: parseItems(values[4][0]),
+    integrations: selected.integrations,
+    payment_gateways: selected.payment_gateways,
+    carriers: selected.carriers,
+    tax_services: selected.tax_services,
     sourceTypes: sourceTypes,
     shippingMethods: shippingMethods,
-    sourceOverlap: values[12][0] === true,
-    fitment: values[13][0] === true
+    sourceOverlap: values[7][0] === true,
+    fitment: values[8][0] === true
   };
 }
 
 function writeConfigurationValues_(sheet, config) {
-  const selectedIntegrations = {};
-  (config.integrations || []).forEach(function (item) { selectedIntegrations[item.code] = true; });
-  sheet.getRange('A5:A12').setValues(AUTOMOTIVE_INTEGRATION_CATALOG.map(function (item) { return [item.name]; }));
-  sheet.getRange('B5:B12').setValues(AUTOMOTIVE_INTEGRATION_CATALOG.map(function (item) {
-    return [Boolean(selectedIntegrations[item.code])];
-  }));
-  sheet.getRange('C5:C12').setValues(AUTOMOTIVE_INTEGRATION_CATALOG.map(function (item) { return [item.code]; }));
-
-  const formatItems = function (items) {
-    return (items || []).map(function (item) { return item.code + '|' + item.name; }).join('\n');
-  };
+  configurationCatalogSections_().forEach(function (section) {
+    writeCatalogSelection_(sheet, section, config[section.key] || []);
+  });
   const sources = config.sourceTypes || [];
   const shipping = config.shippingMethods || [];
-  sheet.getRange('B14:B27').setValues([
-    [formatItems(config.payment_gateways)],
-    [formatItems(config.carriers)],
-    [formatItems(config.tax_services)],
-    [formatItems(config.qa_products)],
-    [formatItems(config.e2e_scenarios)],
+  sheet.getRange('B37:B45').setValues([
     [sources.indexOf('manual') >= 0],
     [sources.indexOf('csv') >= 0],
     [sources.indexOf('supplier_feed') >= 0],
@@ -874,6 +921,35 @@ function writeConfigurationValues_(sheet, config) {
     [Boolean(config.sourceOverlap)],
     [Boolean(config.fitment)]
   ]);
+}
+
+function configurationCatalogSections_() {
+  return [
+    {key: 'integrations', label: 'Automotive integrations', catalog: AUTOMOTIVE_INTEGRATION_CATALOG, headerRow: CONFIGURATION_UI.integrationHeaderRow, firstRow: CONFIGURATION_UI.integrationFirstRow},
+    {key: 'payment_gateways', label: 'Payment gateways', catalog: PAYMENT_GATEWAY_CATALOG, headerRow: CONFIGURATION_UI.paymentHeaderRow, firstRow: CONFIGURATION_UI.paymentFirstRow},
+    {key: 'carriers', label: 'Carriers', catalog: CARRIER_CATALOG, headerRow: CONFIGURATION_UI.carrierHeaderRow, firstRow: CONFIGURATION_UI.carrierFirstRow},
+    {key: 'tax_services', label: 'Tax services', catalog: TAX_SERVICE_CATALOG, headerRow: CONFIGURATION_UI.taxHeaderRow, firstRow: CONFIGURATION_UI.taxFirstRow}
+  ];
+}
+
+function readCatalogSelection_(sheet, section) {
+  const flags = sheet.getRange(section.firstRow, 2, section.catalog.length, 1).getValues();
+  return section.catalog.filter(function (item, index) {
+    return flags[index][0] === true;
+  }).map(function (item) {
+    return {code: item.code, name: item.name};
+  });
+}
+
+function writeCatalogSelection_(sheet, section, selectedItems) {
+  const selected = {};
+  selectedItems.forEach(function (item) { selected[item.code] = true; });
+  sheet.getRange(section.firstRow, 1, section.catalog.length, 1)
+    .setValues(section.catalog.map(function (item) { return [item.name]; }));
+  sheet.getRange(section.firstRow, 2, section.catalog.length, 1)
+    .setValues(section.catalog.map(function (item) { return [Boolean(selected[item.code])]; }));
+  sheet.getRange(section.firstRow, 3, section.catalog.length, 1)
+    .setValues(section.catalog.map(function (item) { return [item.code]; }));
 }
 
 function writeConfigurationSheet_(config) {
@@ -925,6 +1001,7 @@ function getRuntimeState(language) {
         comment: task.comment,
         status: task.status,
         waitingFor: task.waitingFor,
+        systemControlled: Boolean(task.systemApplicable),
         section: lang === 'ru' ? (SECTION_RU[task.section] || task.section) : task.section
       };
     });
@@ -948,7 +1025,11 @@ function updateTaskFromSidebar(taskId, patch) {
   patch = patch || {};
 
   if (Object.prototype.hasOwnProperty.call(patch, 'applicable')) {
-    if (taskId === '10-92') throw new Error('10-92 applicability is controlled by integration T14.');
+    const config = getRuntimeConfiguration();
+    const modelTask = instantiateModel_(config).filter(function (task) { return task.id === taskId; })[0];
+    if (modelTask && modelTask.systemApplicable) {
+      throw new Error(taskId + ' applicability is controlled by Configuration.');
+    }
     const value = patch.applicable === RUNTIME.no ? RUNTIME.no : RUNTIME.yes;
     sheet.getRange(row, RUNTIME.columns.applicable).setValue(value);
   }
@@ -1007,16 +1088,16 @@ function recalculateRuntime() {
     const state = readOperationalState_();
     if (!state.tasks.length) return;
     const config = getRuntimeConfiguration();
-    const turn14Applicable = hasTurn14Integration_(config) ? RUNTIME.yes : RUNTIME.no;
     let systemApplicabilityChanged = false;
     state.tasks.forEach(function (task) {
-      if (task.templateId !== '10-92') return;
-      if (task.localApplicable !== turn14Applicable) {
-        sheet.getRange(task.row, RUNTIME.columns.applicable).setValue(turn14Applicable);
-        task.localApplicable = turn14Applicable;
+      const configuredApplicable = configuredLocalApplicability_(task, config);
+      if (!configuredApplicable) return;
+      if (task.localApplicable !== configuredApplicable) {
+        sheet.getRange(task.row, RUNTIME.columns.applicable).setValue(configuredApplicable);
+        task.localApplicable = configuredApplicable;
         systemApplicabilityChanged = true;
       }
-      if (turn14Applicable === RUNTIME.no && task.done) {
+      if (configuredApplicable === RUNTIME.no && task.done) {
         sheet.getRange(task.row, RUNTIME.columns.done).setValue(false);
         task.done = false;
         systemApplicabilityChanged = true;
@@ -1028,6 +1109,7 @@ function recalculateRuntime() {
 
     function isActive(task, trail) {
       if (Object.prototype.hasOwnProperty.call(activeMemo, task.id)) return activeMemo[task.id];
+      if (task.configurationApplicable === false) return (activeMemo[task.id] = false);
       if (task.localApplicable === RUNTIME.no) return (activeMemo[task.id] = false);
       if (!task.parent) return (activeMemo[task.id] = true);
       if ((trail || []).indexOf(task.id) >= 0) return (activeMemo[task.id] = false);
@@ -1146,8 +1228,10 @@ function evaluateCapabilities_(tasks, config) {
   const shippingValues = config.shippingMethods.map(function (name) { return Boolean(methodResults[name]); });
 
   const catalogQaStatic = gateDone('G_CATALOG_QA');
-  const productValues = config.qa_products.map(function (x) { return Boolean(productQa[x.code]); });
-  const scenarioValues = config.e2e_scenarios.map(function (x) { return Boolean(scenarioVerified[x.code]); });
+  const productSamples = qaProductSamples_();
+  const e2eScenarios = buildE2eScenarios_(config);
+  const productValues = productSamples.map(function (x) { return Boolean(productQa[x.code]); });
+  const scenarioValues = e2eScenarios.map(function (x) { return Boolean(scenarioVerified[x.code]); });
   const customerApproved = gateDone('G_CUSTOMER_ACCEPTANCE');
   const paymentAvailable = paymentValues.length > 0 && paymentValues.some(Boolean);
   const paymentLaunch = paymentLaunchValues.length > 0 && paymentLaunchValues.every(Boolean);
@@ -1182,8 +1266,8 @@ function evaluateCapabilities_(tasks, config) {
     blocked: {
       payment: declaredPayments.length === 0,
       shipping: config.shippingMethods.length === 0,
-      productSample: config.qa_products.length === 0,
-      scenarios: config.e2e_scenarios.length === 0
+      productSample: productSamples.length === 0,
+      scenarios: e2eScenarios.length === 0
     }
   };
 }
@@ -1316,8 +1400,8 @@ function instantiateModel_(config) {
     payment_gateways: config.payment_gateways,
     carriers: config.carriers,
     tax_services: config.tax_services,
-    qa_products: config.qa_products,
-    e2e_scenarios: config.e2e_scenarios
+    qa_products: qaProductSamples_(),
+    e2e_scenarios: buildE2eScenarios_(config)
   };
   const turn14Configured = hasTurn14Integration_(config);
   const byTemplate = {};
@@ -1340,12 +1424,14 @@ function instantiateModel_(config) {
   }
 
   instances.forEach(function (instance) {
-    if (instance.templateId === '10-92') {
-      instance.defaultApplicable = turn14Configured ? RUNTIME.yes : RUNTIME.no;
+    const configuredApplicable = configuredLocalApplicability_(instance, config);
+    if (configuredApplicable) {
+      instance.defaultApplicable = configuredApplicable;
       instance.systemApplicable = true;
     }
     instance.parent = instance.parentTemplate ? resolveReference(instance.parentTemplate, instance)[0] || '' : '';
     instance.dependencies = unique_([].concat.apply([], instance.dependencyTemplates.map(function (ref) { return resolveReference(ref, instance); })));
+    instance.configurationApplicable = configuredTaskApplicable_(instance, config);
   });
   return instances;
 }
@@ -1353,12 +1439,13 @@ function instantiateModel_(config) {
 function createInstance_(template, item) {
   const code = item ? item.code : '';
   const label = item ? item.name : '';
+  const labelRu = item ? (item.nameRu || item.name) : '';
   return {
     id: item ? instantiateId_(template.id, code) : template.id,
     templateId: template.id,
     section: template.section,
     title: item ? replacePlaceholder_(template.en, label) : template.en,
-    titleRu: item ? replacePlaceholder_(template.ru, label) : template.ru,
+    titleRu: item ? replacePlaceholder_(template.ru, labelRu) : template.ru,
     parentTemplate: template.parent || '',
     dependencyTemplates: template.dependencies || [],
     defaultApplicable: template.defaultApplicable,
@@ -1422,6 +1509,8 @@ function readOperationalState_() {
       gate: meta.gate || '',
       collection: meta.collection || '',
       instanceCode: meta.instanceCode || '',
+      systemApplicable: Boolean(meta.systemApplicable),
+      configurationApplicable: meta.configurationApplicable !== false,
       templateId: meta.templateId || String(row[0])
     });
   });
@@ -1457,7 +1546,7 @@ function updateCounters_(sheet, output) {
 
 function defaultConfiguration_() {
   return {
-    integrations: [], payment_gateways: [], carriers: [], tax_services: [], qa_products: [], e2e_scenarios: [],
+    integrations: [], payment_gateways: [], carriers: [], tax_services: [],
     shippingMethods: [], sourceTypes: ['manual'], sourceOverlap: false, fitment: false
   };
 }
@@ -1469,12 +1558,13 @@ function normalizeConfiguration_(input) {
       return {code: normalizeCode_(item.code), name: String(item.name || item.code || '').trim()};
     }).filter(function (item) { return item.code && item.name; });
   };
-  ['integrations', 'payment_gateways', 'carriers', 'tax_services', 'qa_products', 'e2e_scenarios'].forEach(function (key) {
+  ['integrations', 'payment_gateways', 'carriers', 'tax_services'].forEach(function (key) {
     base[key] = normalizeItems(input[key]);
   });
   base.shippingMethods = unique_((Array.isArray(input.shippingMethods) ? input.shippingMethods : []).map(String));
-  base.sourceTypes = unique_((Array.isArray(input.sourceTypes) ? input.sourceTypes : ['manual']).map(String));
-  base.sourceOverlap = Boolean(input.sourceOverlap);
+  base.sourceTypes = unique_((Array.isArray(input.sourceTypes) ? input.sourceTypes : ['manual']).map(String))
+    .filter(function (value) { return SOURCE_TYPE_CATALOG.indexOf(value) >= 0; });
+  base.sourceOverlap = Boolean(input.sourceOverlap) && base.sourceTypes.length >= 2;
   base.fitment = Boolean(input.fitment);
   base.carriers.forEach(function (item) {
     const key = 'carrier:' + item.code;
@@ -1485,7 +1575,7 @@ function normalizeConfiguration_(input) {
 
 function validateConfiguration_(config) {
   const allCodes = [];
-  ['integrations', 'payment_gateways', 'carriers', 'tax_services', 'qa_products', 'e2e_scenarios'].forEach(function (key) {
+  ['integrations', 'payment_gateways', 'carriers', 'tax_services'].forEach(function (key) {
     config[key].forEach(function (item) {
       if (!/^[A-Z0-9_]{2,20}$/.test(item.code)) throw new Error('Invalid code ' + item.code + '. Use 2-20 uppercase letters, digits, or underscore.');
       allCodes.push(key + ':' + item.code);
@@ -1493,12 +1583,93 @@ function validateConfiguration_(config) {
   });
   if (unique_(allCodes).length !== allCodes.length) throw new Error('Duplicate instance code in one collection.');
 
-  const catalogByCode = {};
-  AUTOMOTIVE_INTEGRATION_CATALOG.forEach(function (item) { catalogByCode[item.code] = item.name; });
-  config.integrations.forEach(function (item) {
-    if (!catalogByCode[item.code]) throw new Error('Unsupported automotive integration: ' + item.code);
-    if (item.name !== catalogByCode[item.code]) throw new Error('Integration name does not match catalog for ' + item.code);
+  configurationCatalogSections_().forEach(function (section) {
+    const catalogByCode = {};
+    section.catalog.forEach(function (item) { catalogByCode[item.code] = item.name; });
+    config[section.key].forEach(function (item) {
+      if (!catalogByCode[item.code]) throw new Error('Unsupported ' + section.label + ': ' + item.code);
+      if (item.name !== catalogByCode[item.code]) throw new Error(section.label + ' name does not match catalog for ' + item.code);
+    });
   });
+}
+
+function configuredTaskApplicable_(task, config) {
+  const sources = config.sourceTypes || [];
+  const importSelected = sources.indexOf('csv') >= 0 || sources.indexOf('supplier_feed') >= 0;
+  const supplierFeedSelected = sources.indexOf('supplier_feed') >= 0;
+  const configuredApplicable = configuredLocalApplicability_(task, config);
+
+  if (task.contour === 'SOURCE_COORDINATION') {
+    if (!(config.sourceOverlap && sources.length >= 2)) return false;
+    if (!config.fitment && task.templateId === '05-05') return false;
+    return true;
+  }
+  if (configuredApplicable === RUNTIME.no) return false;
+  if (!config.fitment && (
+    String(task.section).indexOf('8. MMY / FITMENT QA') === 0 ||
+    CONFIGURATION_TASK_RULES.fitmentOptional.indexOf(task.templateId) >= 0
+  )) return false;
+  if (task.collection === 'integrations') return supplierFeedSelected;
+  if (SOURCE_TASK_RULES.automotiveIntegration.indexOf(task.templateId) >= 0) {
+    return supplierFeedSelected && (config.integrations || []).length > 0;
+  }
+  if (SOURCE_TASK_RULES.supplierFeed.indexOf(task.templateId) >= 0) return supplierFeedSelected;
+  if (SOURCE_TASK_RULES.import.indexOf(task.templateId) >= 0) return importSelected;
+  return true;
+}
+
+function configuredLocalApplicability_(task, config) {
+  const templateId = task.templateId || task.id;
+  const shipping = config.shippingMethods || [];
+  const selected = function (method) { return shipping.indexOf(method) >= 0; };
+  const yesNo = function (value) { return value ? RUNTIME.yes : RUNTIME.no; };
+
+  if (templateId === '10-92') return yesNo(hasTurn14Integration_(config));
+  if (CONFIGURATION_TASK_RULES.fitmentRequired.indexOf(templateId) >= 0) return yesNo(config.fitment);
+  if (CONFIGURATION_TASK_RULES.flatRate.indexOf(templateId) >= 0) return yesNo(selected('flat_rate'));
+  if (CONFIGURATION_TASK_RULES.supplierRate.indexOf(templateId) >= 0) return yesNo(selected('supplier_rate'));
+  if (CONFIGURATION_TASK_RULES.freeShipping.indexOf(templateId) >= 0) return yesNo(selected('free_shipping'));
+  return '';
+}
+
+function qaProductSamples_() {
+  return [QA_PRODUCT_SAMPLE];
+}
+
+function buildE2eScenarios_(config) {
+  const payments = config.payment_gateways || [];
+  const shipping = e2eShippingOptions_(config);
+  if (!payments.length || !shipping.length) return [];
+
+  const taxes = (config.tax_services || []).length
+    ? config.tax_services
+    : [{code: 'STORE_TAX', name: 'Store tax configuration', nameRu: 'Налоговая конфигурация магазина'}];
+  const count = Math.max(payments.length, shipping.length, taxes.length);
+  const scenarios = [];
+  for (let index = 0; index < count; index++) {
+    const payment = payments[index % payments.length];
+    const method = shipping[index % shipping.length];
+    const tax = taxes[index % taxes.length];
+    scenarios.push({
+      code: payment.code + '_' + method.code + '_' + tax.code,
+      name: payment.name + ' + ' + method.name + ' + ' + tax.name,
+      nameRu: payment.name + ' + ' + method.nameRu + ' + ' + (tax.nameRu || tax.name)
+    });
+  }
+  return scenarios;
+}
+
+function e2eShippingOptions_(config) {
+  const carrierByCode = {};
+  (config.carriers || []).forEach(function (item) { carrierByCode[item.code] = item; });
+  return (config.shippingMethods || []).map(function (method) {
+    if (String(method).indexOf('carrier:') === 0) {
+      const code = String(method).slice('carrier:'.length);
+      const carrier = carrierByCode[code];
+      return carrier ? {code: carrier.code, name: carrier.name, nameRu: carrier.name} : null;
+    }
+    return SHIPPING_METHOD_LABELS[method] || null;
+  }).filter(Boolean);
 }
 
 function getPoolSheet_() {

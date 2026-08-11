@@ -45,7 +45,9 @@ The repository is the source of truth. To bind it to the existing Apps Script pr
 
 ## Configuration model
 
-Automotive integrations are selected with checkboxes from the fixed catalog in `КОНФИГУРАЦИЯ`:
+Automotive integrations, payment gateways, carriers, and tax services are selected with checkboxes from fixed catalogs in `КОНФИГУРАЦИЯ`.
+
+Automotive integrations:
 
 - `T14` — Turn14 Distribution;
 - `MEYER` — Meyer Distributing;
@@ -56,13 +58,53 @@ Automotive integrations are selected with checkboxes from the fixed catalog in `
 - `DIX` — Dix Performance North;
 - `MOTOR_STATE` — Motor State Distributing.
 
-Other repeat collections are entered as `CODE|Display name`:
+Payment gateways:
 
-- payment gateways;
-- carriers;
-- tax services;
-- QA products;
-- E2E scenarios.
+- `ACIMA` — Acima;
+- `PAYTOMORROW` — Paytomorrow;
+- `AFFIRM` — Affirm;
+- `XPAYMENTS` — X-Payments;
+- `SQUARE` — Square;
+- `BRAINTREE` — Braintree;
+- `AMAZON` — Amazon;
+- `STRIPE` — Stripe;
+- `PAYPAL` — PayPal.
+
+Carriers:
+
+- `DHL` — DHL;
+- `CANADA_POST` — CanadaPost;
+- `UPS` — UPS;
+- `FEDEX` — FedEx;
+- `USPS` — USPS;
+- `AUSTRALIA_POST` — Australia Post.
+
+Tax services:
+
+- `TAXJAR` — TaxJar;
+- `AVATAX` — AvaTax.
+
+QA products are recorded in the task `Комментарий` field. The runtime creates one system QA sample branch. E2E scenarios are generated automatically from the selected payment gateways, shipping methods, and tax services. The minimum scenario set covers every selected payment gateway, shipping method, and tax service at least once.
+
+Catalog source types do not create task instances. They only control the effective applicability of existing tasks:
+
+- common catalog and QA tasks remain available for every source type;
+- `CSV` and `supplier_feed` activate existing import tasks;
+- `supplier_feed` additionally activates integration and scheduled-import tasks;
+- `manual` uses the common catalog workflow, including task `03-02`, without a separate generated branch;
+- source-conflict tasks become applicable only when at least two source types are selected and `Multiple sources overlap` is enabled.
+
+Non-carrier shipping methods control existing shipping tasks and participate in automatic E2E generation:
+
+- `flat_rate` controls `11-02`;
+- `supplier_rate` controls `04-INT-13` and `11-03`;
+- `free_shipping` controls `11-04` and `13-10`;
+- `pickup` is verified by the existing `11-11 + 11-12` pair and is included in generated E2E coverage;
+- every selected carrier automatically becomes a `carrier:<CODE>` shipping method and uses its existing access and rate-verification branches.
+
+`MMY / fitment applies` does not create tasks. When disabled, the existing Section 8 tasks and related fitment-only checks are `INACTIVE`. When enabled, required fitment import, QA, E2E, customer-review, and launch checks are activated; optional fitment checks keep their own task-level applicability.
+
+Applicability for tasks directly controlled by configuration is read-only in the sidebar and is re-applied during every runtime recalculation.
 
 Saving configuration rebuilds repeatable branches and preserves state for Task IDs that still exist. The following static rules are enforced:
 
@@ -73,7 +115,8 @@ Saving configuration rebuilds repeatable branches and preserves state for Task I
 - checkout requires any verified payment method, any verified shipping method, tax readiness, and completed checkout verification;
 - launch requires all declared payment and shipping methods;
 - pickup is verified by `11-11 + 11-12`; `12-29` separately verifies checkout;
-- empty payment, shipping, QA-product, or E2E-scenario sets produce `BLOCKED` where the capability is mandatory;
+- empty payment or shipping sets produce `BLOCKED` where the capability is mandatory;
+- an E2E scenario set is generated only when at least one payment gateway and one shipping method are selected;
 - premature `DONE` is rejected and reset;
 - dependency and parent cycles are rejected.
 - task IDs, parent IDs, and dependency IDs are always read and written as text, so values such as `01-05` cannot be converted to dates by Google Sheets.
