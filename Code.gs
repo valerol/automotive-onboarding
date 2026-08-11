@@ -44,6 +44,8 @@ function onOpen() {
     .addItem('Сохранить конфигурацию и пересобрать', 'saveChecklistConfiguration')
     .addSeparator()
     .addItem('Обновить чеклист', 'refreshChecklist')
+    .addItem('Показать READY', 'showReadyTasks')
+    .addItem('Показать все статусы', 'showAllChecklistTasks')
     .addItem('Проверить модель', 'showRuntimeValidation')
     .addItem('Проверить доступ', 'authorizeAndDiagnoseRuntime')
     .addToUi();
@@ -170,6 +172,21 @@ function refreshChecklist() {
   SpreadsheetApp.getActive().toast('Данные обновлены.', 'ЧЕКЛИСТ', 3);
 }
 
+function showReadyTasks() {
+  const sheet = ensureChecklistSheet_();
+  refreshChecklist_();
+  showReadyTasks_(sheet);
+}
+
+function showAllChecklistTasks() {
+  const sheet = ensureChecklistSheet_();
+  const filter = sheet.getFilter();
+  if (filter) filter.removeColumnFilterCriteria(4);
+  SpreadsheetApp.flush();
+  SpreadsheetApp.getActive().setActiveSheet(sheet);
+  sheet.getRange(RUNTIME.checklistFirstTaskRow, 1).activate();
+}
+
 function saveChecklistConfiguration() {
   try {
     const config = readConfigurationSheet_();
@@ -227,44 +244,56 @@ function onEdit(e) {
 }
 
 function handleChecklistEdit_(e) {
-  const sheet = e.range.getSheet();
-  if (e.range.getA1Notation() === 'H2') {
-    const language = String(e.range.getDisplayValue()).toUpperCase();
-    if (language !== 'RU' && language !== 'EN') e.range.setValue('RU');
-    refreshChecklist_();
+  const editLock = LockService.getScriptLock();
+  if (!editLock.tryLock(30000)) {
+    SpreadsheetApp.getActive().toast('Предыдущее изменение ещё обрабатывается. Повторите действие.', 'ЧЕКЛИСТ', 5);
     return;
   }
-  if (e.range.getRow() < RUNTIME.checklistFirstTaskRow) return;
-  if (e.range.getNumRows() !== 1 || e.range.getNumColumns() !== 1) {
-    refreshChecklist_();
-    SpreadsheetApp.getActive().toast('Вставка диапазона отменена. Изменяйте одну задачу за раз.', 'ЧЕКЛИСТ', 5);
-    return;
-  }
-
-  const column = e.range.getColumn();
-  if ([5, 6, 7].indexOf(column) < 0) {
-    refreshChecklist_();
-    SpreadsheetApp.getActive().toast('Редактируются только Актуален, DONE и Комментарий.', 'ЧЕКЛИСТ', 5);
-    return;
-  }
-
-  const taskId = String(sheet.getRange(e.range.getRow(), 1).getDisplayValue() || '').trim();
-  if (!taskId) {
-    refreshChecklist_();
-    return;
-  }
-
-  const patch = {language: checklistLanguage_(sheet)};
-  if (column === 5) patch.applicable = String(e.range.getDisplayValue()) === RUNTIME.no ? RUNTIME.no : RUNTIME.yes;
-  if (column === 6) patch.done = String(e.value) === 'TRUE';
-  if (column === 7) patch.comment = String(e.range.getValue() || '');
 
   try {
-    updateTaskFromSidebar(taskId, patch);
-  } catch (error) {
-    SpreadsheetApp.getActive().toast(formatRuntimeError_(error), 'Изменение отклонено', 7);
+    const sheet = e.range.getSheet();
+    if (e.range.getA1Notation() === 'H2') {
+      const language = String(e.range.getDisplayValue()).toUpperCase();
+      if (language !== 'RU' && language !== 'EN') e.range.setValue('RU');
+      refreshChecklist_();
+      return;
+    }
+    if (e.range.getRow() < RUNTIME.checklistFirstTaskRow) return;
+    if (e.range.getNumRows() !== 1 || e.range.getNumColumns() !== 1) {
+      refreshChecklist_();
+      SpreadsheetApp.getActive().toast('Вставка диапазона отменена. Изменяйте одну задачу за раз.', 'ЧЕКЛИСТ', 5);
+      return;
+    }
+
+    const column = e.range.getColumn();
+    if ([5, 6, 7].indexOf(column) < 0) {
+      refreshChecklist_();
+      SpreadsheetApp.getActive().toast('Редактируются только Актуален, DONE и Комментарий.', 'ЧЕКЛИСТ', 5);
+      return;
+    }
+
+    const taskId = String(sheet.getRange(e.range.getRow(), 1).getDisplayValue() || '').trim();
+    if (!taskId) {
+      refreshChecklist_();
+      return;
+    }
+
+    const patch = {language: checklistLanguage_(sheet)};
+    if (column === 5) patch.applicable = String(e.range.getDisplayValue()) === RUNTIME.no ? RUNTIME.no : RUNTIME.yes;
+    if (column === 6) patch.done = String(e.value) === 'TRUE';
+    if (column === 7) patch.comment = String(e.range.getValue() || '');
+
+    try {
+      updateTaskFromSidebar(taskId, patch);
+    } catch (error) {
+      SpreadsheetApp.getActive().toast(formatRuntimeError_(error), 'Изменение отклонено', 7);
+    }
+
+    refreshChecklist_();
+    if (column === 6) showReadyTasks_(sheet);
+  } finally {
+    editLock.releaseLock();
   }
-  refreshChecklist_();
 }
 
 function refreshChecklist_() {
@@ -290,19 +319,24 @@ function refreshChecklist_() {
   const availableRows = sheet.getMaxRows() - RUNTIME.checklistFirstTaskRow + 1;
   if (tasks.length > availableRows) sheet.insertRowsAfter(sheet.getMaxRows(), tasks.length - availableRows);
   const clearRows = sheet.getMaxRows() - RUNTIME.checklistFirstTaskRow + 1;
-  sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, clearRows, 8).clearContent().clearDataValidations();
+  const checklistBody = sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, clearRows, 8);
+  checklistBody.clearDataValidations();
+  checklistBody.clearContent();
 
   if (tasks.length) {
     const values = tasks.map(function (task) {
       return [task.id, task.title, task.section, task.status, task.applicable, Boolean(task.done), task.comment, task.waitingFor];
     });
     const target = sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, values.length, 8);
+    const applicableRange = sheet.getRange(RUNTIME.checklistFirstTaskRow, 5, values.length, 1);
+    const doneRange = sheet.getRange(RUNTIME.checklistFirstTaskRow, 6, values.length, 1);
     sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, values.length, 3).setNumberFormat('@');
-    sheet.getRange(RUNTIME.checklistFirstTaskRow, 5, values.length, 1).setDataValidation(
+    target.setValues(values).setVerticalAlignment('middle');
+    applicableRange.setDataValidation(
       SpreadsheetApp.newDataValidation().requireValueInList([RUNTIME.yes, RUNTIME.no], true).setAllowInvalid(false).build()
     );
-    sheet.getRange(RUNTIME.checklistFirstTaskRow, 6, values.length, 1).insertCheckboxes();
-    target.setValues(values).setVerticalAlignment('middle');
+    doneRange.insertCheckboxes();
+    doneRange.setValues(tasks.map(function (task) { return [Boolean(task.done)]; }));
     sheet.getRange(RUNTIME.checklistFirstTaskRow, 2, values.length, 2).setWrap(true);
     sheet.getRange(RUNTIME.checklistFirstTaskRow, 7, values.length, 2).setWrap(true);
   }
@@ -314,6 +348,45 @@ function refreshChecklist_() {
     'НЕАКТИВНЫ', counts.INACTIVE || 0,
     'ГОТОВО', counts.DONE || 0
   ]]);
+}
+
+function showReadyTasks_(sheet) {
+  const lastRow = Math.max(sheet.getLastRow(), RUNTIME.checklistFirstTaskRow);
+  const statuses = sheet.getRange(
+    RUNTIME.checklistFirstTaskRow,
+    4,
+    lastRow - RUNTIME.checklistFirstTaskRow + 1,
+    1
+  ).getDisplayValues();
+  let firstReadyRow = 0;
+  for (let index = 0; index < statuses.length; index++) {
+    if (String(statuses[index][0]) === RUNTIME.statuses.ready) {
+      firstReadyRow = RUNTIME.checklistFirstTaskRow + index;
+      break;
+    }
+  }
+
+  const filter = sheet.getFilter();
+  if (!firstReadyRow) {
+    if (filter) filter.removeColumnFilterCriteria(4);
+    SpreadsheetApp.flush();
+    SpreadsheetApp.getActive().setActiveSheet(sheet);
+    sheet.getRange(RUNTIME.checklistFirstTaskRow, 1).activate();
+    SpreadsheetApp.getActive().toast(
+      'Новых READY нет. Проверьте задачи со статусами WAITING и BLOCKED.',
+      'ЧЕКЛИСТ',
+      6
+    );
+    return;
+  }
+
+  const readyFilter = SpreadsheetApp.newFilterCriteria()
+    .whenTextEqualTo(RUNTIME.statuses.ready)
+    .build();
+  if (filter) filter.setColumnFilterCriteria(4, readyFilter);
+  SpreadsheetApp.flush();
+  SpreadsheetApp.getActive().setActiveSheet(sheet);
+  sheet.getRange(firstReadyRow, 1).activate();
 }
 
 function ensureChecklistSheet_() {
