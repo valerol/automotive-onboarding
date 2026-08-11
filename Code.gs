@@ -532,6 +532,10 @@ function rebuildOperationalPool_(config) {
       sheet.getRange(row, 2, 1, 9).merge();
     } else {
       taskFormat.copyTo(sheet.getRange(row, 1, 1, 10), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+      // IDs such as 01-05 must stay identifiers. Without an explicit text
+      // format Google Sheets converts them to dates, breaking dependency
+      // lookup and sidebar writes.
+      sheet.getRange(row, 1, 1, 4).setNumberFormat('@');
       sheet.getRange(row, 1, 1, 7).setValues([[
         item.id, item.title, item.parent || '', item.dependencies.join(', '), item.localApplicable,
         Boolean(item.done), item.commentValue || ''
@@ -622,29 +626,33 @@ function validateRuntimeModel() {
 function readOperationalState_() {
   const sheet = getPoolSheet_();
   const lastRow = Math.max(sheet.getLastRow(), RUNTIME.firstTaskRow);
-  const values = sheet.getRange(RUNTIME.firstDataRow, 1, lastRow - RUNTIME.firstDataRow + 1, 10).getValues();
+  const range = sheet.getRange(RUNTIME.firstDataRow, 1, lastRow - RUNTIME.firstDataRow + 1, 10);
+  const values = range.getValues();
+  const displayValues = range.getDisplayValues();
   const model = instantiateModel_(getRuntimeConfiguration());
   const metadata = {};
   model.forEach(function (task) { metadata[task.id] = task; });
   let section = '';
   const tasks = [];
   values.forEach(function (row, index) {
+    const displayRow = displayValues[index];
     const sheetRow = RUNTIME.firstDataRow + index;
-    if (!row[0] && row[1]) { section = String(row[1]); return; }
-    if (!row[0]) return;
-    const meta = metadata[String(row[0])] || {};
+    if (!displayRow[0] && displayRow[1]) { section = String(displayRow[1]); return; }
+    if (!displayRow[0]) return;
+    const taskId = String(displayRow[0]).trim();
+    const meta = metadata[taskId] || {};
     tasks.push({
       row: sheetRow,
-      id: String(row[0]),
-      title: String(row[1] || ''),
-      parent: String(row[2] || '').trim(),
-      dependencies: splitIds_(row[3]),
-      localApplicable: String(row[4] || RUNTIME.yes),
+      id: taskId,
+      title: String(displayRow[1] || ''),
+      parent: String(displayRow[2] || '').trim(),
+      dependencies: splitIds_(displayRow[3]),
+      localApplicable: String(displayRow[4] || RUNTIME.yes),
       done: row[5] === true,
-      comment: String(row[6] || ''),
-      effectiveApplicable: String(row[7] || ''),
-      status: String(row[8] || ''),
-      waitingFor: String(row[9] || ''),
+      comment: String(displayRow[6] || ''),
+      effectiveApplicable: String(displayRow[7] || ''),
+      status: String(displayRow[8] || ''),
+      waitingFor: String(displayRow[9] || ''),
       section: section || meta.section || '',
       contour: meta.contour || '',
       gate: meta.gate || '',
@@ -739,9 +747,14 @@ function getTranslationsSheet_() {
 }
 
 function findTaskRow_(sheet, taskId) {
-  const finder = sheet.getRange(RUNTIME.firstTaskRow, 1, Math.max(1, sheet.getLastRow() - RUNTIME.firstTaskRow + 1), 1)
-    .createTextFinder(String(taskId)).matchEntireCell(true).findNext();
-  return finder ? finder.getRow() : 0;
+  const firstRow = RUNTIME.firstTaskRow;
+  const rowCount = Math.max(1, sheet.getLastRow() - firstRow + 1);
+  const target = String(taskId || '').trim();
+  const ids = sheet.getRange(firstRow, RUNTIME.columns.id, rowCount, 1).getDisplayValues();
+  for (let index = 0; index < ids.length; index++) {
+    if (String(ids[index][0] || '').trim() === target) return firstRow + index;
+  }
+  return 0;
 }
 
 function indexById_(tasks) { const out = {}; tasks.forEach(function (task) { out[task.id] = task; }); return out; }
