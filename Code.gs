@@ -22,6 +22,26 @@ const CHECKLIST_FILTER = Object.freeze({
   statuses: Object.freeze(['READY', 'WAITING', 'BLOCKED', 'INACTIVE', 'DONE'])
 });
 
+const AUTOMOTIVE_INTEGRATION_CATALOG = Object.freeze([
+  Object.freeze({code: 'T14', name: 'Turn14 Distribution'}),
+  Object.freeze({code: 'MEYER', name: 'Meyer Distributing'}),
+  Object.freeze({code: 'KEYSTONE', name: 'Keystone Automotive Operations'}),
+  Object.freeze({code: 'ATD', name: 'American Tire Distributors (ATD)'}),
+  Object.freeze({code: 'WHEEL_PROS', name: 'Wheel Pros'}),
+  Object.freeze({code: 'APG', name: 'APG Wholesale – ex. Premier Performance'}),
+  Object.freeze({code: 'DIX', name: 'Dix Performance North'}),
+  Object.freeze({code: 'MOTOR_STATE', name: 'Motor State Distributing'})
+]);
+
+const CONFIGURATION_UI = Object.freeze({
+  version: 'AUTOMOTIVE_CONFIG_INTEGRATIONS_V2',
+  integrationHeaderRow: 4,
+  integrationFirstRow: 5,
+  integrationLastRow: 12,
+  otherFirstRow: 14,
+  otherLastRow: 27
+});
+
 const SECTION_RU = Object.freeze({
   '1. SCOPE AND REQUIREMENTS CONFIRMED': '1. ОБЪЁМ И ТРЕБОВАНИЯ ПОДТВЕРЖДЕНЫ',
   '2. ACCESS AND ACCOUNTS': '2. ДОСТУПЫ И УЧЁТНЫЕ ЗАПИСИ',
@@ -721,20 +741,47 @@ function setChecklistHiddenRows_(sheet, rows) {
 function ensureConfigurationSheet_() {
   const spreadsheet = SpreadsheetApp.getActive();
   let sheet = spreadsheet.getSheetByName(RUNTIME.configurationSheet);
-  if (sheet) return sheet;
-  sheet = spreadsheet.insertSheet(RUNTIME.configurationSheet);
-  sheet.setHiddenGridlines(true);
-  sheet.setFrozenRows(3);
-  sheet.setColumnWidth(1, 250);
-  sheet.setColumnWidth(2, 420);
-  sheet.setColumnWidth(3, 420);
-  sheet.setTabColor('#667085');
-  sheet.getRange('A1:C1').merge().setValue(RUNTIME.configurationSheet)
-    .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
-  sheet.getRange('A3:C3').setValues([['Параметр', 'Значение', 'Формат / назначение']])
-    .setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
-  sheet.getRange('A4:C18').setValues([
-    ['Automotive integrations', '', 'CODE|Название, по одному на строку. Turn14: T14|Turn14'],
+  if (!sheet) {
+    sheet = spreadsheet.insertSheet(RUNTIME.configurationSheet);
+    sheet.setHiddenGridlines(true);
+    sheet.setFrozenRows(3);
+    sheet.setColumnWidth(1, 320);
+    sheet.setColumnWidth(2, 140);
+    sheet.setColumnWidth(3, 420);
+    sheet.setTabColor('#667085');
+    sheet.getRange('A1:C1').merge().setValue(RUNTIME.configurationSheet)
+      .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
+    sheet.getRange('A3:C3').setValues([['Параметр', 'Значение', 'Формат / назначение']])
+      .setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
+  }
+  if (sheet.getRange('A1').getNote() !== CONFIGURATION_UI.version) {
+    renderConfigurationSheet_(sheet, getRuntimeConfiguration());
+  }
+  return sheet;
+}
+
+function renderConfigurationSheet_(sheet, config) {
+  sheet.getRange('A4:C30').clear();
+  sheet.getRange('A4:C4')
+    .setValues([['Automotive integrations', 'Используется', 'Системный код']])
+    .setBackground('#e9edf5')
+    .setFontColor('#29375f')
+    .setFontWeight('bold');
+
+  const integrationRows = AUTOMOTIVE_INTEGRATION_CATALOG.map(function (item) {
+    return [item.name, false, item.code];
+  });
+  sheet.getRange(
+    CONFIGURATION_UI.integrationFirstRow,
+    1,
+    integrationRows.length,
+    3
+  ).setValues(integrationRows);
+  sheet.getRange('B5:B12').insertCheckboxes();
+  sheet.getRange('A5:A12').setFontWeight('bold');
+  sheet.getRange('C5:C12').setFontColor('#667085').setNumberFormat('@');
+
+  sheet.getRange('A14:C27').setValues([
     ['Payment gateways', '', 'По одному на строку: CODE|Display name'],
     ['Carriers', '', 'По одному на строку: CODE|Display name'],
     ['Tax services', '', 'По одному на строку: CODE|Display name'],
@@ -750,17 +797,24 @@ function ensureConfigurationSheet_() {
     ['Multiple sources overlap', false, 'Есть пересечение источников хотя бы в одном домене'],
     ['MMY / fitment applies', false, 'Для проекта применим MMY / fitment']
   ]);
-  sheet.getRange('B4:B9').setNumberFormat('@').setWrap(true);
-  sheet.getRange('B10:B18').insertCheckboxes();
-  sheet.getRange('A4:A18').setFontWeight('bold');
-  sheet.getRange('A4:C18').setVerticalAlignment('top');
-  writeConfigurationSheet_(getRuntimeConfiguration());
-  return sheet;
+  sheet.getRange('B14:B18').setNumberFormat('@').setWrap(true);
+  sheet.getRange('B19:B27').insertCheckboxes();
+  sheet.getRange('A14:A27').setFontWeight('bold');
+  sheet.getRange('A4:C27').setVerticalAlignment('top');
+  sheet.getRange('A1').setNote(CONFIGURATION_UI.version);
+  writeConfigurationValues_(sheet, config);
 }
 
 function readConfigurationSheet_() {
   const sheet = ensureConfigurationSheet_();
-  const values = sheet.getRange('B4:B18').getValues();
+  const integrationFlags = sheet.getRange('B5:B12').getValues();
+  const integrations = AUTOMOTIVE_INTEGRATION_CATALOG.filter(function (item, index) {
+    return integrationFlags[index][0] === true;
+  }).map(function (item) {
+    return {code: item.code, name: item.name};
+  });
+
+  const values = sheet.getRange('B14:B27').getValues();
   const parseItems = function (value) {
     return String(value || '').split(/\r?\n/).map(function (line) { return line.trim(); }).filter(Boolean).map(function (line) {
       const parts = line.split('|');
@@ -768,38 +822,43 @@ function readConfigurationSheet_() {
     });
   };
   const sourceTypes = [];
-  if (values[6][0] === true) sourceTypes.push('manual');
-  if (values[7][0] === true) sourceTypes.push('csv');
-  if (values[8][0] === true) sourceTypes.push('supplier_feed');
+  if (values[5][0] === true) sourceTypes.push('manual');
+  if (values[6][0] === true) sourceTypes.push('csv');
+  if (values[7][0] === true) sourceTypes.push('supplier_feed');
   const shippingMethods = [];
-  if (values[9][0] === true) shippingMethods.push('flat_rate');
-  if (values[10][0] === true) shippingMethods.push('supplier_rate');
-  if (values[11][0] === true) shippingMethods.push('free_shipping');
-  if (values[12][0] === true) shippingMethods.push('pickup');
+  if (values[8][0] === true) shippingMethods.push('flat_rate');
+  if (values[9][0] === true) shippingMethods.push('supplier_rate');
+  if (values[10][0] === true) shippingMethods.push('free_shipping');
+  if (values[11][0] === true) shippingMethods.push('pickup');
   return {
-    integrations: parseItems(values[0][0]),
-    payment_gateways: parseItems(values[1][0]),
-    carriers: parseItems(values[2][0]),
-    tax_services: parseItems(values[3][0]),
-    qa_products: parseItems(values[4][0]),
-    e2e_scenarios: parseItems(values[5][0]),
+    integrations: integrations,
+    payment_gateways: parseItems(values[0][0]),
+    carriers: parseItems(values[1][0]),
+    tax_services: parseItems(values[2][0]),
+    qa_products: parseItems(values[3][0]),
+    e2e_scenarios: parseItems(values[4][0]),
     sourceTypes: sourceTypes,
     shippingMethods: shippingMethods,
-    sourceOverlap: values[13][0] === true,
-    fitment: values[14][0] === true
+    sourceOverlap: values[12][0] === true,
+    fitment: values[13][0] === true
   };
 }
 
-function writeConfigurationSheet_(config) {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.configurationSheet);
-  if (!sheet) return;
+function writeConfigurationValues_(sheet, config) {
+  const selectedIntegrations = {};
+  (config.integrations || []).forEach(function (item) { selectedIntegrations[item.code] = true; });
+  sheet.getRange('A5:A12').setValues(AUTOMOTIVE_INTEGRATION_CATALOG.map(function (item) { return [item.name]; }));
+  sheet.getRange('B5:B12').setValues(AUTOMOTIVE_INTEGRATION_CATALOG.map(function (item) {
+    return [Boolean(selectedIntegrations[item.code])];
+  }));
+  sheet.getRange('C5:C12').setValues(AUTOMOTIVE_INTEGRATION_CATALOG.map(function (item) { return [item.code]; }));
+
   const formatItems = function (items) {
     return (items || []).map(function (item) { return item.code + '|' + item.name; }).join('\n');
   };
   const sources = config.sourceTypes || [];
   const shipping = config.shippingMethods || [];
-  sheet.getRange('B4:B18').setValues([
-    [formatItems(config.integrations)],
+  sheet.getRange('B14:B27').setValues([
     [formatItems(config.payment_gateways)],
     [formatItems(config.carriers)],
     [formatItems(config.tax_services)],
@@ -815,6 +874,16 @@ function writeConfigurationSheet_(config) {
     [Boolean(config.sourceOverlap)],
     [Boolean(config.fitment)]
   ]);
+}
+
+function writeConfigurationSheet_(config) {
+  const sheet = SpreadsheetApp.getActive().getSheetByName(RUNTIME.configurationSheet);
+  if (!sheet) return;
+  if (sheet.getRange('A1').getNote() !== CONFIGURATION_UI.version) {
+    renderConfigurationSheet_(sheet, config);
+    return;
+  }
+  writeConfigurationValues_(sheet, config);
 }
 
 function protectPoolSheet_() {
@@ -1423,6 +1492,13 @@ function validateConfiguration_(config) {
     });
   });
   if (unique_(allCodes).length !== allCodes.length) throw new Error('Duplicate instance code in one collection.');
+
+  const catalogByCode = {};
+  AUTOMOTIVE_INTEGRATION_CATALOG.forEach(function (item) { catalogByCode[item.code] = item.name; });
+  config.integrations.forEach(function (item) {
+    if (!catalogByCode[item.code]) throw new Error('Unsupported automotive integration: ' + item.code);
+    if (item.name !== catalogByCode[item.code]) throw new Error('Integration name does not match catalog for ' + item.code);
+  });
 }
 
 function getPoolSheet_() {
