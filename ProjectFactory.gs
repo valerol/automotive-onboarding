@@ -177,9 +177,12 @@ function resolveDriveFolderId_(folderInput, sourceFileId) {
   try {
     const source = Drive.Files.get(sourceFileId, {
       supportsAllDrives: true,
-      fields: 'id,parents'
+      fields: 'id,parents,driveId'
     });
     if (source.parents && source.parents.length) return source.parents[0];
+    // A file stored directly in a Shared Drive root can have no `parents`
+    // entry even though the drive root itself is a valid destination folder.
+    if (source.driveId) return source.driveId;
   } catch (error) {
     throw new Error('Не удалось определить папку текущей таблицы. Детали: ' + error.message);
   }

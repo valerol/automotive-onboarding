@@ -57,6 +57,8 @@ assert.equal(new Set(cleanTasks.map(task => task.id)).size, cleanTasks.length);
 
 assert.doesNotMatch(factorySource, /Drive\.Files\.copy/);
 assert.match(factorySource, /supportsAllDrives:\s*true/);
+assert.match(factorySource, /fields:\s*'id,parents,driveId'/);
+assert.match(factorySource, /if \(source\.driveId\) return source\.driveId/);
 assert.match(factorySource, /Оставьте поле пустым/);
 assert.match(factorySource, /SpreadsheetApp\.create/);
 assert.match(factorySource, /\.copyTo\(destination\)/);
