@@ -297,7 +297,6 @@ function authorizeAndDiagnoseRuntime() {
 function authorizeCentralProjectRuntime() {
   return {
     ok: true,
-    effectiveUser: Session.getEffectiveUser().getEmail(),
     installableTriggerCount: ScriptApp.getProjectTriggers().length
   };
 }
