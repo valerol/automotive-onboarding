@@ -4,9 +4,9 @@ Container-bound Google Apps Script for the spreadsheet `Automotive Onboarding �
 
 ## Files
 
-- `Code.gs` — runtime, dependency enforcement, capabilities/gates, branch instantiation, validation, and sidebar API.
+- `Code.gs` — runtime, dependency enforcement, capabilities/gates, branch instantiation, validation, and the native Google Sheets workspace.
 - `RuntimeModel.gs` — the 299 operator task templates reconstructed from spreadsheet revision 162. The 13 internal graph nodes are not operator tasks.
-- `Sidebar.html` — English/Russian task UI and structured project configuration.
+- `Sidebar.html` — retained only as a legacy compatibility file; the working interface is no longer a sidebar.
 - `appsscript.json` — V8 manifest.
 
 ## Installation
@@ -19,11 +19,18 @@ Container-bound Google Apps Script for the spreadsheet `Automotive Onboarding �
 6. Open **Project Settings**, enable display of `appsscript.json`, and replace it with this package's manifest.
 7. Save the project.
 8. Run `onOpen` once from the editor.
-9. Reload the spreadsheet and select **Automotive Runtime → Authorize and diagnose**. If the runtime displays an authorization window, select **Grant access**, approve access in Google, then run **Authorize and diagnose** again.
+9. Reload the spreadsheet and select **ЧЕКЛИСТ → Проверить доступ**. If the runtime displays an authorization window, select **Grant access**, approve access in Google, then run **Проверить доступ** again.
 10. Confirm that the diagnostic reports access to `ПУЛ ТАСКОВ`, `_TRANSLATIONS`, and the document lock.
-11. Open **Automotive Runtime → Open runtime**.
+11. Run `installChecklistWorkspace` once from the Apps Script editor, or select **ЧЕКЛИСТ → Открыть чеклист** after reloading the spreadsheet.
 
 The runtime uses only the current spreadsheet. Configuration is stored in `_TRANSLATIONS!D1:E1`; task translations remain in `A:C`. It does not use `PropertiesService`, Drive, URL fetches, or external storage. The manifest requests only current-spreadsheet and container-UI scopes.
+
+## Workspace
+
+- `ЧЕКЛИСТ` is the full-width working tab. It contains a persistent native filter. Users edit only `Актуален`, `DONE`, and `Комментарий`.
+- `КОНФИГУРАЦИЯ` is the structured project-configuration tab. Use **ЧЕКЛИСТ → Сохранить конфигурацию и пересобрать** after making changes.
+- `ПУЛ ТАСКОВ` is the protected technical state and graph tab. Its protection warns against direct edits; Google Sheets owners can still override any protection, so routine work must happen in `ЧЕКЛИСТ`.
+- `_TRANSLATIONS` remains hidden.
 
 ## GitHub / clasp setup
 
