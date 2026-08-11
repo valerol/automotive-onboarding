@@ -459,6 +459,7 @@ function writeCleanOperationalPool_(spreadsheet, config) {
     } else {
       taskFormat.copyTo(sheet.getRange(row, 1, 1, 10), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
       sheet.getRange(row, 1, 1, 4).setNumberFormat('@');
+      sheet.getRange(row, RUNTIME.columns.waitingFor).setNumberFormat('@');
       sheet.getRange(row, 1, 1, 7).setValues([[
         item.id, item.title, item.parent || '', item.dependencies.join(', '), item.localApplicable,
         false, item.commentValue || ''
@@ -472,9 +473,12 @@ function writeCleanOperationalPool_(spreadsheet, config) {
     row++;
   });
   const calculated = calculateRuntimeGraph_(stateTasks, config);
-  writeContiguousTaskBlocks_(sheet, calculated.tasks, RUNTIME.columns.effectiveApplicable, 3, function (task) {
-    return [task.effectiveApplicable, task.status, task.waitingFor];
+  writeContiguousTaskBlocks_(sheet, calculated.tasks, RUNTIME.columns.effectiveApplicable, 2, function (task) {
+    return [task.effectiveApplicable, task.status];
   });
+  writeContiguousTaskBlocks_(sheet, calculated.tasks, RUNTIME.columns.waitingFor, 1, function (task) {
+    return [task.waitingFor];
+  }, '@');
   updateCountersFromTasks_(sheet, calculated.tasks);
   refreshTranslationsOnSpreadsheet_(spreadsheet, tasks);
   return calculated;
@@ -543,8 +547,9 @@ function writeCleanChecklist_(spreadsheet, tasks) {
     const task = row.task;
     return [task.id, row.title, task.status, task.localApplicable, false, task.comment, task.waitingFor];
   });
-  sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, values.length, 7).setValues(values).setVerticalAlignment('middle');
   sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, values.length, 1).setNumberFormat('@');
+  sheet.getRange(RUNTIME.checklistFirstTaskRow, 7, values.length, 1).setNumberFormat('@');
+  sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, values.length, 7).setValues(values).setVerticalAlignment('middle');
   let blockStart = 0;
   displayRows.forEach(function (row, index) {
     const sheetRow = RUNTIME.checklistFirstTaskRow + index;

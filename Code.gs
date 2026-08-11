@@ -715,17 +715,22 @@ function writeRuntimeDiff_(sheet, tasks, changedIds) {
   writeContiguousTaskBlocks_(sheet, rows, RUNTIME.columns.applicable, 2, function (task) {
     return [task.localApplicable, Boolean(task.done)];
   });
-  writeContiguousTaskBlocks_(sheet, rows, RUNTIME.columns.effectiveApplicable, 3, function (task) {
-    return [task.effectiveApplicable, task.status, task.waitingFor];
+  writeContiguousTaskBlocks_(sheet, rows, RUNTIME.columns.effectiveApplicable, 2, function (task) {
+    return [task.effectiveApplicable, task.status];
   });
+  writeContiguousTaskBlocks_(sheet, rows, RUNTIME.columns.waitingFor, 1, function (task) {
+    return [task.waitingFor];
+  }, '@');
 }
 
-function writeContiguousTaskBlocks_(sheet, tasks, column, width, valueFn) {
+function writeContiguousTaskBlocks_(sheet, tasks, column, width, valueFn, numberFormat) {
   if (!tasks.length) return;
   const ordered = tasks.slice().sort(function (a, b) { return a.row - b.row; });
   let block = [ordered[0]];
   const flush = function () {
-    sheet.getRange(block[0].row, column, block.length, width).setValues(block.map(valueFn));
+    const range = sheet.getRange(block[0].row, column, block.length, width);
+    if (numberFormat) range.setNumberFormat(numberFormat);
+    range.setValues(block.map(valueFn));
   };
   for (let index = 1; index < ordered.length; index++) {
     if (ordered[index].row === ordered[index - 1].row + 1) block.push(ordered[index]);
@@ -760,7 +765,7 @@ function writeChecklistDiff_(sheet, checklistIndex, calculated, changedIds) {
   writeContiguousTaskBlocks_(sheet, tasks, 3, 3, function (task) {
     return [task.status, task.localApplicable, Boolean(task.done)];
   });
-  writeContiguousTaskBlocks_(sheet, tasks, 7, 1, function (task) { return [task.waitingFor]; });
+  writeContiguousTaskBlocks_(sheet, tasks, 7, 1, function (task) { return [task.waitingFor]; }, '@');
 }
 
 function applyChecklistVisibilityFromGraph_(sheet, checklistIndex, tasks, focusReady) {
@@ -900,8 +905,9 @@ function refreshChecklist_(lockAlreadyHeld) {
       return [task.id, task.title, task.status, task.applicable, Boolean(task.done), task.comment, task.waitingFor];
     });
     const target = sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, values.length, 7);
-    target.setValues(values).setVerticalAlignment('middle');
     sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, values.length, 1).setNumberFormat('@');
+    sheet.getRange(RUNTIME.checklistFirstTaskRow, 7, values.length, 1).setNumberFormat('@');
+    target.setValues(values).setVerticalAlignment('middle');
     sheet.getRange(RUNTIME.checklistFirstTaskRow, 2, values.length, 1).setWrap(true);
     sheet.getRange(RUNTIME.checklistFirstTaskRow, 6, values.length, 2).setWrap(true);
 
@@ -1823,6 +1829,7 @@ function rebuildOperationalPool_(config) {
       // format Google Sheets converts them to dates, breaking dependency
       // lookup and sidebar writes.
       sheet.getRange(row, 1, 1, 4).setNumberFormat('@');
+      sheet.getRange(row, RUNTIME.columns.waitingFor).setNumberFormat('@');
       sheet.getRange(row, 1, 1, 7).setValues([[
         item.id, item.title, item.parent || '', item.dependencies.join(', '), item.localApplicable,
         Boolean(item.done), item.commentValue || ''
