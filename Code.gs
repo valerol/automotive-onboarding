@@ -79,6 +79,18 @@ const SOURCE_TASK_RULES = Object.freeze({
   ])
 });
 
+const CONFIGURATION_TASK_RULES = Object.freeze({
+  fitmentRequired: Object.freeze([
+    '04-INT-12', '06-19', '07-06', '13-04', '14-05', '15-07'
+  ]),
+  fitmentOptional: Object.freeze([
+    '05-05', '07-PRODUCT-11'
+  ]),
+  flatRate: Object.freeze(['11-02']),
+  supplierRate: Object.freeze(['04-INT-13', '11-03']),
+  freeShipping: Object.freeze(['11-04', '13-10'])
+});
+
 const QA_PRODUCT_SAMPLE = Object.freeze({
   code: 'SAMPLE',
   name: 'Product specified in Comment',
@@ -93,7 +105,7 @@ const SHIPPING_METHOD_LABELS = Object.freeze({
 });
 
 const CONFIGURATION_UI = Object.freeze({
-  version: 'AUTOMOTIVE_CONFIG_SOURCES_V4',
+  version: 'AUTOMOTIVE_CONFIG_APPLICABILITY_V5',
   integrationHeaderRow: 4,
   integrationFirstRow: 5,
   integrationLastRow: 12,
@@ -849,12 +861,12 @@ function renderConfigurationSheet_(sheet, config) {
     ['Source: manual', false, 'Ручное создание; новые задачи не добавляются'],
     ['Source: CSV', false, 'Включает существующие задачи импорта'],
     ['Source: supplier feed', false, 'Включает задачи импорта и расписания'],
-    ['Shipping: flat rate', false, 'Фиксированная стоимость'],
-    ['Shipping: supplier rate', false, 'Тариф поставщика'],
-    ['Shipping: free shipping', false, 'Бесплатная доставка'],
-    ['Shipping: pickup', false, 'Самовывоз'],
+    ['Shipping: flat rate', false, 'Включает существующую задачу настройки фиксированных тарифов'],
+    ['Shipping: supplier rate', false, 'Включает существующие задачи тарифов поставщика'],
+    ['Shipping: free shipping', false, 'Включает проверку правил и E2E-сценарий бесплатной доставки'],
+    ['Shipping: pickup', false, 'Считается способом доставки; отдельные задачи не создаются'],
     ['Multiple sources overlap', false, 'Доступно только при 2–3 источниках'],
-    ['MMY / fitment applies', false, 'Для проекта применим MMY / fitment']
+    ['MMY / fitment applies', false, 'Управляет уже существующими fitment-задачами и разделом 8']
   ]);
   sheet.getRange('B37:B45').insertCheckboxes();
   sheet.getRange('A37:A45').setFontWeight('bold');
@@ -989,6 +1001,7 @@ function getRuntimeState(language) {
         comment: task.comment,
         status: task.status,
         waitingFor: task.waitingFor,
+        systemControlled: Boolean(task.systemApplicable),
         section: lang === 'ru' ? (SECTION_RU[task.section] || task.section) : task.section
       };
     });
@@ -1012,7 +1025,11 @@ function updateTaskFromSidebar(taskId, patch) {
   patch = patch || {};
 
   if (Object.prototype.hasOwnProperty.call(patch, 'applicable')) {
-    if (taskId === '10-92') throw new Error('10-92 applicability is controlled by integration T14.');
+    const config = getRuntimeConfiguration();
+    const modelTask = instantiateModel_(config).filter(function (task) { return task.id === taskId; })[0];
+    if (modelTask && modelTask.systemApplicable) {
+      throw new Error(taskId + ' applicability is controlled by Configuration.');
+    }
     const value = patch.applicable === RUNTIME.no ? RUNTIME.no : RUNTIME.yes;
     sheet.getRange(row, RUNTIME.columns.applicable).setValue(value);
   }
@@ -1071,16 +1088,16 @@ function recalculateRuntime() {
     const state = readOperationalState_();
     if (!state.tasks.length) return;
     const config = getRuntimeConfiguration();
-    const turn14Applicable = hasTurn14Integration_(config) ? RUNTIME.yes : RUNTIME.no;
     let systemApplicabilityChanged = false;
     state.tasks.forEach(function (task) {
-      if (task.templateId !== '10-92') return;
-      if (task.localApplicable !== turn14Applicable) {
-        sheet.getRange(task.row, RUNTIME.columns.applicable).setValue(turn14Applicable);
-        task.localApplicable = turn14Applicable;
+      const configuredApplicable = configuredLocalApplicability_(task, config);
+      if (!configuredApplicable) return;
+      if (task.localApplicable !== configuredApplicable) {
+        sheet.getRange(task.row, RUNTIME.columns.applicable).setValue(configuredApplicable);
+        task.localApplicable = configuredApplicable;
         systemApplicabilityChanged = true;
       }
-      if (turn14Applicable === RUNTIME.no && task.done) {
+      if (configuredApplicable === RUNTIME.no && task.done) {
         sheet.getRange(task.row, RUNTIME.columns.done).setValue(false);
         task.done = false;
         systemApplicabilityChanged = true;
@@ -1407,8 +1424,9 @@ function instantiateModel_(config) {
   }
 
   instances.forEach(function (instance) {
-    if (instance.templateId === '10-92') {
-      instance.defaultApplicable = turn14Configured ? RUNTIME.yes : RUNTIME.no;
+    const configuredApplicable = configuredLocalApplicability_(instance, config);
+    if (configuredApplicable) {
+      instance.defaultApplicable = configuredApplicable;
       instance.systemApplicable = true;
     }
     instance.parent = instance.parentTemplate ? resolveReference(instance.parentTemplate, instance)[0] || '' : '';
@@ -1491,6 +1509,7 @@ function readOperationalState_() {
       gate: meta.gate || '',
       collection: meta.collection || '',
       instanceCode: meta.instanceCode || '',
+      systemApplicable: Boolean(meta.systemApplicable),
       configurationApplicable: meta.configurationApplicable !== false,
       templateId: meta.templateId || String(row[0])
     });
@@ -1578,10 +1597,18 @@ function configuredTaskApplicable_(task, config) {
   const sources = config.sourceTypes || [];
   const importSelected = sources.indexOf('csv') >= 0 || sources.indexOf('supplier_feed') >= 0;
   const supplierFeedSelected = sources.indexOf('supplier_feed') >= 0;
+  const configuredApplicable = configuredLocalApplicability_(task, config);
 
   if (task.contour === 'SOURCE_COORDINATION') {
-    return Boolean(config.sourceOverlap && sources.length >= 2);
+    if (!(config.sourceOverlap && sources.length >= 2)) return false;
+    if (!config.fitment && task.templateId === '05-05') return false;
+    return true;
   }
+  if (configuredApplicable === RUNTIME.no) return false;
+  if (!config.fitment && (
+    String(task.section).indexOf('8. MMY / FITMENT QA') === 0 ||
+    CONFIGURATION_TASK_RULES.fitmentOptional.indexOf(task.templateId) >= 0
+  )) return false;
   if (task.collection === 'integrations') return supplierFeedSelected;
   if (SOURCE_TASK_RULES.automotiveIntegration.indexOf(task.templateId) >= 0) {
     return supplierFeedSelected && (config.integrations || []).length > 0;
@@ -1589,6 +1616,20 @@ function configuredTaskApplicable_(task, config) {
   if (SOURCE_TASK_RULES.supplierFeed.indexOf(task.templateId) >= 0) return supplierFeedSelected;
   if (SOURCE_TASK_RULES.import.indexOf(task.templateId) >= 0) return importSelected;
   return true;
+}
+
+function configuredLocalApplicability_(task, config) {
+  const templateId = task.templateId || task.id;
+  const shipping = config.shippingMethods || [];
+  const selected = function (method) { return shipping.indexOf(method) >= 0; };
+  const yesNo = function (value) { return value ? RUNTIME.yes : RUNTIME.no; };
+
+  if (templateId === '10-92') return yesNo(hasTurn14Integration_(config));
+  if (CONFIGURATION_TASK_RULES.fitmentRequired.indexOf(templateId) >= 0) return yesNo(config.fitment);
+  if (CONFIGURATION_TASK_RULES.flatRate.indexOf(templateId) >= 0) return yesNo(selected('flat_rate'));
+  if (CONFIGURATION_TASK_RULES.supplierRate.indexOf(templateId) >= 0) return yesNo(selected('supplier_rate'));
+  if (CONFIGURATION_TASK_RULES.freeShipping.indexOf(templateId) >= 0) return yesNo(selected('free_shipping'));
+  return '';
 }
 
 function qaProductSamples_() {

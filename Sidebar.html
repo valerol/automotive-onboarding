@@ -90,6 +90,7 @@
       <div class="field"><label>Automotive integrations</label><div id="cfg-integrations" class="catalog"></div></div>
       <div class="field"><label>Payment gateways</label><div id="cfg-payments" class="catalog"></div></div>
       <div class="field"><label>Carriers</label><div id="cfg-carriers" class="catalog"></div></div>
+      <div class="help">Every selected carrier automatically counts as a configured shipping method and creates its existing access and rate-verification branch.</div>
       <div class="field"><label>Tax services</label><div id="cfg-tax" class="catalog"></div></div>
 
       <div class="field"><label>Independent source types</label>
@@ -107,9 +108,10 @@
           <label><input type="checkbox" name="shipping" value="free_shipping"> free shipping</label>
           <label><input type="checkbox" name="shipping" value="pickup"> pickup</label>
         </div>
+        <div class="help">These choices activate existing shipping tasks and are included in the automatically generated minimum E2E coverage.</div>
       </div>
       <div class="field"><label><input id="cfg-overlap" type="checkbox"> Multiple sources overlap in at least one data domain</label><div id="cfg-overlap-help" class="help"></div></div>
-      <div class="field"><label><input id="cfg-fitment" type="checkbox"> MMY / fitment applies</label></div>
+      <div class="field"><label><input id="cfg-fitment" type="checkbox"> MMY / fitment applies</label><div class="help">Controls the existing fitment tasks and the whole MMY / fitment QA section; no rows are added.</div></div>
       <button class="primary" onclick="saveConfiguration()">Save and rebuild runtime</button>
     </section>
   </main>
@@ -205,7 +207,7 @@
           </div>
           ${task.waitingFor ? `<div class="wait">Waiting for: ${escapeHtml(task.waitingFor)}</div>` : ''}
           <div class="task-controls">
-            <select onchange="setApplicable('${escapeAttr(task.id)}',this.value)"><option ${task.applicable === 'ДА' ? 'selected' : ''}>ДА</option><option ${task.applicable === 'НЕТ' ? 'selected' : ''}>НЕТ</option></select>
+            <select ${task.systemControlled ? 'disabled title="Controlled by Configuration"' : ''} onchange="setApplicable('${escapeAttr(task.id)}',this.value)"><option ${task.applicable === 'ДА' ? 'selected' : ''}>ДА</option><option ${task.applicable === 'НЕТ' ? 'selected' : ''}>НЕТ</option></select>
             <input type="text" value="${escapeAttr(task.comment || '')}" placeholder="Comment" onchange="setComment('${escapeAttr(task.id)}',this.value)">
           </div>
         </article>`);

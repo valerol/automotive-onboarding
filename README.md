@@ -94,6 +94,18 @@ Catalog source types do not create task instances. They only control the effecti
 - `manual` uses the common catalog workflow, including task `03-02`, without a separate generated branch;
 - source-conflict tasks become applicable only when at least two source types are selected and `Multiple sources overlap` is enabled.
 
+Non-carrier shipping methods control existing shipping tasks and participate in automatic E2E generation:
+
+- `flat_rate` controls `11-02`;
+- `supplier_rate` controls `04-INT-13` and `11-03`;
+- `free_shipping` controls `11-04` and `13-10`;
+- `pickup` is verified by the existing `11-11 + 11-12` pair and is included in generated E2E coverage;
+- every selected carrier automatically becomes a `carrier:<CODE>` shipping method and uses its existing access and rate-verification branches.
+
+`MMY / fitment applies` does not create tasks. When disabled, the existing Section 8 tasks and related fitment-only checks are `INACTIVE`. When enabled, required fitment import, QA, E2E, customer-review, and launch checks are activated; optional fitment checks keep their own task-level applicability.
+
+Applicability for tasks directly controlled by configuration is read-only in the sidebar and is re-applied during every runtime recalculation.
+
 Saving configuration rebuilds repeatable branches and preserves state for Task IDs that still exist. The following static rules are enforced:
 
 - `Dependencies` is AND;
