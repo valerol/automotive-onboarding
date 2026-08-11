@@ -320,6 +320,12 @@ function migrateWorkbookToEnglish_(spreadsheet, isMaster) {
       rows.forEach(function (row) {
         if (String(row[0] || '').trim()) row[RUNTIME.columns.applicable - 1] = normalizeApplicability_(row[RUNTIME.columns.applicable - 1]);
       });
+      pool.getRange(
+        RUNTIME.firstDataRow,
+        RUNTIME.columns.applicable,
+        pool.getLastRow() - RUNTIME.firstDataRow + 1,
+        1
+      ).clearDataValidations();
       range.setValues(rows);
     }
 
