@@ -7,7 +7,7 @@ const RUNTIME = Object.freeze({
   checklistFirstRow: 7,
   yes: 'YES',
   no: 'NO',
-  statuses: Object.freeze(['READY', 'WAITING', 'INACTIVE', 'DONE'])
+  statuses: Object.freeze(['TODO', 'PENDING', 'INACTIVE', 'DONE'])
 });
 
 let RUNTIME_SPREADSHEET_CONTEXT_ = null;
@@ -116,7 +116,7 @@ const CONFIGURATION_UI = Object.freeze({
   otherLastRow: 45
 });
 
-const CHECKLIST_UI_VERSION = 'AUTOMOTIVE_FORMULA_V6';
+const CHECKLIST_UI_VERSION = 'AUTOMOTIVE_FORMULA_V7';
 
 const CHECKLIST_STYLE = Object.freeze({
   title: '#214F87',
@@ -249,14 +249,14 @@ function onEdit(e) {
     if (checklistEditIsCommentOnly_(e.range)) return;
     if (checklistEditTouchesApplicable_(e.range) && !checklistApplicableValuesAreValid_(e.range)) {
       rebuildChecklistFromConfiguration_(true);
-      runtimeToast_('Applicable must be YES or NO. The checklist was restored.');
+      runtimeToast_('Applicable must remain a checkbox. The checklist was restored.');
       return;
     }
     SpreadsheetApp.flush();
     const reverted = reconcileInvalidDoneValues_(sheet);
     SpreadsheetApp.flush();
     refreshChecklistProtection_(sheet);
-    if (reverted) runtimeToast_('Done is available only for READY tasks. The change was reverted.');
+    if (reverted) runtimeToast_('Done is available only for TODO tasks. The change was reverted.');
   });
 }
 
@@ -280,9 +280,8 @@ function checklistApplicableValuesAreValid_(range) {
   const firstColumn = range.getColumn();
   const applicableOffset = 4 - firstColumn;
   if (applicableOffset < 0 || applicableOffset >= range.getNumColumns()) return true;
-  return range.getDisplayValues().every(function (row) {
-    const value = String(row[applicableOffset] || '').trim().toUpperCase();
-    return value === RUNTIME.yes || value === RUNTIME.no;
+  return range.getValues().every(function (row) {
+    return row[applicableOffset] === true || row[applicableOffset] === false;
   });
 }
 
@@ -446,6 +445,17 @@ function writeFormulaChecklist_(sheet, tasks) {
   sheet.showRows(RUNTIME.checklistFirstRow, clearRows);
   sheet.getRange(RUNTIME.checklistFirstRow, 1, clearRows, 11)
     .clearDataValidations().clearContent().clearFormat();
+  SpreadsheetApp.flush();
+
+  const checkboxRule = SpreadsheetApp.newDataValidation()
+    .requireCheckbox()
+    .setAllowInvalid(false)
+    .build();
+  const doneRange = sheet.getRange(RUNTIME.checklistFirstRow, 2, displayRows.length, 1);
+  const applicableRange = sheet.getRange(RUNTIME.checklistFirstRow, 4, displayRows.length, 1);
+  doneRange.setDataValidation(checkboxRule);
+  applicableRange.setDataValidation(checkboxRule);
+  SpreadsheetApp.flush();
 
   const lastRow = neededLastRow;
   const byId = indexById_(tasks);
@@ -466,7 +476,7 @@ function writeFormulaChecklist_(sheet, tasks) {
       task.title,
       Boolean(task.done),
       task.commentValue || '',
-      task.localApplicable,
+      task.localApplicable === RUNTIME.yes,
       statusFormula_(row, lastRow),
       task.id,
       waitingFormula_(row, lastRow),
@@ -479,14 +489,6 @@ function writeFormulaChecklist_(sheet, tasks) {
   sheet.getRange(RUNTIME.checklistFirstRow, 1, values.length, 11).setValues(values).setVerticalAlignment('middle');
   sheet.getRange(RUNTIME.checklistFirstRow, 1, values.length, 11).setFontFamily(CHECKLIST_STYLE.font).setFontSize(10);
   sheet.getRange(RUNTIME.checklistFirstRow, 6, values.length, 6).setNumberFormat('@');
-
-  const applicableRule = SpreadsheetApp.newDataValidation()
-    .requireValueInList([RUNTIME.yes, RUNTIME.no], true)
-    .setAllowInvalid(false)
-    .build();
-  const taskRange = sheet.getRange(RUNTIME.checklistFirstRow, 2, values.length, 1);
-  taskRange.insertCheckboxes();
-  sheet.getRange(RUNTIME.checklistFirstRow, 4, values.length, 1).setDataValidation(applicableRule);
 
   const sectionDoneRanges = [];
   const sectionApplicableRanges = [];
@@ -522,9 +524,9 @@ function formulaLookupRange_(lastRow) {
 function effectiveApplicableFormula_(row, lastRow) {
   const ids = formulaLookupRange_(lastRow);
   const applicable = '$D$' + RUNTIME.checklistFirstRow + ':$D$' + lastRow;
-  return '=IF($F' + row + '="","",IF($D' + row + '="NO","NO",IF($K' + row + '="","YES",' +
+  return '=IF($F' + row + '="","",IF($D' + row + '<>TRUE,"NO",IF($K' + row + '="","YES",' +
     'IF(SUMPRODUCT(N(COUNTIF(TRIM(SPLIT($K' + row + ',",")),' + ids + ')>0),N(' +
-    applicable + '="NO"))>0,"NO","YES"))))';
+    applicable + '<>TRUE))>0,"NO","YES"))))';
 }
 
 function unresolvedDependencyExpression_(row, lastRow) {
@@ -538,14 +540,14 @@ function unresolvedDependencyExpression_(row, lastRow) {
 function statusFormula_(row, lastRow) {
   const unresolved = unresolvedDependencyExpression_(row, lastRow);
   return '=IF($F' + row + '="","",IF($J' + row + '="NO","INACTIVE",IF($B' + row + ',"DONE",' +
-    'IF($I' + row + '="","READY",IF(' + unresolved + '=0,"READY","WAITING")))))';
+    'IF($I' + row + '="","TODO",IF(' + unresolved + '=0,"TODO","PENDING")))))';
 }
 
 function waitingFormula_(row, lastRow) {
   const ids = formulaLookupRange_(lastRow);
   const done = '$B$' + RUNTIME.checklistFirstRow + ':$B$' + lastRow;
   const effective = '$J$' + RUNTIME.checklistFirstRow + ':$J$' + lastRow;
-  return '=IF($E' + row + '<>"WAITING","",IF($I' + row + '="","",LET(deps,TRIM(SPLIT($I' + row + ',",")),' +
+  return '=IF($E' + row + '<>"PENDING","",IF($I' + row + '="","",LET(deps,TRIM(SPLIT($I' + row + ',",")),' +
     'IFERROR(TEXTJOIN(", ",TRUE,FILTER(' + ids + ',COUNTIF(deps,' + ids + ')>0,' +
     effective + '="YES",' + done + '<>TRUE)),""))))';
 }
@@ -601,8 +603,8 @@ function ensureChecklistFormatting_(sheet) {
     return builder.build();
   };
   sheet.setConditionalFormatRules([
-    rule('READY', '#EAF3FB', '#000000', false),
-    rule('WAITING', '#FFF4D6', '#000000', false),
+    rule('TODO', '#EAF3FB', '#000000', false),
+    rule('PENDING', '#FFF4D6', '#000000', false),
     rule('INACTIVE', CHECKLIST_STYLE.metadata, '#737C8C', true),
     rule('DONE', CHECKLIST_STYLE.section, '#214F87', false)
   ]);
@@ -628,7 +630,7 @@ function refreshChecklistProtection_(sheet) {
       return;
     }
     if (!taskBlockStart) taskBlockStart = sheetRow;
-    if (status === 'READY' || status === 'DONE') editable.push(sheet.getRange(sheetRow, 2));
+    if (status === 'TODO' || status === 'DONE') editable.push(sheet.getRange(sheetRow, 2));
   });
   flushTaskBlock(RUNTIME.checklistFirstRow + rowCount);
   enforceSheetProtection_(sheet, 'CHECKLIST_STRUCTURE_DO_NOT_EDIT', editable);
@@ -944,7 +946,10 @@ function enforceSheetProtection_(sheet, description, unprotectedRanges) {
 }
 
 function normalizeApplicability_(value) {
-  return String(value || '').trim().toUpperCase() === RUNTIME.no ? RUNTIME.no : RUNTIME.yes;
+  if (value === false) return RUNTIME.no;
+  if (value === true) return RUNTIME.yes;
+  const normalized = String(value || '').trim().toUpperCase();
+  return normalized === RUNTIME.no || normalized === 'FALSE' ? RUNTIME.no : RUNTIME.yes;
 }
 
 function indexById_(tasks) {

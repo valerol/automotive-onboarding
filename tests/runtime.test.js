@@ -11,6 +11,7 @@ vm.runInContext(modelSource + '\n' + codeSource + `\n;globalThis.api={
   RUNTIME,RUNTIME_MODEL,defaultConfiguration_,instantiateModel_,mergeTaskStateForRebuild_,
   validateTaskGraph_,detectCycles_,indexById_,statusFormula_,waitingFormula_,effectiveApplicableFormula_
   ,taskCanBeDoneFromState_,checklistEditTouchesProtectedData_,checklistEditIsCommentOnly_
+  ,checklistApplicableValuesAreValid_,normalizeApplicability_
 };`, context);
 const api = context.api;
 
@@ -42,11 +43,16 @@ assert.equal(merged[0].localApplicable, 'NO');
 assert.equal(merged[0].commentValue, 'preserved');
 
 assert.match(api.statusFormula_(8, 400), /^=IF/);
-assert.match(api.statusFormula_(8, 400), /READY/);
-assert.match(api.statusFormula_(8, 400), /WAITING/);
+assert.match(api.statusFormula_(8, 400), /TODO/);
+assert.match(api.statusFormula_(8, 400), /PENDING/);
 assert.match(api.waitingFormula_(8, 400), /TEXTJOIN/);
 assert.match(api.effectiveApplicableFormula_(8, 400), /Ancestor|\$K8|SPLIT/);
+assert.match(api.effectiveApplicableFormula_(8, 400), /\$D8<>TRUE/);
 assert.doesNotMatch(api.statusFormula_(8, 400), /MAP|LAMBDA/);
+assert.equal(api.normalizeApplicability_(true), 'YES');
+assert.equal(api.normalizeApplicability_(false), 'NO');
+assert.equal(api.normalizeApplicability_('YES'), 'YES');
+assert.equal(api.normalizeApplicability_('NO'), 'NO');
 
 const readyState = {
   A: {id: 'A', done: true, effectiveApplicable: 'YES', dependencies: []},
@@ -62,6 +68,10 @@ assert.equal(api.checklistEditTouchesProtectedData_(fakeRange(2, 6)), true, 'B:G
 assert.equal(api.checklistEditTouchesProtectedData_(fakeRange(5, 1)), true, 'Status is protected');
 assert.equal(api.checklistEditTouchesProtectedData_(fakeRange(2, 3)), false, 'Done through Applicable are operator fields');
 assert.equal(api.checklistEditIsCommentOnly_(fakeRange(3, 1)), true);
+const applicableRange = values => ({getColumn: () => 4, getNumColumns: () => 1, getValues: () => values});
+assert.equal(api.checklistApplicableValuesAreValid_(applicableRange([[true], [false]])), true);
+assert.equal(api.checklistApplicableValuesAreValid_(applicableRange([['YES']])), false);
+assert.equal(api.checklistApplicableValuesAreValid_(applicableRange([['']])), false);
 
 assert.match(codeSource, /createFilter\(\)/);
 assert.match(codeSource, /title: '#214F87'/);
@@ -71,12 +81,14 @@ assert.match(codeSource, /metadata: '#F4F7F9'/);
 assert.match(codeSource, /font: 'Arial'/);
 assert.match(codeSource, /function readProjectInformation_\(sheet\)/);
 assert.match(codeSource, /const editable = \[sheet\.getRange\('A3:G5'\)\]/);
-assert.match(codeSource, /getRange\(RUNTIME\.checklistFirstRow, 2, values\.length, 1\);\s*taskRange\.insertCheckboxes\(\)/);
+assert.match(codeSource, /getRange\(RUNTIME\.checklistFirstRow, 2, displayRows\.length, 1\);/);
+assert.match(codeSource, /requireCheckbox\(\)/);
+assert.match(codeSource, /getRange\(RUNTIME\.checklistFirstRow, 4, displayRows\.length, 1\);\s*doneRange\.setDataValidation\(checkboxRule\);\s*applicableRange\.setDataValidation\(checkboxRule\)/);
+assert.ok(codeSource.indexOf('doneRange.setDataValidation(checkboxRule);') < codeSource.indexOf('.setValues(values).setVerticalAlignment'));
 assert.match(codeSource, /getRangeList\(sectionDoneRanges\)\.clearDataValidations\(\)\.clearContent\(\)/);
 assert.match(codeSource, /checklist\.getRange\('A1'\)\.setNote\(CHECKLIST_UI_VERSION\)/);
 assert.match(codeSource, /getRange\('A2:G2'\).*clearContent\(\).*clearDataValidations\(\).*clearFormat\(\)/);
-assert.match(codeSource, /status === 'READY' \|\| status === 'DONE'/);
-assert.match(codeSource, /status === 'READY' \|\| status === 'DONE'/);
+assert.match(codeSource, /status === 'TODO' \|\| status === 'DONE'/);
 assert.match(codeSource, /reconcileInvalidDoneValues_\(sheet\)/);
 assert.match(codeSource, /checklistEditTouchesProtectedData_\(e\.range\)/);
 assert.doesNotMatch(codeSource, /CHECKLIST_FILTER|applyChecklistStatusFilter|showSidebar|Language/);

@@ -10,7 +10,7 @@ Google Sheets checklist backed by one central Apps Script project.
 - `CONFIGURATION` selects integrations, payment gateways, carriers, tax services, sources, shipping options, and fitment.
 - `PROJECTS` is the master registry of generated onboarding spreadsheets.
 
-The checklist uses spreadsheet formulas for `Applicable`, `Status`, and `Waiting for`. Normal task work does not ask Apps Script to recalculate the dependency graph. Apps Script is used only to rebuild service branches after a configuration change, restore the canonical list, create a project, and refresh checkbox protection.
+The checklist uses spreadsheet formulas for effective applicability, `Status`, and `Waiting for`. The visible `Applicable` field is an operator-controlled checkbox. Normal task work does not ask Apps Script to recalculate the dependency graph. Apps Script is used only to rebuild service branches after a configuration change, restore the canonical list, create a project, and refresh checkbox protection.
 
 The visual system follows `Internal Automotive Onboarding Checklist.xlsx`: Arial typography, dark-blue title bands, medium-blue table headers, pale-blue section rows, and light-gray project information fields. Rows 3–5 contain unprotected manual project information: Client / Store, Responsible engineer, Launch date, Onboarding ticket, Current status, and Jira ticket. These values survive checklist rebuilds; new child projects start with the fields blank.
 
@@ -28,12 +28,12 @@ Use the standard Google Sheets filter dropdowns in row 6. Filtering is local to 
 
 ## Status rules
 
-- `INACTIVE`: the task or an ancestor has `Applicable = NO`.
+- `INACTIVE`: the task's `Applicable` checkbox, or an ancestor's checkbox, is cleared.
 - `DONE`: an applicable task is completed.
-- `WAITING`: at least one applicable dependency is not done.
-- `READY`: applicable, not done, and all applicable dependencies are done.
+- `PENDING`: at least one applicable dependency is not done.
+- `TODO`: applicable, not done, and all applicable dependencies are done.
 
-`READY` checkboxes can be selected and `DONE` checkboxes can be cleared. Done cells for `WAITING` and `INACTIVE` rows are protected. Task names, IDs, dependencies, formulas, and complete rows cannot be deleted or edited by operators. Comment and Applicable remain editable.
+`TODO` checkboxes can be selected and `DONE` checkboxes can be cleared. Done cells for `PENDING` and `INACTIVE` rows are protected. Task names, IDs, dependencies, formulas, and complete rows cannot be deleted or edited by operators. Comment and the Applicable checkbox remain editable.
 
 ## Configuration and service branches
 
