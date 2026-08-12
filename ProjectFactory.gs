@@ -194,7 +194,7 @@ function renderEnglishInstructions_(spreadsheet) {
     ['Purpose', 'Use CHECKLIST for daily work and CONFIGURATION to define the project scope.'],
     ['Columns', 'Task, Done, Comment, Applicable, Status, Task ID, Waiting for.'],
     ['Filtering', 'Use the standard Google Sheets filter in row 6. Filtering never runs Apps Script.'],
-    ['Done', 'Only READY task checkboxes are editable. WAITING, INACTIVE, and DONE checkboxes are protected.'],
+    ['Done', 'READY checkboxes can be selected and DONE checkboxes can be cleared. WAITING and INACTIVE checkboxes are protected.'],
     ['Statuses', 'Status and Waiting for are protected spreadsheet formulas calculated from Applicable, Parent ID, Dependencies, and Done.'],
     ['Configuration', 'Changing CONFIGURATION rebuilds service branches and formulas while preserving state by Task ID.'],
     ['Canonical source', 'RuntimeModel is the canonical task template. TASK POOL is a protected generated view used for restoration.'],

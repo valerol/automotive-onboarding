@@ -10,6 +10,7 @@ const context = vm.createContext({console});
 vm.runInContext(modelSource + '\n' + codeSource + `\n;globalThis.api={
   RUNTIME,RUNTIME_MODEL,defaultConfiguration_,instantiateModel_,mergeTaskStateForRebuild_,
   validateTaskGraph_,detectCycles_,indexById_,statusFormula_,waitingFormula_,effectiveApplicableFormula_
+  ,taskCanBeDoneFromState_
 };`, context);
 const api = context.api;
 
@@ -45,11 +46,23 @@ assert.match(api.statusFormula_(8, 400), /READY/);
 assert.match(api.statusFormula_(8, 400), /WAITING/);
 assert.match(api.waitingFormula_(8, 400), /TEXTJOIN/);
 assert.match(api.effectiveApplicableFormula_(8, 400), /Ancestor|\$K8|SPLIT/);
+assert.doesNotMatch(api.statusFormula_(8, 400), /MAP|LAMBDA/);
+
+const readyState = {
+  A: {id: 'A', done: true, effectiveApplicable: 'YES', dependencies: []},
+  B: {id: 'B', done: false, effectiveApplicable: 'YES', dependencies: ['A']},
+  C: {id: 'C', done: false, effectiveApplicable: 'YES', dependencies: ['B']},
+  D: {id: 'D', done: false, effectiveApplicable: 'NO', dependencies: []}
+};
+assert.equal(api.taskCanBeDoneFromState_(readyState.B, readyState), true);
+assert.equal(api.taskCanBeDoneFromState_(readyState.C, readyState), false);
+assert.equal(api.taskCanBeDoneFromState_(readyState.D, readyState), false);
 
 assert.match(codeSource, /createFilter\(\)/);
 assert.match(codeSource, /getRange\('A2:G4'\).*clearContent\(\).*clearDataValidations\(\).*clearFormat\(\)/);
-assert.match(codeSource, /Only READY checkboxes can be selected/);
-assert.match(codeSource, /status === 'READY'/);
+assert.match(codeSource, /READY can be selected; DONE can be cleared/);
+assert.match(codeSource, /status === 'READY' \|\| status === 'DONE'/);
+assert.match(codeSource, /reconcileInvalidDoneValues_\(sheet\)/);
 assert.match(codeSource, /if \(\[2, 4\]\.indexOf\(e\.range\.getColumn\(\)\) < 0\) return/);
 assert.doesNotMatch(codeSource, /CHECKLIST_FILTER|applyChecklistStatusFilter|showSidebar|Language/);
 assert.doesNotMatch(modelSource, /"gate"|"contour"|"nodeType"|qa_products|e2e_scenarios/);

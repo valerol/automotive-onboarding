@@ -31,7 +31,7 @@ Use the standard Google Sheets filter dropdowns in row 6. Filtering is local to 
 - `WAITING`: at least one applicable dependency is not done.
 - `READY`: applicable, not done, and all applicable dependencies are done.
 
-Only a `READY` row has an editable Done checkbox. Done cells for `WAITING`, `INACTIVE`, and `DONE` rows are protected. Task names, IDs, dependencies, formulas, and complete rows cannot be deleted or edited by operators. Comment and Applicable remain editable.
+`READY` checkboxes can be selected and `DONE` checkboxes can be cleared. Done cells for `WAITING` and `INACTIVE` rows are protected. Task names, IDs, dependencies, formulas, and complete rows cannot be deleted or edited by operators. Comment and Applicable remain editable.
 
 ## Configuration and service branches
 

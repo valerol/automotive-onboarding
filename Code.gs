@@ -116,11 +116,18 @@ const CONFIGURATION_UI = Object.freeze({
   otherLastRow: 45
 });
 
+const CHECKLIST_UI_VERSION = 'AUTOMOTIVE_FORMULA_V3';
+
 function onOpen() {
   try {
     cleanupLegacyChecklistHeader_();
   } catch (error) {
     console.warn('Legacy checklist header was not cleared: ' + formatRuntimeError_(error));
+  }
+  try {
+    upgradeFormulaChecklistIfNeeded_();
+  } catch (error) {
+    console.warn('Formula checklist was not upgraded: ' + formatRuntimeError_(error));
   }
   SpreadsheetApp.getUi().createMenu('CHECKLIST')
     .addItem('Open checklist', 'openChecklist')
@@ -131,6 +138,17 @@ function onOpen() {
     .addSeparator()
     .addItem('Create onboarding project', 'promptCreateOnboardingProject')
     .addToUi();
+}
+
+function upgradeFormulaChecklistIfNeeded_() {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  if (!spreadsheet) return;
+  const sheet = spreadsheet.getSheetByName(RUNTIME.checklistSheet);
+  if (!sheet || sheet.getRange('A6').getDisplayValue() !== 'Task') return;
+  if (sheet.getRange('A1').getNote() === CHECKLIST_UI_VERSION) return;
+  return withRuntimeSpreadsheet_(spreadsheet, function () {
+    return rebuildChecklistFromConfiguration_(true);
+  });
 }
 
 function cleanupLegacyChecklistHeader_() {
@@ -216,7 +234,10 @@ function onEdit(e) {
     if (sheet.getName() !== RUNTIME.checklistSheet || e.range.getRow() < RUNTIME.checklistFirstRow) return;
     if ([2, 4].indexOf(e.range.getColumn()) < 0) return;
     SpreadsheetApp.flush();
+    const reverted = reconcileInvalidDoneValues_(sheet);
+    SpreadsheetApp.flush();
     refreshChecklistProtection_(sheet);
+    if (reverted) runtimeToast_('Done is available only for READY tasks. The change was reverted.');
   });
 }
 
@@ -298,7 +319,7 @@ function ensureChecklistSheet_() {
     .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
   sheet.setRowHeight(1, 46);
   sheet.getRange('A5:G5').merge()
-    .setValue('Use the standard Google Sheets filter in row 6. Only READY checkboxes can be selected.')
+    .setValue('Use the standard Google Sheets filter in row 6. READY can be selected; DONE can be cleared.')
     .setBackground('#f4f6f8').setFontColor('#667085');
   sheet.getRange('A6:K6').setValues([[
     'Task', 'Done', 'Comment', 'Applicable', 'Status', 'Task ID', 'Waiting for',
@@ -371,6 +392,7 @@ function writeFormulaChecklist_(sheet, tasks) {
     ];
   });
   sheet.getRange(RUNTIME.checklistFirstRow, 1, values.length, 11).setValues(values).setVerticalAlignment('middle');
+  sheet.getRange('A1').setNote(CHECKLIST_UI_VERSION);
   sheet.getRange(RUNTIME.checklistFirstRow, 6, values.length, 6).setNumberFormat('@');
 
   const applicableRule = SpreadsheetApp.newDataValidation()
@@ -401,29 +423,70 @@ function effectiveApplicableFormula_(row, lastRow) {
   const ids = formulaLookupRange_(lastRow);
   const applicable = '$D$' + RUNTIME.checklistFirstRow + ':$D$' + lastRow;
   return '=IF($F' + row + '="","",IF($D' + row + '="NO","NO",IF($K' + row + '="","YES",' +
-    'IF(SUM(ARRAYFORMULA(N(MAP(TRIM(SPLIT($K' + row + ',",")),LAMBDA(parentId,' +
-    'IFNA(INDEX(' + applicable + ',MATCH(parentId,' + ids + ',0)),"NO")="NO")))))>0,"NO","YES"))))';
+    'IF(SUMPRODUCT(N(COUNTIF(TRIM(SPLIT($K' + row + ',",")),' + ids + ')>0),N(' +
+    applicable + '="NO"))>0,"NO","YES"))))';
 }
 
 function unresolvedDependencyExpression_(row, lastRow) {
   const ids = formulaLookupRange_(lastRow);
   const done = '$B$' + RUNTIME.checklistFirstRow + ':$B$' + lastRow;
   const effective = '$J$' + RUNTIME.checklistFirstRow + ':$J$' + lastRow;
-  return 'LET(deps,TRIM(SPLIT($I' + row + ',",")),MAP(deps,LAMBDA(dep,' +
-    'AND(IFNA(INDEX(' + effective + ',MATCH(dep,' + ids + ',0)),"NO")="YES",' +
-    'IFNA(INDEX(' + done + ',MATCH(dep,' + ids + ',0)),FALSE)<>TRUE))))';
+  return 'SUMPRODUCT(N(COUNTIF(TRIM(SPLIT($I' + row + ',",")),' + ids + ')>0),' +
+    'N(' + effective + '="YES"),N(' + done + '<>TRUE))';
 }
 
 function statusFormula_(row, lastRow) {
   const unresolved = unresolvedDependencyExpression_(row, lastRow);
   return '=IF($F' + row + '="","",IF($J' + row + '="NO","INACTIVE",IF($B' + row + ',"DONE",' +
-    'IF($I' + row + '="","READY",IF(SUM(ARRAYFORMULA(N(' + unresolved + ')))=0,"READY","WAITING")))))';
+    'IF($I' + row + '="","READY",IF(' + unresolved + '=0,"READY","WAITING")))))';
 }
 
 function waitingFormula_(row, lastRow) {
-  const unresolved = unresolvedDependencyExpression_(row, lastRow);
+  const ids = formulaLookupRange_(lastRow);
+  const done = '$B$' + RUNTIME.checklistFirstRow + ':$B$' + lastRow;
+  const effective = '$J$' + RUNTIME.checklistFirstRow + ':$J$' + lastRow;
   return '=IF($E' + row + '<>"WAITING","",IF($I' + row + '="","",LET(deps,TRIM(SPLIT($I' + row + ',",")),' +
-    'IFERROR(TEXTJOIN(", ",TRUE,FILTER(deps,' + unresolved + ')),""))))';
+    'IFERROR(TEXTJOIN(", ",TRUE,FILTER(' + ids + ',COUNTIF(deps,' + ids + ')>0,' +
+    effective + '="YES",' + done + '<>TRUE)),""))))';
+}
+
+function readChecklistExecutionState_(sheet) {
+  const lastRow = Math.max(sheet.getLastRow(), RUNTIME.checklistFirstRow);
+  const values = sheet.getRange(RUNTIME.checklistFirstRow, 2, lastRow - RUNTIME.checklistFirstRow + 1, 9).getValues();
+  const state = {tasks: [], byId: {}};
+  values.forEach(function (row, index) {
+    const id = String(row[4] || '').trim();
+    if (!id) return;
+    const task = {
+      row: RUNTIME.checklistFirstRow + index,
+      done: row[0] === true,
+      id: id,
+      dependencies: String(row[7] || '').split(',').map(function (value) { return value.trim(); }).filter(Boolean),
+      effectiveApplicable: String(row[8] || '')
+    };
+    state.tasks.push(task);
+    state.byId[id] = task;
+  });
+  return state;
+}
+
+function taskCanBeDoneFromState_(task, byId) {
+  if (!task || task.effectiveApplicable !== RUNTIME.yes) return false;
+  return task.dependencies.every(function (id) {
+    const dependency = byId[id];
+    return !dependency || dependency.effectiveApplicable !== RUNTIME.yes || dependency.done;
+  });
+}
+
+function reconcileInvalidDoneValues_(sheet) {
+  const state = readChecklistExecutionState_(sheet);
+  const invalid = state.tasks.filter(function (task) {
+    return task.done && !taskCanBeDoneFromState_(task, state.byId);
+  });
+  if (invalid.length) {
+    sheet.getRangeList(invalid.map(function (task) { return 'B' + task.row; })).setValue(false);
+  }
+  return invalid.length;
 }
 
 function ensureChecklistFormatting_(sheet) {
@@ -465,7 +528,7 @@ function refreshChecklistProtection_(sheet) {
       return;
     }
     if (!taskBlockStart) taskBlockStart = sheetRow;
-    if (status === 'READY') editable.push(sheet.getRange(sheetRow, 2));
+    if (status === 'READY' || status === 'DONE') editable.push(sheet.getRange(sheetRow, 2));
   });
   flushTaskBlock(RUNTIME.checklistFirstRow + rowCount);
   enforceSheetProtection_(sheet, 'CHECKLIST_STRUCTURE_DO_NOT_EDIT', editable);
