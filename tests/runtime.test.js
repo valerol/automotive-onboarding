@@ -47,6 +47,7 @@ assert.match(api.waitingFormula_(8, 400), /TEXTJOIN/);
 assert.match(api.effectiveApplicableFormula_(8, 400), /Ancestor|\$K8|SPLIT/);
 
 assert.match(codeSource, /createFilter\(\)/);
+assert.match(codeSource, /getRange\('A2:G4'\).*clearContent\(\).*clearDataValidations\(\).*clearFormat\(\)/);
 assert.match(codeSource, /Only READY checkboxes can be selected/);
 assert.match(codeSource, /status === 'READY'/);
 assert.match(codeSource, /if \(\[2, 4\]\.indexOf\(e\.range\.getColumn\(\)\) < 0\) return/);

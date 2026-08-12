@@ -117,6 +117,11 @@ const CONFIGURATION_UI = Object.freeze({
 });
 
 function onOpen() {
+  try {
+    cleanupLegacyChecklistHeader_();
+  } catch (error) {
+    console.warn('Legacy checklist header was not cleared: ' + formatRuntimeError_(error));
+  }
   SpreadsheetApp.getUi().createMenu('CHECKLIST')
     .addItem('Open checklist', 'openChecklist')
     .addItem('Open configuration', 'openChecklistConfiguration')
@@ -126,6 +131,14 @@ function onOpen() {
     .addSeparator()
     .addItem('Create onboarding project', 'promptCreateOnboardingProject')
     .addToUi();
+}
+
+function cleanupLegacyChecklistHeader_() {
+  const spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  if (!spreadsheet) return;
+  const sheet = spreadsheet.getSheetByName(RUNTIME.checklistSheet);
+  if (!sheet) return;
+  sheet.getRange('A2:G4').breakApart().clearContent().clearDataValidations().clearFormat();
 }
 
 function openChecklist() {
@@ -280,6 +293,7 @@ function ensureChecklistSheet_() {
   if (sheet.getMaxRows() < 1000) sheet.insertRowsAfter(sheet.getMaxRows(), 1000 - sheet.getMaxRows());
 
   sheet.getRange('A1:J1').breakApart();
+  sheet.getRange('A2:G4').breakApart().clearContent().clearDataValidations().clearFormat();
   sheet.getRange('A1:G1').merge().setValue('CHECKLIST')
     .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
   sheet.setRowHeight(1, 46);
