@@ -12,6 +12,8 @@ Google Sheets checklist backed by one central Apps Script project.
 
 The checklist uses spreadsheet formulas for `Applicable`, `Status`, and `Waiting for`. Normal task work does not ask Apps Script to recalculate the dependency graph. Apps Script is used only to rebuild service branches after a configuration change, restore the canonical list, create a project, and refresh checkbox protection.
 
+The visual system follows `Internal Automotive Onboarding Checklist.xlsx`: Arial typography, dark-blue title bands, medium-blue table headers, pale-blue section rows, and light-gray project information fields. Rows 3–5 contain unprotected manual project information: Client / Store, Responsible engineer, Launch date, Onboarding ticket, Current status, and Jira ticket. These values survive checklist rebuilds; new child projects start with the fields blank.
+
 ## Checklist columns
 
 1. Task

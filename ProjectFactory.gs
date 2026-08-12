@@ -123,6 +123,7 @@ function createDataOnlySpreadsheetCopy_(source, name, targetFolderId) {
 
 function resetOnboardingSpreadsheet_(spreadsheet, metadata) {
   return withRuntimeSpreadsheet_(spreadsheet, function () {
+    clearProjectInformationValues_(ensureChecklistSheet_());
     renderConfigurationSheet_(ensureConfigurationSheet_(), defaultConfiguration_());
     rebuildChecklistFromConfiguration_(false);
     renderEnglishInstructions_(spreadsheet);
@@ -193,6 +194,7 @@ function renderEnglishInstructions_(spreadsheet) {
     ['AUTOMOTIVE ONBOARDING — OPERATING GUIDE', ''],
     ['Purpose', 'Use CHECKLIST for daily work and CONFIGURATION to define the project scope.'],
     ['Columns', 'Task, Done, Comment, Applicable, Status, Task ID, Waiting for.'],
+    ['Project information', 'Rows 3-5 are unprotected manual fields for Client / Store, Responsible engineer, Launch date, Onboarding ticket, Current status, and Jira ticket.'],
     ['Filtering', 'Use the standard Google Sheets filter in row 6. Filtering never runs Apps Script.'],
     ['Done', 'READY checkboxes can be selected and DONE checkboxes can be cleared. WAITING and INACTIVE checkboxes are protected.'],
     ['Statuses', 'Status and Waiting for are protected spreadsheet formulas calculated from Applicable, Parent ID, Dependencies, and Done.'],
@@ -207,11 +209,13 @@ function renderEnglishInstructions_(spreadsheet) {
   if (sheet.getMaxRows() < rows.length) sheet.insertRowsAfter(sheet.getMaxRows(), rows.length - sheet.getMaxRows());
   if (sheet.getMaxColumns() < 2) sheet.insertColumnsAfter(sheet.getMaxColumns(), 2 - sheet.getMaxColumns());
   sheet.getRange(1, 1, rows.length, 2).setValues(rows).setVerticalAlignment('top');
-  sheet.getRange('A1:B1').merge().setBackground('#29375f').setFontColor('#ffffff').setFontSize(18).setFontWeight('bold');
-  sheet.getRange(2, 1, rows.length - 1, 1).setFontWeight('bold').setBackground('#e9edf5');
+  sheet.getRange(1, 1, rows.length, 2).setFontFamily(CHECKLIST_STYLE.font).setFontSize(10);
+  sheet.getRange('A1:B1').merge().setBackground(CHECKLIST_STYLE.title).setFontColor('#ffffff')
+    .setFontSize(16).setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.getRange(2, 1, rows.length - 1, 1).setFontWeight('bold').setBackground(CHECKLIST_STYLE.metadata);
   sheet.getRange(2, 2, rows.length - 1, 1).setBackground('#ffffff').setWrap(true);
   sheet.getRange(2, 1, rows.length - 1, 2).setBorder(
-    true, true, true, true, true, true, '#d5dbe7', SpreadsheetApp.BorderStyle.SOLID
+    true, true, true, true, true, true, CHECKLIST_STYLE.border, SpreadsheetApp.BorderStyle.SOLID
   );
   sheet.setColumnWidth(1, 190);
   sheet.setColumnWidth(2, 720);
@@ -219,7 +223,7 @@ function renderEnglishInstructions_(spreadsheet) {
   sheet.autoResizeRows(2, rows.length - 1);
   sheet.setFrozenRows(1);
   sheet.setHiddenGridlines(true);
-  sheet.setTabColor('#3b82f6');
+  sheet.setTabColor(CHECKLIST_STYLE.header);
   return sheet;
 }
 
@@ -227,8 +231,12 @@ function ensureProjectRegistry_(spreadsheet) {
   let sheet = spreadsheet.getSheetByName(PROJECT_FACTORY.registrySheet);
   if (!sheet) sheet = spreadsheet.insertSheet(PROJECT_FACTORY.registrySheet);
   sheet.getRange(1, 1, 1, PROJECT_FACTORY.registryHeaders.length)
-    .setValues([PROJECT_FACTORY.registryHeaders]).setFontWeight('bold');
+    .setValues([PROJECT_FACTORY.registryHeaders]).setBackground(CHECKLIST_STYLE.header)
+    .setFontColor('#ffffff').setFontFamily(CHECKLIST_STYLE.font).setFontSize(12).setFontWeight('bold');
+  sheet.getRange(2, 1, Math.max(1, sheet.getMaxRows() - 1), PROJECT_FACTORY.registryHeaders.length)
+    .setFontFamily(CHECKLIST_STYLE.font).setFontSize(10);
   sheet.setFrozenRows(1);
+  sheet.setTabColor(CHECKLIST_STYLE.header);
   return sheet;
 }
 

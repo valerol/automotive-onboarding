@@ -64,11 +64,18 @@ assert.equal(api.checklistEditTouchesProtectedData_(fakeRange(2, 3)), false, 'Do
 assert.equal(api.checklistEditIsCommentOnly_(fakeRange(3, 1)), true);
 
 assert.match(codeSource, /createFilter\(\)/);
+assert.match(codeSource, /title: '#214F87'/);
+assert.match(codeSource, /header: '#3875BC'/);
+assert.match(codeSource, /section: '#D8E8F7'/);
+assert.match(codeSource, /metadata: '#F4F7F9'/);
+assert.match(codeSource, /font: 'Arial'/);
+assert.match(codeSource, /function readProjectInformation_\(sheet\)/);
+assert.match(codeSource, /const editable = \[sheet\.getRange\('A3:G5'\)\]/);
 assert.match(codeSource, /getRange\(RUNTIME\.checklistFirstRow, 2, values\.length, 1\);\s*taskRange\.insertCheckboxes\(\)/);
 assert.match(codeSource, /getRangeList\(sectionDoneRanges\)\.clearDataValidations\(\)\.clearContent\(\)/);
 assert.match(codeSource, /checklist\.getRange\('A1'\)\.setNote\(CHECKLIST_UI_VERSION\)/);
-assert.match(codeSource, /getRange\('A2:G4'\).*clearContent\(\).*clearDataValidations\(\).*clearFormat\(\)/);
-assert.match(codeSource, /READY can be selected; DONE can be cleared/);
+assert.match(codeSource, /getRange\('A2:G2'\).*clearContent\(\).*clearDataValidations\(\).*clearFormat\(\)/);
+assert.match(codeSource, /status === 'READY' \|\| status === 'DONE'/);
 assert.match(codeSource, /status === 'READY' \|\| status === 'DONE'/);
 assert.match(codeSource, /reconcileInvalidDoneValues_\(sheet\)/);
 assert.match(codeSource, /checklistEditTouchesProtectedData_\(e\.range\)/);

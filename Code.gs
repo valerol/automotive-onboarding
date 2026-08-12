@@ -99,7 +99,7 @@ const CONFIGURATION_TASK_RULES = Object.freeze({
 });
 
 const CONFIGURATION_UI = Object.freeze({
-  version: 'AUTOMOTIVE_CONFIG_FORMULA_V1',
+  version: 'AUTOMOTIVE_CONFIG_FORMULA_V2',
   integrationHeaderRow: 4,
   integrationFirstRow: 5,
   integrationLastRow: 12,
@@ -116,7 +116,16 @@ const CONFIGURATION_UI = Object.freeze({
   otherLastRow: 45
 });
 
-const CHECKLIST_UI_VERSION = 'AUTOMOTIVE_FORMULA_V5';
+const CHECKLIST_UI_VERSION = 'AUTOMOTIVE_FORMULA_V6';
+
+const CHECKLIST_STYLE = Object.freeze({
+  title: '#214F87',
+  header: '#3875BC',
+  section: '#D8E8F7',
+  metadata: '#F4F7F9',
+  border: '#BFBFBF',
+  font: 'Arial'
+});
 
 function onOpen() {
   try {
@@ -156,7 +165,7 @@ function cleanupLegacyChecklistHeader_() {
   if (!spreadsheet) return;
   const sheet = spreadsheet.getSheetByName(RUNTIME.checklistSheet);
   if (!sheet) return;
-  sheet.getRange('A2:G4').breakApart().clearContent().clearDataValidations().clearFormat();
+  sheet.getRange('A2:G2').breakApart().clearContent().clearDataValidations().clearFormat();
 }
 
 function openChecklist() {
@@ -351,17 +360,17 @@ function ensureChecklistSheet_() {
   if (sheet.getMaxRows() < 1000) sheet.insertRowsAfter(sheet.getMaxRows(), 1000 - sheet.getMaxRows());
 
   sheet.getRange('A1:J1').breakApart();
-  sheet.getRange('A2:G4').breakApart().clearContent().clearDataValidations().clearFormat();
-  sheet.getRange('A1:G1').merge().setValue('CHECKLIST')
-    .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
-  sheet.setRowHeight(1, 46);
-  sheet.getRange('A5:G5').merge()
-    .setValue('Use the standard Google Sheets filter in row 6. READY can be selected; DONE can be cleared.')
-    .setBackground('#f4f6f8').setFontColor('#667085');
+  sheet.getRange('A1:G1').merge().setValue('INTERNAL AUTOMOTIVE ONBOARDING CHECKLIST')
+    .setBackground(CHECKLIST_STYLE.title).setFontColor('#ffffff').setFontFamily(CHECKLIST_STYLE.font)
+    .setFontSize(16).setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.setRowHeight(1, 36);
+  renderProjectInformation_(sheet);
   sheet.getRange('A6:K6').setValues([[
     'Task', 'Done', 'Comment', 'Applicable', 'Status', 'Task ID', 'Waiting for',
     'Parent ID', 'Dependencies', 'Effective applicability', 'Ancestor IDs'
-  ]]).setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
+  ]]).setBackground(CHECKLIST_STYLE.header).setFontColor('#ffffff').setFontFamily(CHECKLIST_STYLE.font)
+    .setFontSize(12).setFontWeight('bold').setHorizontalAlignment('center');
+  sheet.setRowHeight(6, 30);
   sheet.setFrozenRows(RUNTIME.checklistHeaderRow);
   sheet.setHiddenGridlines(true);
   sheet.setColumnWidth(1, 440);
@@ -373,12 +382,51 @@ function ensureChecklistSheet_() {
   sheet.setColumnWidth(7, 240);
   sheet.showColumns(1, 7);
   sheet.hideColumns(8, 4);
-  sheet.setTabColor('#356853');
+  sheet.setTabColor(CHECKLIST_STYLE.header);
 
   const filter = sheet.getFilter();
   if (!filter) sheet.getRange(RUNTIME.checklistHeaderRow, 1, sheet.getMaxRows() - RUNTIME.checklistHeaderRow + 1, 7).createFilter();
   ensureChecklistFormatting_(sheet);
   return sheet;
+}
+
+function readProjectInformation_(sheet) {
+  return {
+    clientStore: sheet.getRange('B3').getValue(),
+    responsibleEngineer: sheet.getRange('E3').getValue(),
+    launchDate: sheet.getRange('G3').getValue(),
+    onboardingTicket: sheet.getRange('B4').getValue(),
+    currentStatus: sheet.getRange('E4').getValue(),
+    jiraTicket: sheet.getRange('B5').getValue()
+  };
+}
+
+function renderProjectInformation_(sheet) {
+  const values = readProjectInformation_(sheet);
+  sheet.getRange('A2:G5').breakApart().clearDataValidations().clearFormat();
+  sheet.getRange('A2:G2').clearContent();
+  sheet.getRange('A3:G5').clearContent();
+  ['B3:C3', 'B4:C4', 'E4:G4', 'B5:G5'].forEach(function (a1) { sheet.getRange(a1).merge(); });
+  sheet.getRange('A3:G5').setBackground(CHECKLIST_STYLE.metadata).setFontFamily(CHECKLIST_STYLE.font)
+    .setFontSize(10).setWrap(true).setVerticalAlignment('middle');
+  sheet.getRangeList(['A3', 'D3', 'F3', 'A4', 'D4', 'A5']).setFontWeight('bold');
+  sheet.getRange('A3').setValue('Client / Store');
+  sheet.getRange('D3').setValue('Responsible engineer:');
+  sheet.getRange('F3').setValue('Launch date');
+  sheet.getRange('A4').setValue('Onboarding ticket');
+  sheet.getRange('D4').setValue('Current status:');
+  sheet.getRange('A5').setValue('Jira ticket');
+  sheet.getRange('B3').setValue(values.clientStore);
+  sheet.getRange('E3').setValue(values.responsibleEngineer);
+  sheet.getRange('G3').setValue(values.launchDate).setNumberFormat('yyyy-mm-dd');
+  sheet.getRange('B4').setValue(values.onboardingTicket);
+  sheet.getRange('E4').setValue(values.currentStatus);
+  sheet.getRange('B5').setValue(values.jiraTicket);
+  sheet.setRowHeights(3, 3, 28);
+}
+
+function clearProjectInformationValues_(sheet) {
+  sheet.getRangeList(['B3', 'E3', 'G3', 'B4', 'E4', 'B5']).clearContent();
 }
 
 function writeFormulaChecklist_(sheet, tasks) {
@@ -429,6 +477,7 @@ function writeFormulaChecklist_(sheet, tasks) {
     ];
   });
   sheet.getRange(RUNTIME.checklistFirstRow, 1, values.length, 11).setValues(values).setVerticalAlignment('middle');
+  sheet.getRange(RUNTIME.checklistFirstRow, 1, values.length, 11).setFontFamily(CHECKLIST_STYLE.font).setFontSize(10);
   sheet.getRange(RUNTIME.checklistFirstRow, 6, values.length, 6).setNumberFormat('@');
 
   const applicableRule = SpreadsheetApp.newDataValidation()
@@ -444,8 +493,14 @@ function writeFormulaChecklist_(sheet, tasks) {
   displayRows.forEach(function (item, index) {
     const row = RUNTIME.checklistFirstRow + index;
     if (item.section) {
-      sheet.getRange(row, 1, 1, 7).setBackground('#e9edf5').setFontColor('#29375f').setFontWeight('bold');
-      sheet.setRowHeight(row, 28);
+      const sectionRange = sheet.getRange(row, 1, 1, 7);
+      sectionRange.setBackground(CHECKLIST_STYLE.section).setFontColor('#000000')
+        .setFontFamily(CHECKLIST_STYLE.font).setFontSize(12).setFontWeight('bold');
+      sectionRange.setBorder(true, null, null, null, null, null,
+        CHECKLIST_STYLE.header, SpreadsheetApp.BorderStyle.SOLID_THICK);
+      sectionRange.setBorder(null, null, true, null, null, null,
+        CHECKLIST_STYLE.border, SpreadsheetApp.BorderStyle.SOLID);
+      sheet.setRowHeight(row, 30);
       sectionDoneRanges.push('B' + row);
       sectionApplicableRanges.push('D' + row);
     }
@@ -546,15 +601,15 @@ function ensureChecklistFormatting_(sheet) {
     return builder.build();
   };
   sheet.setConditionalFormatRules([
-    rule('READY', '#ddefe3', '#202536', false),
-    rule('WAITING', '#fff0cc', '#202536', false),
-    rule('INACTIVE', '#e8ecf1', '#737c8c', true),
-    rule('DONE', '#dbe7ff', '#3c4962', false)
+    rule('READY', '#EAF3FB', '#000000', false),
+    rule('WAITING', '#FFF4D6', '#000000', false),
+    rule('INACTIVE', CHECKLIST_STYLE.metadata, '#737C8C', true),
+    rule('DONE', CHECKLIST_STYLE.section, '#214F87', false)
   ]);
 }
 
 function refreshChecklistProtection_(sheet) {
-  const editable = [];
+  const editable = [sheet.getRange('A3:G5')];
   const lastRow = Math.max(sheet.getLastRow(), RUNTIME.checklistFirstRow);
   const rowCount = lastRow - RUNTIME.checklistFirstRow + 1;
   const rows = sheet.getRange(RUNTIME.checklistFirstRow, 2, rowCount, 5).getDisplayValues();
@@ -585,26 +640,33 @@ function ensureConfigurationSheet_() {
   if (!sheet) sheet = spreadsheet.insertSheet(RUNTIME.configurationSheet);
   if (sheet.getMaxColumns() < 3) sheet.insertColumnsAfter(sheet.getMaxColumns(), 3 - sheet.getMaxColumns());
   if (sheet.getMaxRows() < 50) sheet.insertRowsAfter(sheet.getMaxRows(), 50 - sheet.getMaxRows());
-  if (sheet.getRange('A1').getNote() !== CONFIGURATION_UI.version) renderConfigurationSheet_(sheet, defaultConfiguration_());
+  if (sheet.getRange('A1').getNote() !== CONFIGURATION_UI.version) {
+    const current = sheet.getLastRow() >= CONFIGURATION_UI.otherLastRow
+      ? readConfigurationSheet_()
+      : defaultConfiguration_();
+    renderConfigurationSheet_(sheet, current);
+  }
   protectConfigurationSheet_(sheet);
   return sheet;
 }
 
 function renderConfigurationSheet_(sheet, config) {
   sheet.getRange('A1:C1').breakApart().merge().setValue(RUNTIME.configurationSheet)
-    .setBackground('#29375f').setFontColor('#ffffff').setFontSize(20).setFontWeight('bold');
+    .setBackground(CHECKLIST_STYLE.title).setFontColor('#ffffff').setFontFamily(CHECKLIST_STYLE.font)
+    .setFontSize(16).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A3:C3').setValues([['Parameter', 'Value', 'Format / purpose']])
-    .setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
+    .setBackground(CHECKLIST_STYLE.header).setFontColor('#ffffff').setFontFamily(CHECKLIST_STYLE.font)
+    .setFontSize(12).setFontWeight('bold').setHorizontalAlignment('center');
   sheet.getRange('A4:C50').clear();
   configurationCatalogSections_().forEach(function (section) {
     sheet.getRange(section.headerRow, 1, 1, 3)
       .setValues([[section.label, 'Enabled', 'System code']])
-      .setBackground('#e9edf5').setFontColor('#29375f').setFontWeight('bold');
+      .setBackground(CHECKLIST_STYLE.section).setFontColor('#000000').setFontWeight('bold');
     sheet.getRange(section.firstRow, 1, section.catalog.length, 3)
       .setValues(section.catalog.map(function (item) { return [item.name, false, item.code]; }));
     sheet.getRange(section.firstRow, 2, section.catalog.length, 1).insertCheckboxes();
     sheet.getRange(section.firstRow, 1, section.catalog.length, 1).setFontWeight('bold');
-    sheet.getRange(section.firstRow, 3, section.catalog.length, 1).setFontColor('#667085').setNumberFormat('@');
+    sheet.getRange(section.firstRow, 3, section.catalog.length, 1).setFontColor('#5F6368').setNumberFormat('@');
   });
   sheet.getRange('A37:C45').setValues([
     ['Source: manual', false, 'Manual creation'],
@@ -619,7 +681,7 @@ function renderConfigurationSheet_(sheet, config) {
   ]);
   sheet.getRange('B37:B45').insertCheckboxes();
   sheet.getRange('A37:A45').setFontWeight('bold');
-  sheet.getRange('A4:C45').setVerticalAlignment('top');
+  sheet.getRange('A4:C45').setVerticalAlignment('top').setFontFamily(CHECKLIST_STYLE.font).setFontSize(10);
   sheet.getRange('A1').setNote(CONFIGURATION_UI.version);
   writeConfigurationValues_(sheet, config);
   sheet.setHiddenGridlines(true);
@@ -627,7 +689,7 @@ function renderConfigurationSheet_(sheet, config) {
   sheet.setColumnWidth(1, 320);
   sheet.setColumnWidth(2, 140);
   sheet.setColumnWidth(3, 420);
-  sheet.setTabColor('#667085');
+  sheet.setTabColor(CHECKLIST_STYLE.header);
 }
 
 function configurationCatalogSections_() {
@@ -847,12 +909,14 @@ function writeCanonicalPool_(spreadsheet, tasks) {
     }));
   sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart().clearContent().clearDataValidations();
   if (sheet.getMaxRows() < rows.length) sheet.insertRowsAfter(sheet.getMaxRows(), rows.length - sheet.getMaxRows());
-  sheet.getRange(1, 1, rows.length, 8).setValues(rows).setVerticalAlignment('middle');
+  sheet.getRange(1, 1, rows.length, 8).setValues(rows).setVerticalAlignment('middle')
+    .setFontFamily(CHECKLIST_STYLE.font).setFontSize(10);
   sheet.getRange(1, 1, rows.length, 4).setNumberFormat('@');
-  sheet.getRange(1, 1, 1, 8).setBackground('#356853').setFontColor('#ffffff').setFontWeight('bold');
+  sheet.getRange(1, 1, 1, 8).setBackground(CHECKLIST_STYLE.header).setFontColor('#ffffff')
+    .setFontSize(12).setFontWeight('bold');
   sheet.setFrozenRows(1);
   sheet.setHiddenGridlines(true);
-  sheet.setTabColor('#98a2b3');
+  sheet.setTabColor(CHECKLIST_STYLE.header);
   if (!sheet.isSheetHidden()) sheet.hideSheet();
 }
 
