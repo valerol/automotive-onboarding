@@ -116,7 +116,7 @@ const CONFIGURATION_UI = Object.freeze({
   otherLastRow: 45
 });
 
-const CHECKLIST_UI_VERSION = 'AUTOMOTIVE_FORMULA_V3';
+const CHECKLIST_UI_VERSION = 'AUTOMOTIVE_FORMULA_V4';
 
 function onOpen() {
   try {
@@ -232,12 +232,48 @@ function onEdit(e) {
       return;
     }
     if (sheet.getName() !== RUNTIME.checklistSheet || e.range.getRow() < RUNTIME.checklistFirstRow) return;
-    if ([2, 4].indexOf(e.range.getColumn()) < 0) return;
+    if (checklistEditTouchesProtectedData_(e.range)) {
+      rebuildChecklistFromConfiguration_(true);
+      runtimeToast_('Protected checklist data was restored from the canonical model.');
+      return;
+    }
+    if (checklistEditIsCommentOnly_(e.range)) return;
+    if (checklistEditTouchesApplicable_(e.range) && !checklistApplicableValuesAreValid_(e.range)) {
+      rebuildChecklistFromConfiguration_(true);
+      runtimeToast_('Applicable must be YES or NO. The checklist was restored.');
+      return;
+    }
     SpreadsheetApp.flush();
     const reverted = reconcileInvalidDoneValues_(sheet);
     SpreadsheetApp.flush();
     refreshChecklistProtection_(sheet);
     if (reverted) runtimeToast_('Done is available only for READY tasks. The change was reverted.');
+  });
+}
+
+function checklistEditTouchesProtectedData_(range) {
+  const firstColumn = range.getColumn();
+  const lastColumn = firstColumn + range.getNumColumns() - 1;
+  return firstColumn <= 1 || lastColumn >= 5;
+}
+
+function checklistEditIsCommentOnly_(range) {
+  return range.getColumn() === 3 && range.getNumColumns() === 1;
+}
+
+function checklistEditTouchesApplicable_(range) {
+  const firstColumn = range.getColumn();
+  const lastColumn = firstColumn + range.getNumColumns() - 1;
+  return firstColumn <= 4 && lastColumn >= 4;
+}
+
+function checklistApplicableValuesAreValid_(range) {
+  const firstColumn = range.getColumn();
+  const applicableOffset = 4 - firstColumn;
+  if (applicableOffset < 0 || applicableOffset >= range.getNumColumns()) return true;
+  return range.getDisplayValues().every(function (row) {
+    const value = String(row[applicableOffset] || '').trim().toUpperCase();
+    return value === RUNTIME.yes || value === RUNTIME.no;
   });
 }
 

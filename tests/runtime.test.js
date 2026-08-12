@@ -10,7 +10,7 @@ const context = vm.createContext({console});
 vm.runInContext(modelSource + '\n' + codeSource + `\n;globalThis.api={
   RUNTIME,RUNTIME_MODEL,defaultConfiguration_,instantiateModel_,mergeTaskStateForRebuild_,
   validateTaskGraph_,detectCycles_,indexById_,statusFormula_,waitingFormula_,effectiveApplicableFormula_
-  ,taskCanBeDoneFromState_
+  ,taskCanBeDoneFromState_,checklistEditTouchesProtectedData_,checklistEditIsCommentOnly_
 };`, context);
 const api = context.api;
 
@@ -57,13 +57,18 @@ const readyState = {
 assert.equal(api.taskCanBeDoneFromState_(readyState.B, readyState), true);
 assert.equal(api.taskCanBeDoneFromState_(readyState.C, readyState), false);
 assert.equal(api.taskCanBeDoneFromState_(readyState.D, readyState), false);
+const fakeRange = (column, numColumns) => ({getColumn: () => column, getNumColumns: () => numColumns});
+assert.equal(api.checklistEditTouchesProtectedData_(fakeRange(2, 6)), true, 'B:G deletion must restore');
+assert.equal(api.checklistEditTouchesProtectedData_(fakeRange(5, 1)), true, 'Status is protected');
+assert.equal(api.checklistEditTouchesProtectedData_(fakeRange(2, 3)), false, 'Done through Applicable are operator fields');
+assert.equal(api.checklistEditIsCommentOnly_(fakeRange(3, 1)), true);
 
 assert.match(codeSource, /createFilter\(\)/);
 assert.match(codeSource, /getRange\('A2:G4'\).*clearContent\(\).*clearDataValidations\(\).*clearFormat\(\)/);
 assert.match(codeSource, /READY can be selected; DONE can be cleared/);
 assert.match(codeSource, /status === 'READY' \|\| status === 'DONE'/);
 assert.match(codeSource, /reconcileInvalidDoneValues_\(sheet\)/);
-assert.match(codeSource, /if \(\[2, 4\]\.indexOf\(e\.range\.getColumn\(\)\) < 0\) return/);
+assert.match(codeSource, /checklistEditTouchesProtectedData_\(e\.range\)/);
 assert.doesNotMatch(codeSource, /CHECKLIST_FILTER|applyChecklistStatusFilter|showSidebar|Language/);
 assert.doesNotMatch(modelSource, /"gate"|"contour"|"nodeType"|qa_products|e2e_scenarios/);
 
