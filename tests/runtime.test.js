@@ -2,214 +2,55 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-const {performance} = require('node:perf_hooks');
 
 const root = path.resolve(__dirname, '..');
 const codeSource = fs.readFileSync(path.join(root, 'Code.gs'), 'utf8');
 const modelSource = fs.readFileSync(path.join(root, 'RuntimeModel.gs'), 'utf8');
 const context = vm.createContext({console});
-vm.runInContext(
-  modelSource + '\n' + codeSource + `\n;globalThis.runtimeTestApi = {
-    RUNTIME: RUNTIME,
-    RUNTIME_MODEL: RUNTIME_MODEL,
-    calculateRuntimeGraph_: calculateRuntimeGraph_,
-    cloneRuntimeTask_: cloneRuntimeTask_,
-    defaultConfiguration_: defaultConfiguration_,
-    detectCycles_: detectCycles_,
-    indexById_: indexById_,
-    instantiateModel_: instantiateModel_,
-    mergeTaskStateForRebuild_: mergeTaskStateForRebuild_
-  };`,
-  context
-);
+vm.runInContext(modelSource + '\n' + codeSource + `\n;globalThis.api={
+  RUNTIME,RUNTIME_MODEL,defaultConfiguration_,instantiateModel_,mergeTaskStateForRebuild_,
+  validateTaskGraph_,detectCycles_,indexById_,statusFormula_,waitingFormula_,effectiveApplicableFormula_
+};`, context);
+const api = context.api;
 
-const api = context.runtimeTestApi;
-const yes = api.RUNTIME.yes;
-const no = api.RUNTIME.no;
+const base = api.instantiateModel_(api.defaultConfiguration_());
+assert.ok(base.length > 200);
+assert.equal(new Set(base.map(task => task.id)).size, base.length);
+assert.equal(api.validateTaskGraph_(base).taskCount, base.length);
+assert.equal(base.some(task => ['qa_products', 'e2e_scenarios'].includes(task.collection)), false);
 
-function task(id, dependencies = [], overrides = {}) {
-  return Object.assign({
-    row: 10,
-    id,
-    title: id,
-    parent: '',
-    dependencies,
-    localApplicable: yes,
-    done: false,
-    comment: '',
-    effectiveApplicable: yes,
-    status: '',
-    waitingFor: '',
-    section: 'TEST',
-    contour: '',
-    gate: '',
-    collection: '',
-    instanceCode: '',
-    systemApplicable: false,
-    configurationApplicable: true,
-    templateId: id
-  }, overrides);
-}
-
-function calculate(tasks, config = api.defaultConfiguration_()) {
-  return api.calculateRuntimeGraph_(tasks.map(api.cloneRuntimeTask_), config);
-}
-
-function testDependenciesAndDone() {
-  let result = calculate([task('A'), task('B', ['A'], {row: 11})]);
-  assert.equal(result.byId.A.status, 'READY');
-  assert.equal(result.byId.B.status, 'WAITING');
-
-  result.byId.A.done = true;
-  result = calculate(result.tasks);
-  assert.equal(result.byId.A.status, 'DONE');
-  assert.equal(result.byId.B.status, 'READY');
-
-  result.byId.B.done = true;
-  result = calculate(result.tasks);
-  assert.equal(result.byId.B.status, 'DONE');
-
-  result.byId.A.done = false;
-  result = calculate(result.tasks);
-  assert.equal(result.byId.B.done, false);
-  assert.equal(result.byId.B.status, 'WAITING');
-}
-
-function testInactiveDoesNotBlock() {
-  const result = calculate([
-    task('A', [], {localApplicable: no}),
-    task('B', ['A'], {row: 11})
-  ]);
-  assert.equal(result.byId.A.status, 'INACTIVE');
-  assert.equal(result.byId.B.status, 'READY');
-}
-
-function testParentCascade() {
-  const result = calculate([
-    task('P', [], {localApplicable: no}),
-    task('C', [], {row: 11, parent: 'P', done: true})
-  ]);
-  assert.equal(result.byId.C.status, 'INACTIVE');
-  assert.equal(result.byId.C.done, false);
-}
-
-function testSourcesDoNotCreateTasks() {
-  const configs = ['manual', 'csv', 'supplier_feed'].map(source => Object.assign(api.defaultConfiguration_(), {
-    sourceTypes: [source]
-  }));
-  const counts = configs.map(config => api.instantiateModel_(config).length);
-  assert.deepEqual(counts, [counts[0], counts[0], counts[0]]);
-}
-
-function testDynamicBranchesAndGraphIntegrity() {
-  const config = Object.assign(api.defaultConfiguration_(), {
-    integrations: [{code: 'T14', name: 'Turn14 Distribution'}],
-    payment_gateways: [{code: 'STRIPE', name: 'Stripe'}],
-    carriers: [{code: 'UPS', name: 'UPS'}],
-    tax_services: [{code: 'TAXJAR', name: 'TaxJar'}],
-    shippingMethods: ['carrier:UPS'],
-    sourceTypes: ['supplier_feed']
-  });
-  const tasks = api.instantiateModel_(config);
-  const byId = api.indexById_(tasks);
-  assert.ok(byId['10-STRIPE-01']);
-  assert.ok(byId['11-UPS-01']);
-  assert.ok(tasks.some(item => item.collection === 'e2e_scenarios'));
-  assert.equal(Object.keys(byId).length, tasks.length, 'Task IDs must be unique');
-  tasks.forEach(item => {
-    if (item.parent) assert.ok(byId[item.parent], `${item.id} parent ${item.parent}`);
-    item.dependencies.forEach(id => assert.ok(byId[id], `${item.id} dependency ${id}`));
-  });
-  assert.equal(api.detectCycles_(tasks, item => item.dependencies).length, 0);
-  assert.equal(api.detectCycles_(tasks, item => item.parent ? [item.parent] : []).length, 0);
-}
-
-function testRebuildPreservesStableState() {
-  const current = api.instantiateModel_(api.defaultConfiguration_()).slice(0, 3);
-  const previous = {};
-  previous[current[0].id] = {localApplicable: no, done: false, comment: 'keep comment'};
-  previous[current[1].id] = {localApplicable: yes, done: true, comment: 'done remains'};
-  const merged = api.mergeTaskStateForRebuild_(current, previous);
-  assert.equal(merged[0].localApplicable, no);
-  assert.equal(merged[0].commentValue, 'keep comment');
-  assert.equal(merged[1].done, true);
-  assert.equal(merged[1].commentValue, 'done remains');
-}
-
-function testFastPathSourceGuards() {
-  const handler = codeSource.slice(
-    codeSource.indexOf('function handleChecklistEdit_'),
-    codeSource.indexOf('function runtimeFastPathCompatible_')
-  );
-  const commentBranch = handler.match(/if \(column === 6\) \{([\s\S]*?)\n\s*\}/);
-  assert.ok(commentBranch, 'comment branch exists');
-  assert.match(commentBranch[1], /fastUpdateComment_/);
-  assert.doesNotMatch(commentBranch[1], /refreshChecklist_|recalculateRuntime/);
-
-  const fastFunctions = codeSource.slice(
-    codeSource.indexOf('function fastUpdateComment_'),
-    codeSource.indexOf('function createRuntimeTimer_')
-  );
-  assert.doesNotMatch(fastFunctions, /clearContent|clearFormat|clearDataValidations|insertCheckboxes|setDataValidation|setConditionalFormatRules/);
-}
-
-function testCentralRuntimeSourceGuards() {
-  assert.match(codeSource, /function centralProjectOnEdit\(e\)/);
-  assert.match(codeSource, /function authorizeCentralProjectRuntime\(\)/);
-  assert.match(codeSource, /withRuntimeSpreadsheet_\(e\.source/);
-  assert.match(codeSource, /PropertiesService\.getScriptProperties\(\)/);
-  assert.match(codeSource, /CacheService\.getScriptCache\(\)/);
-  assert.match(codeSource, /LockService\.getScriptLock\(\)/);
-  assert.match(codeSource, /function handleConfigurationEdit_\(e\)/);
-  assert.match(codeSource, /requireValueInList\(\['ALL'\]\.concat\(CHECKLIST_FILTER\.statuses\)/);
-  assert.match(codeSource, /const displayValues = range\.getDisplayValues\(\)/);
-  assert.match(codeSource, /const values = output\.map/);
-  assert.doesNotMatch(codeSource, /getDocumentProperties|getDocumentCache|getDocumentLock/);
-}
-
-function testRapidSequentialChanges() {
-  let state = calculate([task('A'), task('B', ['A'], {row: 11}), task('C', ['B'], {row: 12})]);
-  for (let index = 0; index < 20; index++) {
-    state.byId.A.done = index % 2 === 0;
-    state = calculate(state.tasks);
-    assert.equal(state.byId.B.status, index % 2 === 0 ? 'READY' : 'WAITING');
-    assert.equal(state.byId.C.status, 'WAITING');
-  }
-}
-
-const tests = [
-  testDependenciesAndDone,
-  testInactiveDoesNotBlock,
-  testParentCascade,
-  testSourcesDoNotCreateTasks,
-  testDynamicBranchesAndGraphIntegrity,
-  testRebuildPreservesStableState,
-  testFastPathSourceGuards,
-  testCentralRuntimeSourceGuards,
-  testRapidSequentialChanges
-];
-
-const started = performance.now();
-tests.forEach(test => test());
-const testMs = performance.now() - started;
-
-const config = Object.assign(api.defaultConfiguration_(), {
+const configured = api.instantiateModel_(Object.assign(api.defaultConfiguration_(), {
   integrations: [{code: 'T14', name: 'Turn14 Distribution'}],
   payment_gateways: [{code: 'STRIPE', name: 'Stripe'}],
   carriers: [{code: 'UPS', name: 'UPS'}],
-  shippingMethods: ['carrier:UPS'],
-  sourceTypes: ['supplier_feed']
-});
-const benchmarkTasks = api.instantiateModel_(config).map((item, index) => task(item.id, item.dependencies, Object.assign(item, {row: index + 8})));
-const benchmarkStart = performance.now();
-for (let index = 0; index < 100; index++) calculate(benchmarkTasks, config);
-const benchmarkMs = performance.now() - benchmarkStart;
-
-console.log(JSON.stringify({
-  ok: true,
-  tests: tests.length,
-  testMs: Number(testMs.toFixed(2)),
-  graphRecalculations: 100,
-  tasksPerGraph: benchmarkTasks.length,
-  graphBenchmarkMs: Number(benchmarkMs.toFixed(2))
+  tax_services: [{code: 'TAXJAR', name: 'TaxJar'}],
+  sourceTypes: ['supplier_feed'], shippingMethods: ['carrier:UPS']
 }));
+const byId = api.indexById_(configured);
+assert.ok(byId['04-T14-01']);
+assert.ok(byId['10-STRIPE-01']);
+assert.ok(byId['11-UPS-01']);
+assert.ok(byId['02-TAXJAR-01']);
+assert.equal(configured.some(task => ['qa_products', 'e2e_scenarios'].includes(task.collection)), false);
+assert.equal(api.validateTaskGraph_(configured).taskCount, configured.length);
+
+const merged = api.mergeTaskStateForRebuild_(base.slice(0, 2), {
+  [base[0].id]: {localApplicable: 'NO', done: false, comment: 'preserved'}
+});
+assert.equal(merged[0].localApplicable, 'NO');
+assert.equal(merged[0].commentValue, 'preserved');
+
+assert.match(api.statusFormula_(8, 400), /^=IF/);
+assert.match(api.statusFormula_(8, 400), /READY/);
+assert.match(api.statusFormula_(8, 400), /WAITING/);
+assert.match(api.waitingFormula_(8, 400), /TEXTJOIN/);
+assert.match(api.effectiveApplicableFormula_(8, 400), /Ancestor|\$K8|SPLIT/);
+
+assert.match(codeSource, /createFilter\(\)/);
+assert.match(codeSource, /Only READY checkboxes can be selected/);
+assert.match(codeSource, /status === 'READY'/);
+assert.match(codeSource, /if \(\[2, 4\]\.indexOf\(e\.range\.getColumn\(\)\) < 0\) return/);
+assert.doesNotMatch(codeSource, /CHECKLIST_FILTER|applyChecklistStatusFilter|showSidebar|Language/);
+assert.doesNotMatch(modelSource, /"gate"|"contour"|"nodeType"|qa_products|e2e_scenarios/);
+
+console.log(JSON.stringify({ok: true, baseTasks: base.length, configuredTasks: configured.length}));

@@ -1,5 +1,5 @@
 const RUNTIME_MODEL = Object.freeze({
-  "version": "1.0.0",
+  "version": "2.0.0",
   "sourceRevision": "162",
   "tasks": [
     {
@@ -11,11 +11,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Output: final list of integrations used in the project.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-02",
@@ -28,11 +24,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Confirm the source or combination of sources used for catalog data.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-03",
@@ -45,11 +37,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined pricing and stock item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-04",
@@ -62,11 +50,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined pricing and stock item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-05",
@@ -77,11 +61,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-06",
@@ -95,11 +75,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Section 1 confirms which approvals are required; Section 2 verifies that they were actually granted.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-07",
@@ -110,11 +86,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-08",
@@ -127,11 +99,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined exclusions item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-09",
@@ -144,11 +112,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined exclusions item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-10",
@@ -161,11 +125,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "The task remains applicable even when the answer is No; downstream fitment tasks are then set to inactive.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-11",
@@ -178,11 +138,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "The task remains applicable even when the answer is No.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-12",
@@ -195,11 +151,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from pricing and markup rules.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-13",
@@ -212,11 +164,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from pricing and markup rules.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-14",
@@ -229,11 +177,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Confirm rules and exceptions; this is not a manual check of every product.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-15",
@@ -246,11 +190,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-16",
@@ -263,11 +203,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate only if backorders are applicable.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-17",
@@ -280,11 +216,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-18",
@@ -297,11 +229,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined stock and price import settings item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-19",
@@ -316,11 +244,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined stock and price import settings item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-20",
@@ -333,11 +257,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate only if product options or variants are applicable.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-21",
@@ -348,11 +268,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-22",
@@ -363,11 +279,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-23",
@@ -378,11 +290,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-24",
@@ -393,11 +301,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "DONE is valid when requirements are documented or their absence is confirmed.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "01-25",
@@ -408,11 +312,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PROJECT_CONFIGURATION",
-      "gate": "G_PROJECT_PROFILE",
-      "nodeType": "PROJECT_FACT"
+      "collection": ""
     },
     {
       "id": "02-INT-00",
@@ -425,11 +325,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Conditional. Clone once per integration only when access is missing; replace INT with a unique code.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "integrations"
     },
     {
       "id": "02-INT-01",
@@ -443,11 +339,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Branch root for this integration. Clone once per confirmed integration.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "integrations"
     },
     {
       "id": "02-INT-02",
@@ -460,11 +352,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "02-INT-03",
@@ -477,11 +365,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "02-INT-04",
@@ -495,11 +379,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Set inactive when the integration has no provider-side brand approval requirement.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "integrations"
     },
     {
       "id": "02-INT-05",
@@ -513,11 +393,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "integrations"
     },
     {
       "id": "02-INT-06",
@@ -530,11 +406,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate only when an additional FTP import is required.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "02-PAY-00",
@@ -547,11 +419,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Conditional. Clone once per gateway only when access is missing.",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "payment_gateways"
     },
     {
       "id": "02-PAY-01",
@@ -565,11 +433,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Branch root. Clone once per confirmed payment gateway.",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "payment_gateways"
     },
     {
       "id": "02-PAY-02",
@@ -582,11 +446,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "payment_gateways"
     },
     {
       "id": "02-SHIP-00",
@@ -599,11 +459,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Conditional. Clone once per carrier only when access is missing.",
       "scope": "REPEAT",
-      "collection": "carriers",
-      "family": "CARRIER_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "carriers"
     },
     {
       "id": "02-SHIP-01",
@@ -617,11 +473,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Branch root. Clone once per confirmed carrier.",
       "scope": "REPEAT",
-      "collection": "carriers",
-      "family": "CARRIER_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "carriers"
     },
     {
       "id": "02-SHIP-02",
@@ -634,11 +486,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "carriers",
-      "family": "CARRIER_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "carriers"
     },
     {
       "id": "02-TAX-00",
@@ -651,11 +499,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Conditional. Clone once per tax service only when access is missing.",
       "scope": "REPEAT",
-      "collection": "tax_services",
-      "family": "TAX_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "tax_services"
     },
     {
       "id": "02-TAX-01",
@@ -669,11 +513,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Branch root. Clone once per confirmed tax service.",
       "scope": "REPEAT",
-      "collection": "tax_services",
-      "family": "TAX_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "tax_services"
     },
     {
       "id": "02-TAX-02",
@@ -686,11 +526,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "tax_services",
-      "family": "TAX_ACCESS",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "ACTION"
+      "collection": "tax_services"
     },
     {
       "id": "02-90",
@@ -706,11 +542,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "After instantiation, Dependencies must list every applicable credential-receipt task.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SERVICE_ACCESS",
-      "gate": "G_SERVICE_ACCESS_INSTANCE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "03-01",
@@ -747,11 +579,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "03-02",
@@ -764,11 +592,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "One outcome; import and manual creation are alternative methods, so the item is not split.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "03-03",
@@ -781,11 +605,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "03-04",
@@ -798,11 +618,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "03-05",
@@ -815,11 +631,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "03-06",
@@ -832,11 +644,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive completion criterion replacing 'No obvious duplicate categories'.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "03-07",
@@ -849,11 +657,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "03-08",
@@ -866,11 +670,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "03-09",
@@ -884,11 +684,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "03-10",
@@ -902,11 +698,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "03-11",
@@ -943,11 +735,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate only when demo categories exist.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "03-12",
@@ -984,11 +772,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate only when demo products exist.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "03-13",
@@ -1002,11 +786,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Category mapping verification.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "03-14",
@@ -1019,11 +799,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate only when the store sells one brand.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_STRUCTURE",
-      "gate": "G_CATALOG_STRUCTURE",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "04-INT-01",
@@ -1036,11 +812,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Branch root. Clone the complete Section 4 block once per confirmed integration.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-02",
@@ -1053,11 +825,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-03",
@@ -1073,11 +841,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-04",
@@ -1092,11 +856,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-05",
@@ -1110,11 +870,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Set inactive when the integration has no warehouse selection.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-06",
@@ -1130,11 +886,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-07",
@@ -1147,11 +899,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Set inactive when MAP / MSRP is not applicable.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-08",
@@ -1167,11 +915,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-09",
@@ -1186,11 +930,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-10",
@@ -1203,11 +943,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-11",
@@ -1220,11 +956,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-12",
@@ -1238,11 +970,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate only when fitment import is required for this integration.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-13",
@@ -1256,11 +984,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate only when supplier shipping rates are applicable.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-14",
@@ -1274,11 +998,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate only when order export or fulfillment is applicable.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-15",
@@ -1302,11 +1022,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Inactive optional dependencies count as not required.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-16",
@@ -1331,11 +1047,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "A completed import may still contain item-level errors that require review.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-17",
@@ -1348,11 +1060,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "DONE means errors were reviewed; resolution is handled later where required.",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-19",
@@ -1365,11 +1073,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "04-INT-20",
@@ -1384,11 +1088,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "integrations",
-      "family": "INTEGRATION_CONFIG",
-      "contour": "INTEGRATION_CONFIGURATION",
-      "gate": "G_INTEGRATION_READY",
-      "nodeType": "ACTION"
+      "collection": "integrations"
     },
     {
       "id": "05-01",
@@ -1403,11 +1103,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "05-02",
@@ -1422,11 +1118,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "05-03",
@@ -1441,11 +1133,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "05-04",
@@ -1460,11 +1148,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "05-05",
@@ -1479,11 +1163,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "05-06",
@@ -1498,11 +1178,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "05-07",
@@ -1517,11 +1193,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "05-08",
@@ -1540,11 +1212,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "05-09",
@@ -1557,11 +1225,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "After instantiation, replace 04-INT-15 with the schedule task for every applicable integration.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "05-10",
@@ -1574,11 +1238,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "05-11",
@@ -1593,11 +1253,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "05-12",
@@ -1610,11 +1266,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "05-13",
@@ -1627,11 +1279,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined SKU / MPN item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SOURCE_COORDINATION",
-      "gate": "G_SOURCE_ROUTING",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-01",
@@ -1644,11 +1292,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "After instantiation, depend on the reviewed import for every applicable integration.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-02",
@@ -1673,11 +1317,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-03",
@@ -1691,11 +1331,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "06-04",
@@ -1708,11 +1344,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "06-05",
@@ -1725,11 +1357,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-06",
@@ -1742,11 +1370,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "06-07",
@@ -1759,11 +1383,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "06-08",
@@ -1777,11 +1397,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-09",
@@ -1794,11 +1410,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-10",
@@ -1811,11 +1423,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-11",
@@ -1828,11 +1436,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-12",
@@ -1845,11 +1449,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-13",
@@ -1862,11 +1462,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-14",
@@ -1879,11 +1475,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-15",
@@ -1898,11 +1490,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-16",
@@ -1916,11 +1504,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-17",
@@ -1934,11 +1518,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when MAP pricing applies.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-18",
@@ -1952,11 +1532,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when options or variants apply.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-19",
@@ -1970,11 +1546,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when fitment import applies.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "06-20",
@@ -1988,11 +1560,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "IMPORT_RELIABILITY",
-      "gate": "G_IMPORT_STABLE",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-02",
@@ -2022,11 +1590,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Record the selected product IDs in the comment or linked project evidence.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-03",
@@ -2056,11 +1620,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Record the selected product IDs in the comment or linked project evidence.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-04",
@@ -2090,11 +1650,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-05",
@@ -2124,11 +1680,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when variants exist.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-06",
@@ -2158,11 +1710,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when fitment products exist.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-07",
@@ -2192,11 +1740,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-08",
@@ -2226,11 +1770,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-09",
@@ -2260,11 +1800,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when MAP products exist.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-10",
@@ -2294,11 +1830,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when discounted products exist.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-11",
@@ -2328,11 +1860,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when oversized or freight products exist.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-12",
@@ -2362,11 +1890,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when multiple-supplier products exist.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "07-13",
@@ -2396,419 +1920,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-02",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify title",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-03",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify SKU and MPN",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-04",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify brand",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-05",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify price",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-06",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify MAP and MSRP",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "NO",
-      "comment": "Set inactive for this product when the field is not applicable.",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-07",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify stock",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-08",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify images",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-09",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify description",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-10",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify category",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-11",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify fitment",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "NO",
-      "comment": "Set inactive for this product when the field is not applicable.",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-12",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify shipping attributes",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "NO",
-      "comment": "Set inactive for this product when the field is not applicable.",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "07-PRODUCT-13",
-      "section": "7. CATALOG QA SAMPLING",
-      "en": "{Sampled product}: verify Add to Cart",
-      "parent": "",
-      "dependencies": [
-        "06-01",
-        "06-02",
-        "06-04",
-        "06-05",
-        "06-07",
-        "06-08",
-        "06-09",
-        "06-10",
-        "06-11",
-        "06-12",
-        "06-13",
-        "06-14",
-        "06-15",
-        "06-16",
-        "06-17",
-        "06-18",
-        "06-19",
-        "06-20"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "qa_products",
-      "family": "PRODUCT_QA",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_PRODUCT_QA",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": ""
     },
     {
       "id": "08-01",
@@ -2821,11 +1933,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-02",
@@ -2838,11 +1946,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-03",
@@ -2855,11 +1959,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-04",
@@ -2872,11 +1972,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-05",
@@ -2889,11 +1985,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate only when Submodel or engine is used.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-06",
@@ -2906,11 +1998,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-07",
@@ -2923,11 +2011,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-08",
@@ -2940,11 +2024,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-09",
@@ -2957,11 +2037,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-10",
@@ -2974,11 +2050,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-11",
@@ -2991,11 +2063,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-12",
@@ -3010,11 +2078,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-13",
@@ -3029,11 +2093,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-14",
@@ -3047,11 +2107,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-15",
@@ -3064,11 +2120,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "08-16",
@@ -3081,11 +2133,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CATALOG_QUALITY",
-      "gate": "G_CATALOG_QA",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "09-01",
@@ -3122,11 +2170,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-02",
@@ -3139,11 +2183,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "09-03",
@@ -3156,11 +2196,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-04",
@@ -3173,11 +2209,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-05",
@@ -3190,11 +2222,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-06",
@@ -3207,11 +2235,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-07",
@@ -3225,11 +2249,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-08",
@@ -3242,11 +2262,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-09",
@@ -3259,11 +2275,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "09-10",
@@ -3276,11 +2288,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "09-11",
@@ -3293,11 +2301,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-12",
@@ -3310,11 +2314,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-13",
@@ -3327,11 +2327,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-14",
@@ -3344,11 +2340,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-15",
@@ -3361,11 +2353,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "09-16",
@@ -3378,11 +2366,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STORE_FOUNDATION",
-      "gate": "G_STORE_FOUNDATION",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "10-PAY-01",
@@ -3395,11 +2379,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Template root. Clone the complete block once per confirmed payment gateway; replace PAY with a unique code. For each gateway, determine which status transitions and functions are supported; set unsupported checks to INACTIVE.",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-02",
@@ -3412,11 +2392,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "ACTION"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-03",
@@ -3429,11 +2405,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "ACTION"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-04",
@@ -3446,11 +2418,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-05",
@@ -3463,11 +2431,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "ACTION"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-06",
@@ -3481,11 +2445,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "ACTION"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-07",
@@ -3498,11 +2458,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Set inactive for this payment gateway when capture is not supported or not used.",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "ACTION"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-08",
@@ -3515,11 +2471,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Set inactive for this payment gateway when void is not supported or not used.",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "ACTION"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-09",
@@ -3532,11 +2484,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Set inactive for this payment gateway when refund is not supported or not used.",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "ACTION"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-10",
@@ -3549,11 +2497,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "ACTION"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-11",
@@ -3566,11 +2510,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "ACTION"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-PAY-12",
@@ -3587,11 +2527,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "payment_gateways",
-      "family": "PAYMENT_QA",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_METHOD",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "payment_gateways"
     },
     {
       "id": "10-90",
@@ -3604,11 +2540,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_LAUNCH",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "10-91",
@@ -3621,11 +2553,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_LAUNCH",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "10-92",
@@ -3639,11 +2567,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "System-controlled: active when T14|Turn14 is configured in Automotive integrations.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "PAYMENT_ASSURANCE",
-      "gate": "G_PAYMENT_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "11-01",
@@ -3657,11 +2581,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_LAUNCH",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "11-CAR-01",
@@ -3675,11 +2595,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Template root. Clone once per confirmed carrier; replace CAR with a unique code.",
       "scope": "REPEAT",
-      "collection": "carriers",
-      "family": "CARRIER_QA",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_METHOD",
-      "nodeType": "INSTANCE_ROOT"
+      "collection": "carriers"
     },
     {
       "id": "11-CAR-02",
@@ -3692,11 +2608,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "REPEAT",
-      "collection": "carriers",
-      "family": "CARRIER_QA",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_METHOD",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": "carriers"
     },
     {
       "id": "11-02",
@@ -3709,11 +2621,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when flat rates are used.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_METHOD",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "11-03",
@@ -3726,11 +2634,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when supplier rates are used.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_METHOD",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "11-04",
@@ -3743,11 +2647,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when free shipping rules are used.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_METHOD",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "11-05",
@@ -3761,11 +2661,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "11-06",
@@ -3778,11 +2674,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when these rules apply.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "11-07",
@@ -3795,11 +2687,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when oversized products exist.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "11-08",
@@ -3812,11 +2700,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when freight products exist.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "11-09",
@@ -3829,11 +2713,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "11-10",
@@ -3846,11 +2726,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when multiple suppliers are used.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "11-11",
@@ -3865,11 +2741,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_LAUNCH; G_SHIPPING_METHOD(pickup)",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "11-12",
@@ -3882,11 +2754,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "SHIPPING_ASSURANCE",
-      "gate": "G_SHIPPING_LAUNCH; G_SHIPPING_METHOD(pickup)",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "12-01",
@@ -3899,11 +2767,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-02",
@@ -3916,11 +2780,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-03",
@@ -3933,11 +2793,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-04",
@@ -3950,11 +2806,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Alternative outcomes; one task because both satisfy the same acceptance criterion.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-05",
@@ -3967,11 +2819,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-06",
@@ -3988,11 +2836,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-07",
@@ -4005,11 +2849,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-08",
@@ -4022,11 +2862,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined H1 / duplicate H2 item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-09",
@@ -4039,11 +2875,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined H1 / duplicate H2 item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "12-10",
@@ -4056,11 +2888,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-11",
@@ -4073,11 +2901,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-12",
@@ -4090,11 +2914,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined robots.txt and sitemap.xml item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-13",
@@ -4107,11 +2927,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Split from the original combined robots.txt and sitemap.xml item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-14",
@@ -4124,11 +2940,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-15",
@@ -4141,11 +2953,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-16",
@@ -4158,11 +2966,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when applicable.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-17",
@@ -4175,11 +2979,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "12-18",
@@ -4192,11 +2992,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-19",
@@ -4212,11 +3008,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-20",
@@ -4230,11 +3022,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-21",
@@ -4248,11 +3036,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-22",
@@ -4266,11 +3050,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-23",
@@ -4285,11 +3065,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-24",
@@ -4314,11 +3090,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-25",
@@ -4348,11 +3120,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-26",
@@ -4382,11 +3150,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-27",
@@ -4399,11 +3163,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-28",
@@ -4416,11 +3176,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-29",
@@ -4435,11 +3191,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_CHECKOUT_READY",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-30",
@@ -4459,11 +3211,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "12-31",
@@ -4478,11 +3226,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when demo content exists.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "12-32",
@@ -4497,11 +3241,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive completion criterion replacing 'No broken images'.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "12-33",
@@ -4519,11 +3259,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive completion criterion replacing 'No broken links'.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "12-34",
@@ -4538,11 +3274,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive completion criterion.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "12-35",
@@ -4559,11 +3291,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive completion criterion.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "12-36",
@@ -4576,11 +3304,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "STOREFRONT_ASSURANCE",
-      "gate": "G_STOREFRONT",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "13-01",
@@ -4593,11 +3317,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-02",
@@ -4610,11 +3330,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-03",
@@ -4627,11 +3343,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-04",
@@ -4644,11 +3356,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when MMY applies. Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-05",
@@ -4661,11 +3369,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-06",
@@ -4678,11 +3382,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when multiple suppliers are used. Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-07",
@@ -4695,11 +3395,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-08",
@@ -4712,11 +3408,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-09",
@@ -4729,11 +3421,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when coupons are in scope. Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-10",
@@ -4746,11 +3434,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when free shipping is configured. Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-11",
@@ -4763,11 +3447,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when oversized or freight products exist. Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-12",
@@ -4780,11 +3460,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
+      "collection": ""
     },
     {
       "id": "13-13",
@@ -4797,181 +3473,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": " Clone the 13-SCN verification block for this scenario.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_ALL",
-      "nodeType": "SCENARIO_ROOT"
-    },
-    {
-      "id": "13-SCN-02",
-      "section": "13. END-TO-END ORDER QA",
-      "en": "{Scenario}: verify product price is correct",
-      "parent": "",
-      "dependencies": [
-        "13-01"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "e2e_scenarios",
-      "family": "E2E_SCENARIO_QA",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_SCENARIO",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "13-SCN-03",
-      "section": "13. END-TO-END ORDER QA",
-      "en": "{Scenario}: verify tax is correct",
-      "parent": "",
-      "dependencies": [
-        "13-01"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "e2e_scenarios",
-      "family": "E2E_SCENARIO_QA",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_SCENARIO",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "13-SCN-04",
-      "section": "13. END-TO-END ORDER QA",
-      "en": "{Scenario}: verify shipping is correct",
-      "parent": "",
-      "dependencies": [
-        "13-01"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "e2e_scenarios",
-      "family": "E2E_SCENARIO_QA",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_SCENARIO",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "13-SCN-05",
-      "section": "13. END-TO-END ORDER QA",
-      "en": "{Scenario}: verify payment result is correct",
-      "parent": "",
-      "dependencies": [
-        "13-01"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "e2e_scenarios",
-      "family": "E2E_SCENARIO_QA",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_SCENARIO",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "13-SCN-06",
-      "section": "13. END-TO-END ORDER QA",
-      "en": "{Scenario}: verify the order result is correct",
-      "parent": "",
-      "dependencies": [
-        "13-01"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "e2e_scenarios",
-      "family": "E2E_SCENARIO_QA",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_SCENARIO",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "13-SCN-07",
-      "section": "13. END-TO-END ORDER QA",
-      "en": "{Scenario}: verify emails are received",
-      "parent": "",
-      "dependencies": [
-        "13-01"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "e2e_scenarios",
-      "family": "E2E_SCENARIO_QA",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_SCENARIO",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "13-SCN-08",
-      "section": "13. END-TO-END ORDER QA",
-      "en": "{Scenario}: verify stock is updated correctly",
-      "parent": "",
-      "dependencies": [
-        "13-01"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "e2e_scenarios",
-      "family": "E2E_SCENARIO_QA",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_SCENARIO",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "13-SCN-09",
-      "section": "13. END-TO-END ORDER QA",
-      "en": "{Scenario}: verify the order is visible to the administrator",
-      "parent": "",
-      "dependencies": [
-        "13-01"
-      ],
-      "defaultApplicable": "YES",
-      "comment": "",
-      "scope": "REPEAT",
-      "collection": "e2e_scenarios",
-      "family": "E2E_SCENARIO_QA",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_SCENARIO",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "13-SCN-10",
-      "section": "13. END-TO-END ORDER QA",
-      "en": "{Scenario}: verify supplier export or processing works",
-      "parent": "",
-      "dependencies": [
-        "13-01"
-      ],
-      "defaultApplicable": "NO",
-      "comment": "Set inactive for a scenario when not applicable.",
-      "scope": "REPEAT",
-      "collection": "e2e_scenarios",
-      "family": "E2E_SCENARIO_QA",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_SCENARIO",
-      "nodeType": "ACTION"
-    },
-    {
-      "id": "13-SCN-11",
-      "section": "13. END-TO-END ORDER QA",
-      "en": "{Scenario}: verify the tracking workflow is defined",
-      "parent": "",
-      "dependencies": [
-        "13-01"
-      ],
-      "defaultApplicable": "NO",
-      "comment": "Set inactive for a scenario when not applicable.",
-      "scope": "REPEAT",
-      "collection": "e2e_scenarios",
-      "family": "E2E_SCENARIO_QA",
-      "contour": "ORDER_ASSURANCE",
-      "gate": "G_E2E_SCENARIO",
-      "nodeType": "INSTANCE_OUTPUT"
+      "collection": ""
     },
     {
       "id": "14-01",
@@ -4984,11 +3486,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "14-02",
@@ -5002,11 +3500,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "14-03",
@@ -5020,11 +3514,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "14-04",
@@ -5039,11 +3529,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "14-05",
@@ -5057,11 +3543,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when MMY applies.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "14-06",
@@ -5075,11 +3557,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "14-07",
@@ -5093,11 +3571,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "14-08",
@@ -5115,11 +3589,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "14-09",
@@ -5132,11 +3602,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "14-10",
@@ -5149,11 +3615,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "14-11",
@@ -5181,11 +3643,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "CUSTOMER_ACCEPTANCE",
-      "gate": "G_CUSTOMER_ACCEPTANCE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-01",
@@ -5198,11 +3656,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-02",
@@ -5215,11 +3669,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-03",
@@ -5232,11 +3682,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-04",
@@ -5266,11 +3712,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-05",
@@ -5285,11 +3727,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-06",
@@ -5303,11 +3741,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-07",
@@ -5320,11 +3754,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when MMY applies.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-08",
@@ -5351,11 +3781,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-09",
@@ -5382,11 +3808,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-10",
@@ -5400,11 +3822,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-11",
@@ -5418,11 +3836,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when multiple suppliers are used.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-12",
@@ -5450,11 +3864,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-13",
@@ -5467,11 +3877,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-14",
@@ -5484,11 +3890,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "15-15",
@@ -5501,11 +3903,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "15-16",
@@ -5518,11 +3916,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive launch criterion replacing the original negative blocker condition.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_LAUNCH",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "16-01",
@@ -5550,11 +3944,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "16-02",
@@ -5567,11 +3957,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-03",
@@ -5599,11 +3985,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-04",
@@ -5616,11 +3998,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-05",
@@ -5633,11 +4011,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-06",
@@ -5650,11 +4024,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-07",
@@ -5668,11 +4038,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-08",
@@ -5685,11 +4051,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when order export applies.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-09",
@@ -5703,11 +4065,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Positive completion criterion replacing 'No unresolved critical onboarding tickets'.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "16-10",
@@ -5725,11 +4083,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "SOURCE_OUTCOME"
+      "collection": ""
     },
     {
       "id": "16-11",
@@ -5742,11 +4096,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-12",
@@ -5759,11 +4109,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "ACTION"
+      "collection": ""
     },
     {
       "id": "16-13",
@@ -5776,11 +4122,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "Known resolved errors do not block completion.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-14",
@@ -5793,11 +4135,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-15",
@@ -5810,11 +4148,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when feeds are used.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-16",
@@ -5842,11 +4176,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "YES",
       "comment": "",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-17",
@@ -5874,11 +4204,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when CloudSearch is used.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-18",
@@ -5891,11 +4217,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Post-launch observation. Actual indexing in Google does not block onboarding closure; sitemap submission and the indexing request are the blocking prerequisites.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-19",
@@ -5923,11 +4245,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when GA4 is used. Split from the original combined GA4 / GTM item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     },
     {
       "id": "16-20",
@@ -5940,11 +4258,7 @@ const RUNTIME_MODEL = Object.freeze({
       "defaultApplicable": "NO",
       "comment": "Activate when both GA4 and GTM are used. Split from the original combined item.",
       "scope": "STATIC",
-      "collection": "",
-      "family": "",
-      "contour": "RELEASE_LIFECYCLE",
-      "gate": "G_ONBOARDING_CLOSE",
-      "nodeType": "OBSERVATION"
+      "collection": ""
     }
   ]
 });
