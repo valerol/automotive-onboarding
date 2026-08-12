@@ -41,10 +41,10 @@ Configuration is stored in each project's `_RUNTIME_DATA!D1:E1`; English task di
 
 ## Workspace
 
-- `CHECKLIST` is the full-width working tab. It contains a persistent native filter. Users edit only `Applicable`, `DONE`, and `Comment`.
-- `CONFIGURATION` is the structured project-configuration tab. In data-only projects every supported edit is saved and rebuilds the checklist automatically.
+- `CHECKLIST` is the full-width working tab. Its structure is protected; users edit only `Applicable`, `DONE`, and `Comment` and cannot insert, delete, or move task rows.
+- `CONFIGURATION` is the structured project-configuration tab. Its labels and structure are protected; only supported selection cells are editable and rebuild the checklist automatically.
 - `INSTRUCTIONS` is the operator-facing quick start, configuration map, state reference, and safe-edit guide. It is regenerated in English by the runtime.
-- `TASK POOL` is the protected technical state and graph tab. Its protection warns against direct edits; Google Sheets owners can still override any protection, so routine work must happen in `CHECKLIST`.
+- `TASK POOL` is the strictly protected technical state and graph tab generated from `RuntimeModel.gs`. Routine work must happen in `CHECKLIST`.
 - `_RUNTIME_DATA` remains hidden.
 
 ## GitHub / clasp setup

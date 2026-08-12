@@ -977,6 +977,7 @@ function refreshChecklist_(lockAlreadyHeld) {
   }
 
   applyChecklistStatusFilter_(sheet);
+  protectChecklistSheet_(sheet);
   markRuntimeFastPathCompatible_();
   cacheRuntimeRowIndex_(state.tasks, readChecklistRowIndex_(sheet));
 }
@@ -1303,6 +1304,7 @@ function ensureConfigurationSheet_() {
   if (sheet.getRange('A1').getNote() !== CONFIGURATION_UI.version) {
     renderConfigurationSheet_(sheet, getRuntimeConfiguration());
   }
+  protectConfigurationSheet_(sheet);
   return sheet;
 }
 
@@ -1343,6 +1345,7 @@ function renderConfigurationSheet_(sheet, config) {
   sheet.getRange('A4:C45').setVerticalAlignment('top');
   sheet.getRange('A1').setNote(CONFIGURATION_UI.version);
   writeConfigurationValues_(sheet, config);
+  protectConfigurationSheet_(sheet);
 }
 
 function readConfigurationSheet_() {
@@ -1432,28 +1435,68 @@ function writeConfigurationSheet_(config) {
   writeConfigurationValues_(sheet, config);
 }
 
-function protectPoolSheet_() {
-  const spreadsheet = runtimeSpreadsheet_();
-  const sheet = getPoolSheet_();
+function protectPoolSheet_(spreadsheet) {
+  const targetSpreadsheet = spreadsheet || runtimeSpreadsheet_();
+  const sheet = targetSpreadsheet.getSheetByName(RUNTIME.poolSheet);
+  if (!sheet) throw new Error('Missing sheet: ' + RUNTIME.poolSheet);
   const description = 'TECHNICAL_TASK_POOL_DO_NOT_EDIT';
-  const protections = sheet.getProtections(SpreadsheetApp.ProtectionType.SHEET);
-  let protection = protections.filter(function (item) { return item.getDescription() === description; })[0];
-  if (!protection) protection = sheet.protect().setDescription(description);
-
-  // Warning-only protection keeps checklist writes available to every operator.
-  // The hidden tab prevents accidental direct edits without breaking the runtime.
-  protection.setWarningOnly(true);
+  enforceSheetProtection_(sheet, description, []);
   renderEnglishPoolHeader_(sheet);
   sheet.setTabColor('#98a2b3');
   sheet.getRange('A1').setNote('Technical sheet. Use CHECKLIST for routine work.');
 
   if (!sheet.isSheetHidden()) {
-    spreadsheet.setActiveSheet(sheet);
-    spreadsheet.moveActiveSheet(spreadsheet.getNumSheets());
-    const checklist = spreadsheet.getSheetByName(RUNTIME.checklistSheet);
-    if (checklist) spreadsheet.setActiveSheet(checklist);
+    targetSpreadsheet.setActiveSheet(sheet);
+    targetSpreadsheet.moveActiveSheet(targetSpreadsheet.getNumSheets());
+    const checklist = targetSpreadsheet.getSheetByName(RUNTIME.checklistSheet);
+    if (checklist) targetSpreadsheet.setActiveSheet(checklist);
     sheet.hideSheet();
   }
+}
+
+function protectChecklistSheet_(sheet) {
+  const editableRanges = [sheet.getRange('D2')];
+  const rowCount = Math.max(0, sheet.getLastRow() - RUNTIME.checklistFirstTaskRow + 1);
+  if (rowCount) {
+    const ids = sheet.getRange(RUNTIME.checklistFirstTaskRow, 1, rowCount, 1).getDisplayValues();
+    let blockStart = 0;
+    const flush = function (endRow) {
+      if (!blockStart) return;
+      editableRanges.push(sheet.getRange(blockStart, 4, endRow - blockStart, 3));
+      blockStart = 0;
+    };
+    ids.forEach(function (row, index) {
+      const sheetRow = RUNTIME.checklistFirstTaskRow + index;
+      if (String(row[0] || '').trim()) {
+        if (!blockStart) blockStart = sheetRow;
+      } else {
+        flush(sheetRow);
+      }
+    });
+    flush(RUNTIME.checklistFirstTaskRow + rowCount);
+  }
+  enforceSheetProtection_(sheet, 'CHECKLIST_STRUCTURE_DO_NOT_EDIT', editableRanges);
+}
+
+function protectConfigurationSheet_(sheet) {
+  const editableRanges = configurationCatalogSections_().map(function (section) {
+    return sheet.getRange(section.firstRow, 2, section.catalog.length, 1);
+  });
+  editableRanges.push(sheet.getRange('B37:B45'));
+  enforceSheetProtection_(sheet, 'CONFIGURATION_STRUCTURE_DO_NOT_EDIT', editableRanges);
+}
+
+function enforceSheetProtection_(sheet, description, unprotectedRanges) {
+  const protections = sheet.getProtections(SpreadsheetApp.ProtectionType.SHEET);
+  let protection = protections.filter(function (item) { return item.getDescription() === description; })[0];
+  if (!protection) protection = sheet.protect().setDescription(description);
+  protection.setWarningOnly(false);
+  protection.setUnprotectedRanges(unprotectedRanges || []);
+
+  // A new sheet protection is owned by the executing administrator. The
+  // unprotected ranges above remain editable by ordinary spreadsheet editors.
+  if (protection.canDomainEdit()) protection.setDomainEdit(false);
+  return protection;
 }
 
 function renderEnglishPoolHeader_(sheet) {

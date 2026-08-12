@@ -258,6 +258,9 @@ function resetOnboardingSpreadsheet_(spreadsheet, metadata) {
 
   const calculated = writeCleanOperationalPool_(spreadsheet, config);
   writeCleanChecklist_(spreadsheet, calculated.tasks);
+  protectChecklistSheet_(spreadsheet.getSheetByName(RUNTIME.checklistSheet));
+  protectConfigurationSheet_(configSheet);
+  protectPoolSheet_(spreadsheet);
   renderEnglishInstructions_(spreadsheet);
   writeProjectMetadata_(spreadsheet, {
     kind: metadata.kind,
@@ -387,7 +390,7 @@ function renderEnglishInstructions_(spreadsheet) {
     ['AUTOMOTIVE ONBOARDING — OPERATING GUIDE', ''],
     ['Purpose', 'Use CHECKLIST for daily work and CONFIGURATION to define the project scope.'],
     ['Quick start', 'Open CONFIGURATION, select all applicable services and options, then save the configuration.'],
-    ['Checklist editing', 'Only Applicable, DONE, and Comment are editable. System-controlled applicability is read-only.'],
+    ['Checklist editing', 'Only Applicable, DONE, and Comment are editable. Rows and all structural fields are protected from insertion, deletion, movement, or direct editing.'],
     ['Status filter', 'Use CHECKLIST -> Status filter. READY means the task can be completed now.'],
     ['DONE', 'Mark DONE only after the task is complete. The runtime rejects premature completion.'],
     ['WAITING', 'One or more dependencies are incomplete. See Waiting for for the blocking Task IDs.'],
@@ -401,7 +404,8 @@ function renderEnglishInstructions_(spreadsheet) {
     ['Domain access', 'Other @x-cart.com users can create projects when the master and destination folder are shared with sufficient access.'],
     ['Authorization', 'Only the central runtime owner/creator authorizes Apps Script. Project editors use the spreadsheet without script authorization.'],
     ['Runtime limit', 'One central Apps Script project supports up to 20 installable project triggers for its owner.'],
-    ['Technical sheets', 'TASK POOL, _RUNTIME_DATA, and _PROJECT_METADATA are runtime-managed. Do not edit them directly.'],
+    ['Canonical task source', 'Task templates live in the central RuntimeModel. TASK POOL is generated from that model and the project configuration.'],
+    ['Technical sheets', 'TASK POOL is protected from operator edits. _RUNTIME_DATA and _PROJECT_METADATA are hidden and runtime-managed.'],
     ['Recovery', 'If creation fails, verify folder access and retry. Failed partial copies are moved to Trash and logged in PROJECTS.']
   ];
   sheet.getRange(1, 1, sheet.getMaxRows(), sheet.getMaxColumns()).breakApart();
