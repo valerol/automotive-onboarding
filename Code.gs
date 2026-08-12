@@ -116,7 +116,7 @@ const CONFIGURATION_UI = Object.freeze({
   otherLastRow: 45
 });
 
-const CHECKLIST_UI_VERSION = 'AUTOMOTIVE_FORMULA_V4';
+const CHECKLIST_UI_VERSION = 'AUTOMOTIVE_FORMULA_V5';
 
 function onOpen() {
   try {
@@ -305,6 +305,7 @@ function rebuildChecklistFromConfiguration_(preserveState) {
     protectConfigurationSheet_(ensureConfigurationSheet_());
     refreshChecklistProtection_(checklist);
     removeLegacyRuntimeSheets_(spreadsheet);
+    checklist.getRange('A1').setNote(CHECKLIST_UI_VERSION);
     return {ok: true, taskCount: tasks.length};
   } finally {
     lock.releaseLock();
@@ -428,23 +429,31 @@ function writeFormulaChecklist_(sheet, tasks) {
     ];
   });
   sheet.getRange(RUNTIME.checklistFirstRow, 1, values.length, 11).setValues(values).setVerticalAlignment('middle');
-  sheet.getRange('A1').setNote(CHECKLIST_UI_VERSION);
   sheet.getRange(RUNTIME.checklistFirstRow, 6, values.length, 6).setNumberFormat('@');
 
   const applicableRule = SpreadsheetApp.newDataValidation()
     .requireValueInList([RUNTIME.yes, RUNTIME.no], true)
     .setAllowInvalid(false)
     .build();
+  const taskRange = sheet.getRange(RUNTIME.checklistFirstRow, 2, values.length, 1);
+  taskRange.insertCheckboxes();
+  sheet.getRange(RUNTIME.checklistFirstRow, 4, values.length, 1).setDataValidation(applicableRule);
+
+  const sectionDoneRanges = [];
+  const sectionApplicableRanges = [];
   displayRows.forEach(function (item, index) {
     const row = RUNTIME.checklistFirstRow + index;
     if (item.section) {
       sheet.getRange(row, 1, 1, 7).setBackground('#e9edf5').setFontColor('#29375f').setFontWeight('bold');
       sheet.setRowHeight(row, 28);
-    } else {
-      sheet.getRange(row, 2).insertCheckboxes();
-      sheet.getRange(row, 4).setDataValidation(applicableRule);
+      sectionDoneRanges.push('B' + row);
+      sectionApplicableRanges.push('D' + row);
     }
   });
+  if (sectionDoneRanges.length) {
+    sheet.getRangeList(sectionDoneRanges).clearDataValidations().clearContent();
+    sheet.getRangeList(sectionApplicableRanges).clearDataValidations().clearContent();
+  }
   sheet.getRange(RUNTIME.checklistFirstRow, 1, values.length, 1).setWrap(true);
   sheet.getRange(RUNTIME.checklistFirstRow, 3, values.length, 1).setWrap(true);
   sheet.getRange(RUNTIME.checklistFirstRow, 7, values.length, 1).setWrap(true);

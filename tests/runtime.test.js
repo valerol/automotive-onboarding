@@ -64,6 +64,9 @@ assert.equal(api.checklistEditTouchesProtectedData_(fakeRange(2, 3)), false, 'Do
 assert.equal(api.checklistEditIsCommentOnly_(fakeRange(3, 1)), true);
 
 assert.match(codeSource, /createFilter\(\)/);
+assert.match(codeSource, /getRange\(RUNTIME\.checklistFirstRow, 2, values\.length, 1\);\s*taskRange\.insertCheckboxes\(\)/);
+assert.match(codeSource, /getRangeList\(sectionDoneRanges\)\.clearDataValidations\(\)\.clearContent\(\)/);
+assert.match(codeSource, /checklist\.getRange\('A1'\)\.setNote\(CHECKLIST_UI_VERSION\)/);
 assert.match(codeSource, /getRange\('A2:G4'\).*clearContent\(\).*clearDataValidations\(\).*clearFormat\(\)/);
 assert.match(codeSource, /READY can be selected; DONE can be cleared/);
 assert.match(codeSource, /status === 'READY' \|\| status === 'DONE'/);
